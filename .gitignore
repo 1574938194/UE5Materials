@@ -362,8 +362,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-Binaries/
-Content/
-DerivedDataCache/
-Intermediate/
-Saved/
+Binaries
+Content
+DerivedDataCache
+Intermediate
+Saved

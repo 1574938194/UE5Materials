@@ -14,17 +14,17 @@
 #include "XLWorksheet.generated.h"
 
 
- 
+// 
+//
+//UENUM(BlueprintType)
+//enum class EXLSheetType :uint8 { 
+//    Worksheet UMETA(DisplayName = "Worksheet"),
+//    Chartsheet UMETA(DisplayName = "Chartsheet"),
+//    Dialogsheet UMETA(DisplayName = "Dialogsheet"),
+//    Macrosheet UMETA(DisplayName = "Macrosheet")
+//};
 
-UENUM(BlueprintType)
-enum class EXLSheetType :uint8 { 
-    Worksheet UMETA(DisplayName = "Worksheet"),
-    Chartsheet UMETA(DisplayName = "Chartsheet"),
-    Dialogsheet UMETA(DisplayName = "Dialogsheet"),
-    Macrosheet UMETA(DisplayName = "Macrosheet")
-};
-
-class UXLWorkbook;
+class UXLDocument;
 /**
  * 
  */
@@ -72,8 +72,7 @@ public:
 
     UFUNCTION(BlueprintCallable)
     void Clone(FString newName);
-
-   
+     
     UFUNCTION(BlueprintCallable)
     UXLCell* Cell(FString ref) ;
 
@@ -125,6 +124,7 @@ public:
 protected:
     OpenXLSX::XLWorksheet _Inner;
 
-    friend class UXLWorkbook;
+    friend class UXLDocument;
     friend class UXLSheet;
+    
 };

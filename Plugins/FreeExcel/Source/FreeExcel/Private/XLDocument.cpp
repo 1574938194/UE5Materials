@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "XLDocument.h"
+#include "XLDocument.h" 
 #include "OpenXLSX/include/OpenXLSX.hpp"
- 
+#include "XLWorksheet.h"
  
 using namespace std;
 using namespace OpenXLSX;
@@ -53,31 +53,103 @@ FString UXLDocument::ExcelFullPath()
 	return FString(_Inner.path().c_str());
 }
   
-bool UXLDocument::IsValid()
+bool UXLDocument::ExcelIsValid()
 {
 	return (bool)_Inner;
 }
-  
-UXLWorkbook* UXLDocument::Workbook()
-{ 
-	auto ret = NewObject<UXLWorkbook>();
-	ret->_Inner = std::move(_Inner.workbook());
+ 
 
+UXLWorksheet* UXLDocument::GetSheetAt(int32 index)
+{
+	try
+	{
+		auto ret = NewObject<UXLWorksheet>();
+		ret->_Inner = std::move(_Inner.workbook().sheet(index).get<XLWorksheet>());
+		return ret;
+	}
+	catch (...)
+	{
+		return nullptr;
+	}
+}
+
+UXLWorksheet* UXLDocument::GetOrCreateSheetWithName(FString name)
+{
+	try
+	{
+		std::string _Name(TCHAR_TO_UTF8(*name));
+		auto ret = NewObject<UXLWorksheet>();
+		if (_Inner.workbook().worksheetExists(_Name))
+		{
+			ret->_Inner = std::move(_Inner.workbook().sheet(_Name));
+			return ret;
+		}
+		ret->_Inner = std::move(_Inner.workbook().worksheet(_Name));
+		return ret; 
+	}
+	catch (...)
+	{
+		return nullptr;
+	}
+}
+ 
+void UXLDocument::DeleteSheet(FString name)
+{
+	std::string _Name(TCHAR_TO_UTF8(*name));
+	_Inner.workbook().deleteSheet(_Name);
+}
+
+  
+void UXLDocument::CloneSheet(FString existingName, FString newName)
+{
+	std::string _Name1(TCHAR_TO_UTF8(*existingName));
+	std::string _Name2(TCHAR_TO_UTF8(*newName));
+	_Inner.workbook().cloneSheet(_Name1, _Name2);
+}
+
+void UXLDocument::SetSheetIndex(FString sheetName, int32 index)
+{
+	std::string _Name1(TCHAR_TO_UTF8(*sheetName));
+	_Inner.workbook().setSheetIndex(_Name1, index);
+}
+
+
+int32 UXLDocument::IndexOfSheet(FString sheetName)
+{
+	std::string _Name1(TCHAR_TO_UTF8(*sheetName));
+	return _Inner.workbook().indexOfSheet(_Name1);
+}
+ 
+int32 UXLDocument::SheetCount()
+{
+	return _Inner.workbook().sheetCount();
+}
+ 
+TArray<FString> UXLDocument::SheetNames()
+{
+	auto ls = _Inner.workbook().sheetNames();
+	TArray<FString> ret;
+	ret.Reserve(ls.size());
+	std::for_each(ls.begin(), ls.end(), [&ret](auto& it) {
+		ret.Add(FString(it.c_str()));
+		});
 	return ret;
 }
- /*
-FString UXLDocument::Property(EXLProperty prop)
+ 
+
+bool UXLDocument::SheetExists(FString name)
 {
-	return FString((_Inner.property((XLProperty)prop)).c_str());
+	std::string _Name1(TCHAR_TO_UTF8(*name));
+	return _Inner.workbook().sheetExists(_Name1);
 }
  
-void UXLDocument::SetProperty(EXLProperty prop, FString value)
+
+void UXLDocument::DeleteNamedRanges()
 {
-	_Inner.setProperty((XLProperty)prop, std::string(TCHAR_TO_UTF8(*value)));
+	_Inner.workbook().deleteNamedRanges();
 }
- 
-void UXLDocument::DeleteProperty(EXLProperty prop)
+
+void UXLDocument::SetFullCalculationOnLoad()
 {
-	_Inner.deleteProperty((XLProperty)prop);
+	_Inner.workbook().setFullCalculationOnLoad();
 }
- */

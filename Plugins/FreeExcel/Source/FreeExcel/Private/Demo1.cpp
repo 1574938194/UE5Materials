@@ -3,6 +3,8 @@
 
 #include "Demo1.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "OpenXLSX/include/headers/XLSheet.hpp"
+#include "XLWorksheet.h"
 #include <string>
 #include <iostream>
 #include "XLDocument.h"
@@ -155,10 +157,8 @@ void ADemo1::RunDemo1OLD()
 void ADemo1::RunDemoBasicUsage()
 {
 
-    auto doc = NewObject<UXLDocument>();
-
-    doc->Create(TEXT("D:\\proj\\ueTest\\Demo01.xlsx"));
-    auto wks = doc->Workbook()->Worksheet(TEXT("Sheet1"));
+    auto doc = UXLDocument::CreateExcel(TEXT("D:\\proj\\ueTest\\Demo01.xlsx"));
+    auto wks = doc->GetOrCreateSheetWithName(TEXT("Sheet1"));
 
     auto cell = wks->CellAt(1, 1);
     cell->Value()->SetInteger(321);
@@ -205,8 +205,8 @@ void ADemo1::RunDemoBasicUsage()
     auto result = A1->DateTime();
     UKismetSystemLibrary::PrintString(this, A1->TypeAsString() + "," + result.ToString(TEXT("%Y-%m-%d-%H-%M-%S")));
 
-    doc->Save();
-    doc->Close();
+    doc->SaveExcel();
+    doc->CloseExcel();
 }
 
 void ADemo1::RunDemo2OLD()
