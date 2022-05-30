@@ -1,0 +1,15 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.SplineSweepMesh.cpp.obj": [
+			"SplineSweepMesh.cpp.obj",
+			"SplineSweepMeshActor.cpp.obj",
+			"SplineSweepMeshComponent.cpp.obj"
+		],
+		"Module.SplineSweepMesh.gen.cpp.obj": [
+			"SplineSweepMesh.init.gen.cpp.obj",
+			"SplineSweepMeshActor.gen.cpp.obj",
+			"SplineSweepMeshComponent.gen.cpp.obj"
+		]
+	}
+}

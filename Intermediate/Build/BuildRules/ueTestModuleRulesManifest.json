@@ -1,0 +1,10 @@
+{
+	"SourceFiles": [
+		"D:\\proj\\ueTest\\Source\\ueTest\\ueTest.Build.cs",
+		"D:\\proj\\ueTest\\Plugins\\FreeExcel\\Source\\FreeExcel\\FreeExcel.Build.cs",
+		"D:\\proj\\ueTest\\Plugins\\SplineSweepMesh\\Source\\SplineSweepMesh\\SplineSweepMesh.Build.cs",
+		"D:\\proj\\ueTest\\Source\\ueTest.Target.cs",
+		"D:\\proj\\ueTest\\Source\\ueTestEditor.Target.cs"
+	],
+	"EngineVersion": "4.27.2"
+}

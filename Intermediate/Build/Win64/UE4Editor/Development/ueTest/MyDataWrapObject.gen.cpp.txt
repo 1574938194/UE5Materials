@@ -1,0 +1,11 @@
+D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\Development\ueTest\Definitions.ueTest.h
+D:\UE_4.27\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
+D:\UE_4.27\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
+D:\proj\ueTest\Source\ueTest/MyDataWrapObject.h
+D:\UE_4.27\Engine\Source\Runtime\CoreUObject\Public\UObject/NoExportTypes.h
+D:\UE_4.27\Engine\Source\Runtime\CoreUObject\Public\UObject/PropertyAccessUtil.h
+D:\UE_4.27\Engine\Source\Runtime\Core\Public\Math/UnitConversion.h
+D:\UE_4.27\Engine\Source\Runtime\Core\Public\Math/UnitConversion.inl
+D:\UE_4.27\Engine\Source\Runtime\Core\Public\Internationalization/PolyglotTextData.h
+D:\UE_4.27\Engine\Source\Runtime\CoreUObject\Public\AssetRegistry/ARFilter.h
+D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\Inc\ueTest\MyDataWrapObject.generated.h

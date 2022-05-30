@@ -1,0 +1,7 @@
+{
+	"SourceFiles": [
+		"D:\\proj\\ueTest\\Plugins\\FreeExcel\\Source\\FreeExcel\\FreeExcel.Build.cs",
+		"D:\\proj\\ueTest\\Plugins\\FreeExcel\\Source\\ThirdParty\\FreeExcelLibrary\\FreeExcelLibrary.Build.cs"
+	],
+	"EngineVersion": "4.27.2"
+}

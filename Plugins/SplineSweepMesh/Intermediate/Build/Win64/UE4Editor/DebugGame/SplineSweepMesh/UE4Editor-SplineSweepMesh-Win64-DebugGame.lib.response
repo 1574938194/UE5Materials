@@ -1,0 +1,13 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-SplineSweepMesh-Win64-DebugGame.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\proj\ueTest\Intermediate\Build\Win64\ueTestEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.obj"
+"D:\proj\ueTest\Plugins\SplineSweepMesh\Intermediate\Build\Win64\UE4Editor\DebugGame\SplineSweepMesh\Module.SplineSweepMesh.cpp.obj"
+"D:\proj\ueTest\Plugins\SplineSweepMesh\Intermediate\Build\Win64\UE4Editor\DebugGame\SplineSweepMesh\Module.SplineSweepMesh.gen.cpp.obj"
+"D:\proj\ueTest\Plugins\SplineSweepMesh\Intermediate\Build\Win64\UE4Editor\DebugGame\SplineSweepMesh\Default.rc2.res"
+/OUT:"D:\proj\ueTest\Plugins\SplineSweepMesh\Intermediate\Build\Win64\UE4Editor\DebugGame\SplineSweepMesh\UE4Editor-SplineSweepMesh-Win64-DebugGame.lib"

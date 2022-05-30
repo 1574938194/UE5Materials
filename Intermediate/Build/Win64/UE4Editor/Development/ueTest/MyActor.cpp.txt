@@ -1,0 +1,3 @@
+D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\Development\ueTest\Definitions.ueTest.h
+D:\proj\ueTest\Source\ueTest\MyActor.h
+D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\Inc\ueTest\MyActor.generated.h
