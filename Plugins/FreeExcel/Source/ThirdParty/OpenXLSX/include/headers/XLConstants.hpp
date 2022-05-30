@@ -5,15 +5,21 @@
 #ifndef OPENXLSX_XLCONSTANTS_HPP
 #define OPENXLSX_XLCONSTANTS_HPP
 
+
+#if __cplusplus >=201703L
 namespace OpenXLSX
 {
-#if __cplusplus >=201703L
     inline const uint16_t MAX_COLS = 16'384;
     inline const uint32_t MAX_ROWS = 1'048'576;
-#else 
-#define MAX_COLS 16'384
-#define MAX_ROWS 1'048'576
-#endif
 }    // namespace OpenXLSX
+#else 
+class MaxConstant
+{
+public:
+    static constexpr uint16_t MAX_COLS = 16'384;
+    static constexpr uint32_t MAX_ROWS = 1'048'576;
+};
+#endif
+
 
 #endif    // OPENXLSX_XLCONSTANTS_HPP

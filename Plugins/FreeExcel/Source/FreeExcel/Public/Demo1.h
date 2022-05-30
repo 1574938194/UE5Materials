@@ -19,25 +19,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	 
 	UFUNCTION(BlueprintCallable, Category = "XLXS")
-		static void  RunDemo1OLD();
-	UFUNCTION(BlueprintCallable, Category = "XLXS")
-		static void  RunDemo2OLD();
-	UFUNCTION(BlueprintCallable, Category = "XLXS")
-		static void  RunDemo3OLD();
-	UFUNCTION(BlueprintCallable, Category = "XLXS")
-		static void  RunDemo4OLD();
-	UFUNCTION(BlueprintCallable, Category = "XLXS")
-		static void  RunDemo5OLD();
-	UFUNCTION(BlueprintCallable, Category = "XLXS")
-		static void  RunDemo6OLD();
-	UFUNCTION(BlueprintCallable, Category = "XLXS")
-		static void  RunDemo7OLD();
-	UFUNCTION(BlueprintCallable, Category = "XLXS")
-		static void  RunDemo8OLD();
-
-	UFUNCTION(BlueprintCallable, Category = "XLXS")
-		void RunDemoBasicUsage();
+	 void RunDemo();
 
 public:	
 	// Called every frame

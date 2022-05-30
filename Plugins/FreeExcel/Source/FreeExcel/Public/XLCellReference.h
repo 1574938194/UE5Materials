@@ -20,6 +20,9 @@ public:
 	 UFUNCTION(BlueprintCallable)
 		static	UXLCellReference* MakeCellReference(FString ref);
 
+	 UFUNCTION(BlueprintCallable)
+		 static	UXLCellReference* MakeCellReference2(int32 row, int32 col);
+
 		UFUNCTION(BlueprintCallable)
 			void Forward();
 

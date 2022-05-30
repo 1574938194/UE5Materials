@@ -16,5 +16,6 @@ enum class EXLValueType:uint8 {
 	Integer UMETA(DisplayName = "Integer"),
 	Float UMETA(DisplayName = "Float"),
 	Error UMETA(DisplayName = "Error"),
-	String UMETA(DisplayName = "String")
+	String UMETA(DisplayName = "String"),
+	Formula UMETA(DisplayName = "Formula")
 };

@@ -100,3 +100,11 @@ UXLCellReference* UXLCellReference::MakeCellReference(FString ref)
 
 	return ret;
 }
+
+UXLCellReference* UXLCellReference::MakeCellReference2(int32 row, int32 col)
+{
+	auto ret = NewObject<UXLCellReference>();
+	ret->_Inner = std::move(OpenXLSX::XLCellReference(row,col));
+
+	return ret;
+}

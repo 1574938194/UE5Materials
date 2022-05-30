@@ -81,9 +81,10 @@ UXLWorksheet* UXLDocument::GetOrCreateSheetWithName(FString name)
 		auto ret = NewObject<UXLWorksheet>();
 		if (_Inner.workbook().worksheetExists(_Name))
 		{
-			ret->_Inner = std::move(_Inner.workbook().sheet(_Name));
+			ret->_Inner = std::move(_Inner.workbook().worksheet(_Name));
 			return ret;
 		}
+		_Inner.workbook().addWorksheet(_Name);
 		ret->_Inner = std::move(_Inner.workbook().worksheet(_Name));
 		return ret; 
 	}

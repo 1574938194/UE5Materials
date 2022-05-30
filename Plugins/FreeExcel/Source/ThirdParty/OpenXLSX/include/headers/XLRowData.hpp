@@ -253,7 +253,7 @@ namespace OpenXLSX
                                          T>::type* = nullptr>
         XLRowDataProxy& operator=(const T& values)
         {
-            if (values.size() > MAX_COLS) throw XLOverflowError("Container size exceeds maximum number of columns.");
+            if (values.size() > MaxConstant::MAX_COLS) throw XLOverflowError("Container size exceeds maximum number of columns.");
             if (values.size() == 0) return *this;
 
             // ===== If the container value_type is XLCellValue, the values can be copied directly.

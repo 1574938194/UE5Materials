@@ -27,16 +27,16 @@ UXLCell* UXLCell::Offset(int32 rowOffset, int32 colOffset)
 
 	return ret;
 }
- 
-bool UXLCell::HasFormula()
-{
-	return _Inner.hasFormula();
-}
- 
-UXLFormulaProxy* UXLCell::Formula()
-{
-	auto ret = NewObject<UXLFormulaProxy>();
-	ret->_Inner =_Inner.formula();
-
-	return ret;
-}
+// 
+//bool UXLCell::HasFormula()
+//{
+//	return _Inner.hasFormula();
+//}
+// 
+//UXLFormulaProxy* UXLCell::Formula()
+//{
+//	auto ret = NewObject<UXLFormulaProxy>();
+//	ret->_Inner =_Inner.formula();
+//
+//	return ret;
+//}

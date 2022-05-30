@@ -6,8 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "OpenXLSX/include/headers/XLCell.hpp"
 #include "XLCellValueProxy.h"
-#include "XLCellReference.h"
-#include "XLFormulaProxy.h"
+#include "XLCellReference.h" 
 #include "XLCell.generated.h"
 
  
@@ -32,12 +31,12 @@ public:
     UFUNCTION(BlueprintCallable)
     UXLCell* Offset(int32 rowOffset, int32 colOffset) ;
 
-    UFUNCTION(BlueprintCallable)
-    bool HasFormula() ;
+    //UFUNCTION(BlueprintCallable)
+    //bool HasFormula() ;
 
-    UFUNCTION(BlueprintCallable)
-    UXLFormulaProxy* Formula();
-     
+    //UFUNCTION(BlueprintCallable)
+    //UXLFormulaProxy* Formula();
+    // 
 protected:
     OpenXLSX::XLCell _Inner;
 
