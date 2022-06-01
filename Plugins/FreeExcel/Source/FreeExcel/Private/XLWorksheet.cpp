@@ -119,39 +119,7 @@ UXLCellRange* UXLWorksheet::Range(UXLCellReference* topLeft, UXLCellReference* b
 
 	return ret;
 }
- 
-UXLRowRange* UXLWorksheet::Rows()
-{
-	auto ret = NewObject<UXLRowRange>();
-	ret->_Inner = std::move(_Inner.rows());
 
-	return ret;
-}
- 
-UXLRowRange* UXLWorksheet::RowsAt(int32 rowCount)
-{
-	auto ret = NewObject<UXLRowRange>();
-	ret->_Inner = std::move(_Inner.rows(rowCount));
-
-	return ret;
-}
- 
-UXLRowRange* UXLWorksheet::RowsRange(int32 firstRow, int32 lastRow)
-{
-	auto ret = NewObject<UXLRowRange>();
-	ret->_Inner = std::move(_Inner.rows(firstRow, lastRow));
-
-	return ret;
-}
-
- 
-UXLRow* UXLWorksheet::Row(int32 rowNumber)
-{
-	auto ret = NewObject<UXLRow>();
-	ret->_Inner = std::move(_Inner.row(rowNumber));
-
-	return ret;
-}
  
 UXLCellReference* UXLWorksheet::LastCell()
 {
@@ -434,4 +402,19 @@ FString UXLWorksheet::GetSource(FString ref)
 	return FString(TEXT(""));
 }
 
+ 
+bool UXLWorksheet::IsRowHidden(int32 rowNo)
+{
+	return _Inner.row(rowNo).isHidden();
+}
+
+void UXLWorksheet::SetRowHidden(int32 rowNo,bool state)
+{
+	_Inner.row(rowNo).setHidden(state);
+}
+
+int32 UXLWorksheet::GetRowCellCount(int32 rowNo)
+{
+	return _Inner.row(rowNo).cellCount();
+}
  

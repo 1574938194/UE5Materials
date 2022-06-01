@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "OpenXLSX/include/headers/XLDocument.hpp"
- 
+#include <stack>
 #include "XLDocument.generated.h"
    
 class UXLSheet;
@@ -13,7 +13,7 @@ class UXLWorksheet;
 /**
  * 
  */
-UCLASS(BlueprintType)
+UCLASS(Blueprintable)
 class FREEEXCEL_API UXLDocument : public UObject
 {
 	GENERATED_BODY()
@@ -84,6 +84,19 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "XLXS")
 		void SetFullCalculationOnLoad();
+
+	UFUNCTION(BlueprintCallable, Category = "XLXS")
+	UXLWorksheet* GetCurrentSheet();
+
+	UFUNCTION(BlueprintCallable, Category = "XLXS")
+	UXLWorksheet* GetPreviousSheet();
+	 
+	UFUNCTION(BlueprintCallable, Category = "XLXS")
+	void SetCurrentSheet(UXLWorksheet* _New);
 protected:
 	OpenXLSX::XLDocument _Inner;
+
+	UXLWorksheet* _curSheet;
+	UXLWorksheet* _prevSheet;
+	 
 };

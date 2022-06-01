@@ -154,3 +154,19 @@ void UXLDocument::SetFullCalculationOnLoad()
 {
 	_Inner.workbook().setFullCalculationOnLoad();
 }
+ 
+UXLWorksheet* UXLDocument::GetCurrentSheet()
+{
+	return _curSheet;
+}
+ 
+UXLWorksheet* UXLDocument::GetPreviousSheet()
+{
+	return _prevSheet;
+}
+ 
+void UXLDocument::SetCurrentSheet(UXLWorksheet* _New)
+{
+	_prevSheet = _curSheet;
+	_curSheet = _New;
+}

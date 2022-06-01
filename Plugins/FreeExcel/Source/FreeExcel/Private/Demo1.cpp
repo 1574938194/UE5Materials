@@ -11,6 +11,7 @@
 #include <random>
 #include <algorithm>
 #include <numeric>
+#include <mutex>
 
 using namespace std;
 using namespace OpenXLSX;
@@ -44,8 +45,8 @@ void ADemo1::RunDemo()
     auto wks = doc->GetOrCreateSheetWithName(TEXT("Sheet1"));
 
     auto cell = wks->CellAt(1, 1);
-    cell->Value()->SetInteger(321);
-    UKismetSystemLibrary::PrintString(this, FString::FromInt(cell->Value()->Integer()));
+    cell->SetInteger(321);
+    UKismetSystemLibrary::PrintString(this, FString::FromInt(cell->GetInteger()));
 
     // basic usage
     wks->SetFloat(TEXT("A1"),3.1415926);
@@ -66,18 +67,18 @@ void ADemo1::RunDemo()
     );
 
     
-    wks->Cell("A2")->Value()->SetProxy(wks->CellWithRef(UXLCellReference::MakeCellReference("C1"))->Value());
-    auto A2 = wks->Cell("A2")->Value();
-    UKismetSystemLibrary::PrintString(this, A2->TypeAsString() + "," + A2->String());
+    wks->Cell("A2")->SetCellValue(wks->CellWithRef(UXLCellReference::MakeCellReference("C1")));
+    auto A2 = wks->Cell("A2");
+    UKismetSystemLibrary::PrintString(this, "," + A2->GetString());
 
     // dateTime usage
     auto dt = FDateTime::Now();
 
-    wks->Cell(TEXT("B2"))->Value()->SetDateTime(dt);
+    wks->Cell(TEXT("B2"))->SetDateTime(dt);
 
-    auto B2 = wks->Cell("B2")->Value();
-    auto result = B2->DateTime();
-    UKismetSystemLibrary::PrintString(this, B2->TypeAsString() + "," + result.ToString(TEXT("%Y-%m-%d-%H-%M-%S")));
+    auto B2 = wks->Cell("B2");
+    auto result = B2->GetDateTime();
+    UKismetSystemLibrary::PrintString(this,   result.ToString(TEXT("%Y-%m-%d-%H-%M-%S")));
 
     // formula usage
     wks->SetFormula("C2", "SQRT(B1)"); 

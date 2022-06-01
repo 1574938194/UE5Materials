@@ -8,27 +8,17 @@
 #include "XLCell.h"
 #include "XLCellReference.h"
 #include "XLCellRange.h"
-#include "XLRow.h"
-#include "XLRowRange.h" 
+ 
 #include "XLSheetState.h"
 #include "XLWorksheet.generated.h"
 
 
-// 
-//
-//UENUM(BlueprintType)
-//enum class EXLSheetType :uint8 { 
-//    Worksheet UMETA(DisplayName = "Worksheet"),
-//    Chartsheet UMETA(DisplayName = "Chartsheet"),
-//    Dialogsheet UMETA(DisplayName = "Dialogsheet"),
-//    Macrosheet UMETA(DisplayName = "Macrosheet")
-//};
-
+ 
 class UXLDocument;
 /**
  * 
  */
-UCLASS(BlueprintType)
+UCLASS(Blueprintable)
 class FREEEXCEL_API UXLWorksheet : public UObject
 {
 	GENERATED_BODY()
@@ -91,20 +81,7 @@ public:
    //Get a range with the given coordinates.
     UFUNCTION(BlueprintCallable, Category = "XLXS")
     UXLCellRange* Range(UXLCellReference* topLeft, UXLCellReference* bottomRight);
-   
-    UFUNCTION(BlueprintCallable, Category = "XLXS")
-    UXLRowRange* Rows() ;
-
-    UFUNCTION(BlueprintCallable, Category = "XLXS")
-    UXLRowRange* RowsAt(int32 rowCount) ;
-
-    UFUNCTION(BlueprintCallable, Category = "XLXS")
-    UXLRowRange* RowsRange(int32 firstRow, int32 lastRow) ;
-
-    //Get the row with the given row number.
-    UFUNCTION(BlueprintCallable, Category = "XLXS")
-    UXLRow* Row(int32 rowNumber) ;
-
+    
     // Get an XLCellReference to the last (bottom right) cell in the worksheet.
     UFUNCTION(BlueprintCallable, Category = "XLXS")
     UXLCellReference* LastCell();
@@ -209,7 +186,16 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "XLXS")
         FString GetSource(FString ref);
+  
+    UFUNCTION(BlueprintCallable, Category = "XLXS")
+        bool IsRowHidden(int32 rowNo);
+
+    UFUNCTION(BlueprintCallable, Category = "XLXS")
+        void SetRowHidden(int32 rowNo,bool state);
  
+    UFUNCTION(BlueprintCallable, Category = "XLXS")
+        int32 GetRowCellCount(int32 rowNo);
+
 protected:
     OpenXLSX::XLWorksheet _Inner;
 
