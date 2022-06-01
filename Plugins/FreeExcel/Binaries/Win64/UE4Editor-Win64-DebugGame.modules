@@ -1,8 +1,0 @@
-{
-	"BuildId": "17155196",
-	"Modules": 
-	{
-		"FreeExcel": "UE4Editor-FreeExcel-Win64-DebugGame.dll",
-		"FreeExcelEditor": "UE4Editor-FreeExcelEditor-Win64-DebugGame.dll"
-	}
-}

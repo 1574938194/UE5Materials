@@ -1,8 +1,0 @@
-{
-	"BuildId": "17155196",
-	"Modules": 
-	{
-		"FreeExcel": "UE4Editor-FreeExcel.dll",
-		"FreeExcelEditor": "UE4Editor-FreeExcelEditor.dll"
-	}
-}
