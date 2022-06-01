@@ -16,14 +16,12 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_Demo1_h_12_SPARSE_DATA
 #define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_Demo1_h_12_RPC_WRAPPERS \
  \
-	DECLARE_FUNCTION(execRunDemoBasicUsage); \
-	DECLARE_FUNCTION(execRunDemo1OLD);
+	DECLARE_FUNCTION(execRunDemo);
 
 
 #define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_Demo1_h_12_RPC_WRAPPERS_NO_PURE_DECLS \
  \
-	DECLARE_FUNCTION(execRunDemoBasicUsage); \
-	DECLARE_FUNCTION(execRunDemo1OLD);
+	DECLARE_FUNCTION(execRunDemo);
 
 
 #define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_Demo1_h_12_INCLASS_NO_PURE_DECLS \

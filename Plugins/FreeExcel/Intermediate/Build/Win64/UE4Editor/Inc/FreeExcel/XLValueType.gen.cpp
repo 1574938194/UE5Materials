@@ -30,7 +30,7 @@ void EmptyLinkFunctionForGeneratedCodeXLValueType() {}
 		return EXLValueType_StaticEnum();
 	}
 	static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EXLValueType(EXLValueType_StaticEnum, TEXT("/Script/FreeExcel"), TEXT("EXLValueType"), false, nullptr, nullptr);
-	uint32 Get_Z_Construct_UEnum_FreeExcel_EXLValueType_Hash() { return 596710290U; }
+	uint32 Get_Z_Construct_UEnum_FreeExcel_EXLValueType_Hash() { return 1641721467U; }
 	UEnum* Z_Construct_UEnum_FreeExcel_EXLValueType()
 	{
 #if WITH_HOT_RELOAD
@@ -48,6 +48,7 @@ void EmptyLinkFunctionForGeneratedCodeXLValueType() {}
 				{ "EXLValueType::Float", (int64)EXLValueType::Float },
 				{ "EXLValueType::Error", (int64)EXLValueType::Error },
 				{ "EXLValueType::String", (int64)EXLValueType::String },
+				{ "EXLValueType::Formula", (int64)EXLValueType::Formula },
 			};
 #if WITH_METADATA
 			const UE4CodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
@@ -65,6 +66,9 @@ void EmptyLinkFunctionForGeneratedCodeXLValueType() {}
 				{ "Float.Comment", "/**\n * \n */" },
 				{ "Float.DisplayName", "Float" },
 				{ "Float.Name", "EXLValueType::Float" },
+				{ "Formula.Comment", "/**\n * \n */" },
+				{ "Formula.DisplayName", "Formula" },
+				{ "Formula.Name", "EXLValueType::Formula" },
 				{ "Integer.Comment", "/**\n * \n */" },
 				{ "Integer.DisplayName", "Integer" },
 				{ "Integer.Name", "EXLValueType::Integer" },

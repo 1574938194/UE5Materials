@@ -134,6 +134,15 @@ void EmptyLinkFunctionForGeneratedCodeXLCellReference() {}
 		P_THIS->Forward();
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(UXLCellReference::execMakeCellReference2)
+	{
+		P_GET_PROPERTY(FIntProperty,Z_Param_row);
+		P_GET_PROPERTY(FIntProperty,Z_Param_col);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(UXLCellReference**)Z_Param__Result=UXLCellReference::MakeCellReference2(Z_Param_row,Z_Param_col);
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(UXLCellReference::execMakeCellReference)
 	{
 		P_GET_PROPERTY(FStrProperty,Z_Param_ref);
@@ -156,6 +165,7 @@ void EmptyLinkFunctionForGeneratedCodeXLCellReference() {}
 			{ "Less", &UXLCellReference::execLess },
 			{ "LessEqual", &UXLCellReference::execLessEqual },
 			{ "MakeCellReference", &UXLCellReference::execMakeCellReference },
+			{ "MakeCellReference2", &UXLCellReference::execMakeCellReference2 },
 			{ "NotEqual", &UXLCellReference::execNotEqual },
 			{ "Row", &UXLCellReference::execRow },
 			{ "Set", &UXLCellReference::execSet },
@@ -514,6 +524,46 @@ void EmptyLinkFunctionForGeneratedCodeXLCellReference() {}
 		}
 		return ReturnFunction;
 	}
+	struct Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics
+	{
+		struct XLCellReference_eventMakeCellReference2_Parms
+		{
+			int32 row;
+			int32 col;
+			UXLCellReference* ReturnValue;
+		};
+		static const UE4CodeGen_Private::FIntPropertyParams NewProp_row;
+		static const UE4CodeGen_Private::FIntPropertyParams NewProp_col;
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::NewProp_row = { "row", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLCellReference_eventMakeCellReference2_Parms, row), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::NewProp_col = { "col", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLCellReference_eventMakeCellReference2_Parms, col), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLCellReference_eventMakeCellReference2_Parms, ReturnValue), Z_Construct_UClass_UXLCellReference_NoRegister, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::NewProp_row,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::NewProp_col,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/XLCellReference.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLCellReference, nullptr, "MakeCellReference2", nullptr, nullptr, sizeof(XLCellReference_eventMakeCellReference2_Parms), Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04022401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLCellReference_MakeCellReference2()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLCellReference_MakeCellReference2_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
 	struct Z_Construct_UFunction_UXLCellReference_NotEqual_Statics
 	{
 		struct XLCellReference_eventNotEqual_Parms
@@ -748,6 +798,7 @@ void EmptyLinkFunctionForGeneratedCodeXLCellReference() {}
 		{ &Z_Construct_UFunction_UXLCellReference_Less, "Less" }, // 318230905
 		{ &Z_Construct_UFunction_UXLCellReference_LessEqual, "LessEqual" }, // 1783771521
 		{ &Z_Construct_UFunction_UXLCellReference_MakeCellReference, "MakeCellReference" }, // 586524020
+		{ &Z_Construct_UFunction_UXLCellReference_MakeCellReference2, "MakeCellReference2" }, // 498242043
 		{ &Z_Construct_UFunction_UXLCellReference_NotEqual, "NotEqual" }, // 4221095580
 		{ &Z_Construct_UFunction_UXLCellReference_Row, "Row" }, // 2293172265
 		{ &Z_Construct_UFunction_UXLCellReference_Set, "Set" }, // 3505671991
@@ -790,7 +841,7 @@ void EmptyLinkFunctionForGeneratedCodeXLCellReference() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(UXLCellReference, 1377489711);
+	IMPLEMENT_CLASS(UXLCellReference, 1293512333);
 	template<> FREEEXCEL_API UClass* StaticClass<UXLCellReference>()
 	{
 		return UXLCellReference::StaticClass();

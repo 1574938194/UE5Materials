@@ -18,30 +18,22 @@ void EmptyLinkFunctionForGeneratedCodeDemo1() {}
 	ENGINE_API UClass* Z_Construct_UClass_AActor();
 	UPackage* Z_Construct_UPackage__Script_FreeExcel();
 // End Cross Module References
-	DEFINE_FUNCTION(ADemo1::execRunDemoBasicUsage)
+	DEFINE_FUNCTION(ADemo1::execRunDemo)
 	{
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		P_THIS->RunDemoBasicUsage();
-		P_NATIVE_END;
-	}
-	DEFINE_FUNCTION(ADemo1::execRunDemo1OLD)
-	{
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->RunDemo1OLD();
+		P_THIS->RunDemo();
 		P_NATIVE_END;
 	}
 	void ADemo1::StaticRegisterNativesADemo1()
 	{
 		UClass* Class = ADemo1::StaticClass();
 		static const FNameNativePtrPair Funcs[] = {
-			{ "RunDemo1OLD", &ADemo1::execRunDemo1OLD },
-			{ "RunDemoBasicUsage", &ADemo1::execRunDemoBasicUsage },
+			{ "RunDemo", &ADemo1::execRunDemo },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 	}
-	struct Z_Construct_UFunction_ADemo1_RunDemo1OLD_Statics
+	struct Z_Construct_UFunction_ADemo1_RunDemo_Statics
 	{
 #if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
@@ -49,41 +41,18 @@ void EmptyLinkFunctionForGeneratedCodeDemo1() {}
 		static const UE4CodeGen_Private::FFunctionParams FuncParams;
 	};
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ADemo1_RunDemo1OLD_Statics::Function_MetaDataParams[] = {
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ADemo1_RunDemo_Statics::Function_MetaDataParams[] = {
 		{ "Category", "XLXS" },
 		{ "ModuleRelativePath", "Public/Demo1.h" },
 	};
 #endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_ADemo1_RunDemo1OLD_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ADemo1, nullptr, "RunDemo1OLD", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04080401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_ADemo1_RunDemo1OLD_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_ADemo1_RunDemo1OLD_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_ADemo1_RunDemo1OLD()
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_ADemo1_RunDemo_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ADemo1, nullptr, "RunDemo", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04080401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_ADemo1_RunDemo_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_ADemo1_RunDemo_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_ADemo1_RunDemo()
 	{
 		static UFunction* ReturnFunction = nullptr;
 		if (!ReturnFunction)
 		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_ADemo1_RunDemo1OLD_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_ADemo1_RunDemoBasicUsage_Statics
-	{
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UE4CodeGen_Private::FFunctionParams FuncParams;
-	};
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_ADemo1_RunDemoBasicUsage_Statics::Function_MetaDataParams[] = {
-		{ "Category", "XLXS" },
-		{ "ModuleRelativePath", "Public/Demo1.h" },
-	};
-#endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_ADemo1_RunDemoBasicUsage_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_ADemo1, nullptr, "RunDemoBasicUsage", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04080401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_ADemo1_RunDemoBasicUsage_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_ADemo1_RunDemoBasicUsage_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_ADemo1_RunDemoBasicUsage()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_ADemo1_RunDemoBasicUsage_Statics::FuncParams);
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_ADemo1_RunDemo_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -106,8 +75,7 @@ void EmptyLinkFunctionForGeneratedCodeDemo1() {}
 		(UObject* (*)())Z_Construct_UPackage__Script_FreeExcel,
 	};
 	const FClassFunctionLinkInfo Z_Construct_UClass_ADemo1_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_ADemo1_RunDemo1OLD, "RunDemo1OLD" }, // 103431525
-		{ &Z_Construct_UFunction_ADemo1_RunDemoBasicUsage, "RunDemoBasicUsage" }, // 3986934045
+		{ &Z_Construct_UFunction_ADemo1_RunDemo, "RunDemo" }, // 1493530319
 	};
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_ADemo1_Statics::Class_MetaDataParams[] = {
@@ -144,7 +112,7 @@ void EmptyLinkFunctionForGeneratedCodeDemo1() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(ADemo1, 3137917849);
+	IMPLEMENT_CLASS(ADemo1, 545866680);
 	template<> FREEEXCEL_API UClass* StaticClass<ADemo1>()
 	{
 		return ADemo1::StaticClass();

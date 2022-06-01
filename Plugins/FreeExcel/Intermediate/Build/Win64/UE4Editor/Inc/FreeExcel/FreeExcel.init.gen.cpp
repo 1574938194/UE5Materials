@@ -21,8 +21,8 @@ void EmptyLinkFunctionForGeneratedCodeFreeExcel_init() {}
 				nullptr,
 				0,
 				PKG_CompiledIn | 0x00000000,
-				0x3520EE17,
-				0xFD3E2E17,
+				0xE56F5B39,
+				0x483981D6,
 				METADATA_PARAMS(nullptr, 0)
 			};
 			UE4CodeGen_Private::ConstructUPackage(ReturnPackage, PackageParams);

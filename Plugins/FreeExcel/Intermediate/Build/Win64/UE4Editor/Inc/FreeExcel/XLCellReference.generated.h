@@ -32,6 +32,7 @@ class UXLCellReference;
 	DECLARE_FUNCTION(execRow); \
 	DECLARE_FUNCTION(execBackward); \
 	DECLARE_FUNCTION(execForward); \
+	DECLARE_FUNCTION(execMakeCellReference2); \
 	DECLARE_FUNCTION(execMakeCellReference);
 
 
@@ -52,6 +53,7 @@ class UXLCellReference;
 	DECLARE_FUNCTION(execRow); \
 	DECLARE_FUNCTION(execBackward); \
 	DECLARE_FUNCTION(execForward); \
+	DECLARE_FUNCTION(execMakeCellReference2); \
 	DECLARE_FUNCTION(execMakeCellReference);
 
 

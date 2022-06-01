@@ -7,16 +7,12 @@
 /IGNORE:4221
 /NODEFAULTLIB
 "D:\proj\ueTest\Intermediate\Build\Win64\ueTestEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.obj"
-"D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\MyDataStruct.cpp.obj"
-"D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\MyActor.cpp.obj"
 "D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\perlin_noise.cpp.obj"
 "D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\ProceduralTerrainMeshComponent.cpp.obj"
 "D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\ueTest.cpp.obj"
 "D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\ueTestCharacter.cpp.obj"
 "D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\ueTestGameMode.cpp.obj"
 "D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\uniform_random.cpp.obj"
-"D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\MyActor.gen.cpp.obj"
-"D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\MyDataStruct.gen.cpp.obj"
 "D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\ProceduralTerrainMeshComponent.gen.cpp.obj"
 "D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\ueTest.init.gen.cpp.obj"
 "D:\proj\ueTest\Intermediate\Build\Win64\UE4Editor\DebugGame\ueTest\ueTestCharacter.gen.cpp.obj"

@@ -23,7 +23,8 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 	op(EXLValueType::Integer) \
 	op(EXLValueType::Float) \
 	op(EXLValueType::Error) \
-	op(EXLValueType::String) 
+	op(EXLValueType::String) \
+	op(EXLValueType::Formula) 
 
 enum class EXLValueType : uint8;
 template<> FREEEXCEL_API UEnum* StaticEnum<EXLValueType>();

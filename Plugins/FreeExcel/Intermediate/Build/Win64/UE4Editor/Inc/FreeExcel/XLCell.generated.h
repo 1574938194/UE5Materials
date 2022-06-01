@@ -8,35 +8,60 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
-class UXLFormulaProxy;
 class UXLCell;
-class UXLCellReference;
-class UXLCellValueProxy;
+enum class EXLValueType : uint8;
+struct FDateTime;
 #ifdef FREEEXCEL_XLCell_generated_h
 #error "XLCell.generated.h already included, missing '#pragma once' in XLCell.h"
 #endif
 #define FREEEXCEL_XLCell_generated_h
 
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_SPARSE_DATA
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_RPC_WRAPPERS \
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_SPARSE_DATA
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_RPC_WRAPPERS \
  \
-	DECLARE_FUNCTION(execFormula); \
-	DECLARE_FUNCTION(execHasFormula); \
-	DECLARE_FUNCTION(execOffset); \
-	DECLARE_FUNCTION(execCellReference); \
-	DECLARE_FUNCTION(execValue);
+	DECLARE_FUNCTION(execSetCellValue); \
+	DECLARE_FUNCTION(execGetFormula); \
+	DECLARE_FUNCTION(execSetFormula); \
+	DECLARE_FUNCTION(execType); \
+	DECLARE_FUNCTION(execClearCell); \
+	DECLARE_FUNCTION(execGetDateTime); \
+	DECLARE_FUNCTION(execGetString); \
+	DECLARE_FUNCTION(execGetFloat); \
+	DECLARE_FUNCTION(execGetInteger); \
+	DECLARE_FUNCTION(execGetBool); \
+	DECLARE_FUNCTION(execSetFloat); \
+	DECLARE_FUNCTION(execSetDateTime); \
+	DECLARE_FUNCTION(execSetString); \
+	DECLARE_FUNCTION(execSetInteger); \
+	DECLARE_FUNCTION(execSetBool); \
+	DECLARE_FUNCTION(execIsFormula); \
+	DECLARE_FUNCTION(execCellOffset); \
+	DECLARE_FUNCTION(execGetCellReference);
 
 
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_RPC_WRAPPERS_NO_PURE_DECLS \
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_RPC_WRAPPERS_NO_PURE_DECLS \
  \
-	DECLARE_FUNCTION(execFormula); \
-	DECLARE_FUNCTION(execHasFormula); \
-	DECLARE_FUNCTION(execOffset); \
-	DECLARE_FUNCTION(execCellReference); \
-	DECLARE_FUNCTION(execValue);
+	DECLARE_FUNCTION(execSetCellValue); \
+	DECLARE_FUNCTION(execGetFormula); \
+	DECLARE_FUNCTION(execSetFormula); \
+	DECLARE_FUNCTION(execType); \
+	DECLARE_FUNCTION(execClearCell); \
+	DECLARE_FUNCTION(execGetDateTime); \
+	DECLARE_FUNCTION(execGetString); \
+	DECLARE_FUNCTION(execGetFloat); \
+	DECLARE_FUNCTION(execGetInteger); \
+	DECLARE_FUNCTION(execGetBool); \
+	DECLARE_FUNCTION(execSetFloat); \
+	DECLARE_FUNCTION(execSetDateTime); \
+	DECLARE_FUNCTION(execSetString); \
+	DECLARE_FUNCTION(execSetInteger); \
+	DECLARE_FUNCTION(execSetBool); \
+	DECLARE_FUNCTION(execIsFormula); \
+	DECLARE_FUNCTION(execCellOffset); \
+	DECLARE_FUNCTION(execGetCellReference);
 
 
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_INCLASS_NO_PURE_DECLS \
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUXLCell(); \
 	friend struct Z_Construct_UClass_UXLCell_Statics; \
@@ -45,7 +70,7 @@ public: \
 	DECLARE_SERIALIZER(UXLCell)
 
 
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_INCLASS \
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_INCLASS \
 private: \
 	static void StaticRegisterNativesUXLCell(); \
 	friend struct Z_Construct_UClass_UXLCell_Statics; \
@@ -54,7 +79,7 @@ public: \
 	DECLARE_SERIALIZER(UXLCell)
 
 
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_STANDARD_CONSTRUCTORS \
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UXLCell(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UXLCell) \
@@ -67,7 +92,7 @@ private: \
 public:
 
 
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_ENHANCED_CONSTRUCTORS \
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UXLCell(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()) : Super(ObjectInitializer) { }; \
 private: \
@@ -80,28 +105,28 @@ public: \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UXLCell)
 
 
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_PRIVATE_PROPERTY_OFFSET
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_18_PROLOG
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_GENERATED_BODY_LEGACY \
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_PRIVATE_PROPERTY_OFFSET
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_17_PROLOG
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_PRIVATE_PROPERTY_OFFSET \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_SPARSE_DATA \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_RPC_WRAPPERS \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_INCLASS \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_STANDARD_CONSTRUCTORS \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_PRIVATE_PROPERTY_OFFSET \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_SPARSE_DATA \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_RPC_WRAPPERS \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_INCLASS \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_GENERATED_BODY \
+#define ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_PRIVATE_PROPERTY_OFFSET \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_SPARSE_DATA \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_RPC_WRAPPERS_NO_PURE_DECLS \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_INCLASS_NO_PURE_DECLS \
-	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_21_ENHANCED_CONSTRUCTORS \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_PRIVATE_PROPERTY_OFFSET \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_SPARSE_DATA \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_RPC_WRAPPERS_NO_PURE_DECLS \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_INCLASS_NO_PURE_DECLS \
+	ueTest_Plugins_FreeExcel_Source_FreeExcel_Public_XLCell_h_20_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

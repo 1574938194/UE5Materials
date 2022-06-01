@@ -13,234 +13,246 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeXLDocument() {}
 // Cross Module References
-	FREEEXCEL_API UEnum* Z_Construct_UEnum_FreeExcel_EXLProperty();
-	UPackage* Z_Construct_UPackage__Script_FreeExcel();
 	FREEEXCEL_API UClass* Z_Construct_UClass_UXLDocument_NoRegister();
 	FREEEXCEL_API UClass* Z_Construct_UClass_UXLDocument();
 	COREUOBJECT_API UClass* Z_Construct_UClass_UObject();
-	FREEEXCEL_API UClass* Z_Construct_UClass_UXLWorkbook_NoRegister();
+	UPackage* Z_Construct_UPackage__Script_FreeExcel();
+	FREEEXCEL_API UClass* Z_Construct_UClass_UXLWorksheet_NoRegister();
 // End Cross Module References
-	static UEnum* EXLProperty_StaticEnum()
+	DEFINE_FUNCTION(UXLDocument::execSetCurrentSheet)
 	{
-		static UEnum* Singleton = nullptr;
-		if (!Singleton)
-		{
-			Singleton = GetStaticEnum(Z_Construct_UEnum_FreeExcel_EXLProperty, Z_Construct_UPackage__Script_FreeExcel(), TEXT("EXLProperty"));
-		}
-		return Singleton;
-	}
-	template<> FREEEXCEL_API UEnum* StaticEnum<EXLProperty>()
-	{
-		return EXLProperty_StaticEnum();
-	}
-	static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EXLProperty(EXLProperty_StaticEnum, TEXT("/Script/FreeExcel"), TEXT("EXLProperty"), false, nullptr, nullptr);
-	uint32 Get_Z_Construct_UEnum_FreeExcel_EXLProperty_Hash() { return 1262747413U; }
-	UEnum* Z_Construct_UEnum_FreeExcel_EXLProperty()
-	{
-#if WITH_HOT_RELOAD
-		UPackage* Outer = Z_Construct_UPackage__Script_FreeExcel();
-		static UEnum* ReturnEnum = FindExistingEnumIfHotReloadOrDynamic(Outer, TEXT("EXLProperty"), 0, Get_Z_Construct_UEnum_FreeExcel_EXLProperty_Hash(), false);
-#else
-		static UEnum* ReturnEnum = nullptr;
-#endif // WITH_HOT_RELOAD
-		if (!ReturnEnum)
-		{
-			static const UE4CodeGen_Private::FEnumeratorParam Enumerators[] = {
-				{ "EXLProperty::Title", (int64)EXLProperty::Title },
-				{ "EXLProperty::Subject", (int64)EXLProperty::Subject },
-				{ "EXLProperty::Creator", (int64)EXLProperty::Creator },
-				{ "EXLProperty::Keywords", (int64)EXLProperty::Keywords },
-				{ "EXLProperty::Description", (int64)EXLProperty::Description },
-				{ "EXLProperty::LastModifiedBy", (int64)EXLProperty::LastModifiedBy },
-				{ "EXLProperty::LastPrinted", (int64)EXLProperty::LastPrinted },
-				{ "EXLProperty::CreationDate", (int64)EXLProperty::CreationDate },
-				{ "EXLProperty::ModificationDate", (int64)EXLProperty::ModificationDate },
-				{ "EXLProperty::Category", (int64)EXLProperty::Category },
-				{ "EXLProperty::Application", (int64)EXLProperty::Application },
-				{ "EXLProperty::DocSecurity", (int64)EXLProperty::DocSecurity },
-				{ "EXLProperty::ScaleCrop", (int64)EXLProperty::ScaleCrop },
-				{ "EXLProperty::Manager", (int64)EXLProperty::Manager },
-				{ "EXLProperty::Company", (int64)EXLProperty::Company },
-				{ "EXLProperty::LinksUpToDate", (int64)EXLProperty::LinksUpToDate },
-				{ "EXLProperty::SharedDoc", (int64)EXLProperty::SharedDoc },
-				{ "EXLProperty::HyperlinkBase", (int64)EXLProperty::HyperlinkBase },
-				{ "EXLProperty::HyperlinksChanged", (int64)EXLProperty::HyperlinksChanged },
-				{ "EXLProperty::AppVersion", (int64)EXLProperty::AppVersion },
-			};
-#if WITH_METADATA
-			const UE4CodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
-				{ "Application.DisplayName", "Application" },
-				{ "Application.Name", "EXLProperty::Application" },
-				{ "AppVersion.DisplayName", "AppVersion" },
-				{ "AppVersion.Name", "EXLProperty::AppVersion" },
-				{ "BlueprintType", "true" },
-				{ "Category.DisplayName", "Category" },
-				{ "Category.Name", "EXLProperty::Category" },
-				{ "Company.DisplayName", "Company" },
-				{ "Company.Name", "EXLProperty::Company" },
-				{ "CreationDate.DisplayName", "CreationDate" },
-				{ "CreationDate.Name", "EXLProperty::CreationDate" },
-				{ "Creator.DisplayName", "Creator" },
-				{ "Creator.Name", "EXLProperty::Creator" },
-				{ "Description.DisplayName", "Description" },
-				{ "Description.Name", "EXLProperty::Description" },
-				{ "DocSecurity.DisplayName", "DocSecurity" },
-				{ "DocSecurity.Name", "EXLProperty::DocSecurity" },
-				{ "HyperlinkBase.DisplayName", "HyperlinkBase" },
-				{ "HyperlinkBase.Name", "EXLProperty::HyperlinkBase" },
-				{ "HyperlinksChanged.DisplayName", "HyperlinksChanged" },
-				{ "HyperlinksChanged.Name", "EXLProperty::HyperlinksChanged" },
-				{ "Keywords.DisplayName", "Keywords" },
-				{ "Keywords.Name", "EXLProperty::Keywords" },
-				{ "LastModifiedBy.DisplayName", "LastModifiedBy" },
-				{ "LastModifiedBy.Name", "EXLProperty::LastModifiedBy" },
-				{ "LastPrinted.DisplayName", "LastPrinted" },
-				{ "LastPrinted.Name", "EXLProperty::LastPrinted" },
-				{ "LinksUpToDate.DisplayName", "LinksUpToDate" },
-				{ "LinksUpToDate.Name", "EXLProperty::LinksUpToDate" },
-				{ "Manager.DisplayName", "Manager" },
-				{ "Manager.Name", "EXLProperty::Manager" },
-				{ "ModificationDate.DisplayName", "ModificationDate" },
-				{ "ModificationDate.Name", "EXLProperty::ModificationDate" },
-				{ "ModuleRelativePath", "Public/XLDocument.h" },
-				{ "ScaleCrop.DisplayName", "ScaleCrop" },
-				{ "ScaleCrop.Name", "EXLProperty::ScaleCrop" },
-				{ "SharedDoc.DisplayName", "SharedDoc" },
-				{ "SharedDoc.Name", "EXLProperty::SharedDoc" },
-				{ "Subject.DisplayName", "Subject" },
-				{ "Subject.Name", "EXLProperty::Subject" },
-				{ "Title.DisplayName", "Title" },
-				{ "Title.Name", "EXLProperty::Title" },
-			};
-#endif
-			static const UE4CodeGen_Private::FEnumParams EnumParams = {
-				(UObject*(*)())Z_Construct_UPackage__Script_FreeExcel,
-				nullptr,
-				"EXLProperty",
-				"EXLProperty",
-				Enumerators,
-				UE_ARRAY_COUNT(Enumerators),
-				RF_Public|RF_Transient|RF_MarkAsNative,
-				EEnumFlags::None,
-				UE4CodeGen_Private::EDynamicType::NotDynamic,
-				(uint8)UEnum::ECppForm::EnumClass,
-				METADATA_PARAMS(Enum_MetaDataParams, UE_ARRAY_COUNT(Enum_MetaDataParams))
-			};
-			UE4CodeGen_Private::ConstructUEnum(ReturnEnum, EnumParams);
-		}
-		return ReturnEnum;
-	}
-	DEFINE_FUNCTION(UXLDocument::execDeleteProperty)
-	{
-		P_GET_ENUM(EXLProperty,Z_Param_prop);
+		P_GET_OBJECT(UXLWorksheet,Z_Param__New);
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		P_THIS->DeleteProperty(EXLProperty(Z_Param_prop));
+		P_THIS->SetCurrentSheet(Z_Param__New);
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UXLDocument::execIsValid)
+	DEFINE_FUNCTION(UXLDocument::execGetPreviousSheet)
 	{
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		*(bool*)Z_Param__Result=P_THIS->IsValid();
+		*(UXLWorksheet**)Z_Param__Result=P_THIS->GetPreviousSheet();
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UXLDocument::execSetProperty)
-	{
-		P_GET_ENUM(EXLProperty,Z_Param_prop);
-		P_GET_PROPERTY(FStrProperty,Z_Param_value);
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->SetProperty(EXLProperty(Z_Param_prop),Z_Param_value);
-		P_NATIVE_END;
-	}
-	DEFINE_FUNCTION(UXLDocument::execProperty)
-	{
-		P_GET_ENUM(EXLProperty,Z_Param_prop);
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		*(FString*)Z_Param__Result=P_THIS->Property(EXLProperty(Z_Param_prop));
-		P_NATIVE_END;
-	}
-	DEFINE_FUNCTION(UXLDocument::execWorkbook)
+	DEFINE_FUNCTION(UXLDocument::execGetCurrentSheet)
 	{
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		*(UXLWorkbook**)Z_Param__Result=P_THIS->Workbook();
+		*(UXLWorksheet**)Z_Param__Result=P_THIS->GetCurrentSheet();
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UXLDocument::execPath)
+	DEFINE_FUNCTION(UXLDocument::execSetFullCalculationOnLoad)
 	{
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		*(FString*)Z_Param__Result=P_THIS->Path();
+		P_THIS->SetFullCalculationOnLoad();
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UXLDocument::execName)
+	DEFINE_FUNCTION(UXLDocument::execDeleteNamedRanges)
 	{
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		*(FString*)Z_Param__Result=P_THIS->Name();
+		P_THIS->DeleteNamedRanges();
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UXLDocument::execSaveAs)
+	DEFINE_FUNCTION(UXLDocument::execSheetExists)
+	{
+		P_GET_PROPERTY(FStrProperty,Z_Param_name);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(bool*)Z_Param__Result=P_THIS->SheetExists(Z_Param_name);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execSheetNames)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(TArray<FString>*)Z_Param__Result=P_THIS->SheetNames();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execSheetCount)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(int32*)Z_Param__Result=P_THIS->SheetCount();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execIndexOfSheet)
+	{
+		P_GET_PROPERTY(FStrProperty,Z_Param_sheetName);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(int32*)Z_Param__Result=P_THIS->IndexOfSheet(Z_Param_sheetName);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execSetSheetIndex)
+	{
+		P_GET_PROPERTY(FStrProperty,Z_Param_sheetName);
+		P_GET_PROPERTY(FIntProperty,Z_Param_index);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->SetSheetIndex(Z_Param_sheetName,Z_Param_index);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execCloneSheet)
+	{
+		P_GET_PROPERTY(FStrProperty,Z_Param_existingName);
+		P_GET_PROPERTY(FStrProperty,Z_Param_newName);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->CloneSheet(Z_Param_existingName,Z_Param_newName);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execDeleteSheet)
+	{
+		P_GET_PROPERTY(FStrProperty,Z_Param_name);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->DeleteSheet(Z_Param_name);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execGetOrCreateSheetWithName)
+	{
+		P_GET_PROPERTY(FStrProperty,Z_Param_name);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(UXLWorksheet**)Z_Param__Result=P_THIS->GetOrCreateSheetWithName(Z_Param_name);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execGetSheetAt)
+	{
+		P_GET_PROPERTY(FIntProperty,Z_Param_index);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(UXLWorksheet**)Z_Param__Result=P_THIS->GetSheetAt(Z_Param_index);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execExcelIsValid)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(bool*)Z_Param__Result=P_THIS->ExcelIsValid();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execExcelFullPath)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(FString*)Z_Param__Result=P_THIS->ExcelFullPath();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execExcelFileName)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(FString*)Z_Param__Result=P_THIS->ExcelFileName();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execSaveExcelAs)
 	{
 		P_GET_PROPERTY(FStrProperty,Z_Param_path);
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		P_THIS->SaveAs(Z_Param_path);
+		P_THIS->SaveExcelAs(Z_Param_path);
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UXLDocument::execSave)
+	DEFINE_FUNCTION(UXLDocument::execSaveExcel)
 	{
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		P_THIS->Save();
+		P_THIS->SaveExcel();
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UXLDocument::execColse)
+	DEFINE_FUNCTION(UXLDocument::execCloseExcel)
 	{
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		P_THIS->Colse();
+		P_THIS->CloseExcel();
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UXLDocument::execCreate)
-	{
-		P_GET_PROPERTY(FStrProperty,Z_Param_path);
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->Create(Z_Param_path);
-		P_NATIVE_END;
-	}
-	DEFINE_FUNCTION(UXLDocument::execOpen)
+	DEFINE_FUNCTION(UXLDocument::execCreateExcel)
 	{
 		P_GET_PROPERTY(FStrProperty,Z_Param_path);
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		P_THIS->Open(Z_Param_path);
+		*(UXLDocument**)Z_Param__Result=UXLDocument::CreateExcel(Z_Param_path);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(UXLDocument::execOpenExcel)
+	{
+		P_GET_PROPERTY(FStrProperty,Z_Param_path);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(UXLDocument**)Z_Param__Result=UXLDocument::OpenExcel(Z_Param_path);
 		P_NATIVE_END;
 	}
 	void UXLDocument::StaticRegisterNativesUXLDocument()
 	{
 		UClass* Class = UXLDocument::StaticClass();
 		static const FNameNativePtrPair Funcs[] = {
-			{ "Colse", &UXLDocument::execColse },
-			{ "Create", &UXLDocument::execCreate },
-			{ "DeleteProperty", &UXLDocument::execDeleteProperty },
-			{ "IsValid", &UXLDocument::execIsValid },
-			{ "Name", &UXLDocument::execName },
-			{ "Open", &UXLDocument::execOpen },
-			{ "Path", &UXLDocument::execPath },
-			{ "Property", &UXLDocument::execProperty },
-			{ "Save", &UXLDocument::execSave },
-			{ "SaveAs", &UXLDocument::execSaveAs },
-			{ "SetProperty", &UXLDocument::execSetProperty },
-			{ "Workbook", &UXLDocument::execWorkbook },
+			{ "CloneSheet", &UXLDocument::execCloneSheet },
+			{ "CloseExcel", &UXLDocument::execCloseExcel },
+			{ "CreateExcel", &UXLDocument::execCreateExcel },
+			{ "DeleteNamedRanges", &UXLDocument::execDeleteNamedRanges },
+			{ "DeleteSheet", &UXLDocument::execDeleteSheet },
+			{ "ExcelFileName", &UXLDocument::execExcelFileName },
+			{ "ExcelFullPath", &UXLDocument::execExcelFullPath },
+			{ "ExcelIsValid", &UXLDocument::execExcelIsValid },
+			{ "GetCurrentSheet", &UXLDocument::execGetCurrentSheet },
+			{ "GetOrCreateSheetWithName", &UXLDocument::execGetOrCreateSheetWithName },
+			{ "GetPreviousSheet", &UXLDocument::execGetPreviousSheet },
+			{ "GetSheetAt", &UXLDocument::execGetSheetAt },
+			{ "IndexOfSheet", &UXLDocument::execIndexOfSheet },
+			{ "OpenExcel", &UXLDocument::execOpenExcel },
+			{ "SaveExcel", &UXLDocument::execSaveExcel },
+			{ "SaveExcelAs", &UXLDocument::execSaveExcelAs },
+			{ "SetCurrentSheet", &UXLDocument::execSetCurrentSheet },
+			{ "SetFullCalculationOnLoad", &UXLDocument::execSetFullCalculationOnLoad },
+			{ "SetSheetIndex", &UXLDocument::execSetSheetIndex },
+			{ "SheetCount", &UXLDocument::execSheetCount },
+			{ "SheetExists", &UXLDocument::execSheetExists },
+			{ "SheetNames", &UXLDocument::execSheetNames },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 	}
-	struct Z_Construct_UFunction_UXLDocument_Colse_Statics
+	struct Z_Construct_UFunction_UXLDocument_CloneSheet_Statics
+	{
+		struct XLDocument_eventCloneSheet_Parms
+		{
+			FString existingName;
+			FString newName;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_existingName;
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_newName;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::NewProp_existingName = { "existingName", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventCloneSheet_Parms, existingName), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::NewProp_newName = { "newName", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventCloneSheet_Parms, newName), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::NewProp_existingName,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::NewProp_newName,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "CloneSheet", nullptr, nullptr, sizeof(XLDocument_eventCloneSheet_Parms), Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_CloneSheet()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_CloneSheet_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_CloseExcel_Statics
 	{
 #if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
@@ -248,96 +260,193 @@ void EmptyLinkFunctionForGeneratedCodeXLDocument() {}
 		static const UE4CodeGen_Private::FFunctionParams FuncParams;
 	};
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_Colse_Statics::Function_MetaDataParams[] = {
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_CloseExcel_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
 		{ "Comment", "// Close the current document\n" },
 		{ "ModuleRelativePath", "Public/XLDocument.h" },
 		{ "ToolTip", "Close the current document" },
 	};
 #endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_Colse_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "Colse", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_Colse_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Colse_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_Colse()
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_CloseExcel_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "CloseExcel", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_CloseExcel_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_CloseExcel_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_CloseExcel()
 	{
 		static UFunction* ReturnFunction = nullptr;
 		if (!ReturnFunction)
 		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_Colse_Statics::FuncParams);
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_CloseExcel_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
-	struct Z_Construct_UFunction_UXLDocument_Create_Statics
+	struct Z_Construct_UFunction_UXLDocument_CreateExcel_Statics
 	{
-		struct XLDocument_eventCreate_Parms
+		struct XLDocument_eventCreateExcel_Parms
 		{
 			FString path;
+			UXLDocument* ReturnValue;
 		};
 		static const UE4CodeGen_Private::FStrPropertyParams NewProp_path;
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
 		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
 #if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
 #endif
 		static const UE4CodeGen_Private::FFunctionParams FuncParams;
 	};
-	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_Create_Statics::NewProp_path = { "path", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventCreate_Parms, path), METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_Create_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_Create_Statics::NewProp_path,
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::NewProp_path = { "path", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventCreateExcel_Parms, path), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventCreateExcel_Parms, ReturnValue), Z_Construct_UClass_UXLDocument_NoRegister, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::NewProp_path,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::NewProp_ReturnValue,
 	};
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_Create_Statics::Function_MetaDataParams[] = {
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
 		{ "Comment", "// Create a new .xlsx file with the given path.\n" },
 		{ "ModuleRelativePath", "Public/XLDocument.h" },
 		{ "ToolTip", "Create a new .xlsx file with the given path." },
 	};
 #endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_Create_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "Create", nullptr, nullptr, sizeof(XLDocument_eventCreate_Parms), Z_Construct_UFunction_UXLDocument_Create_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Create_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_Create_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Create_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_Create()
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "CreateExcel", nullptr, nullptr, sizeof(XLDocument_eventCreateExcel_Parms), Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04022401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_CreateExcel()
 	{
 		static UFunction* ReturnFunction = nullptr;
 		if (!ReturnFunction)
 		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_Create_Statics::FuncParams);
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_CreateExcel_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
-	struct Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics
+	struct Z_Construct_UFunction_UXLDocument_DeleteNamedRanges_Statics
 	{
-		struct XLDocument_eventDeleteProperty_Parms
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_DeleteNamedRanges_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_DeleteNamedRanges_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "DeleteNamedRanges", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_DeleteNamedRanges_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_DeleteNamedRanges_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_DeleteNamedRanges()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
 		{
-			EXLProperty prop;
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_DeleteNamedRanges_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics
+	{
+		struct XLDocument_eventDeleteSheet_Parms
+		{
+			FString name;
 		};
-		static const UE4CodeGen_Private::FBytePropertyParams NewProp_prop_Underlying;
-		static const UE4CodeGen_Private::FEnumPropertyParams NewProp_prop;
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_name;
 		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
 #if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
 #endif
 		static const UE4CodeGen_Private::FFunctionParams FuncParams;
 	};
-	const UE4CodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::NewProp_prop_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UE4CodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::NewProp_prop = { "prop", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventDeleteProperty_Parms, prop), Z_Construct_UEnum_FreeExcel_EXLProperty, METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::NewProp_prop_Underlying,
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::NewProp_prop,
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::NewProp_name = { "name", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventDeleteSheet_Parms, name), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::NewProp_name,
 	};
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "// Delete the property from the document\n" },
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "Comment", "// Delete sheet (worksheet or chartsheet) from the workbook.\n" },
 		{ "ModuleRelativePath", "Public/XLDocument.h" },
-		{ "ToolTip", "Delete the property from the document" },
+		{ "ToolTip", "Delete sheet (worksheet or chartsheet) from the workbook." },
 	};
 #endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "DeleteProperty", nullptr, nullptr, sizeof(XLDocument_eventDeleteProperty_Parms), Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_DeleteProperty()
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "DeleteSheet", nullptr, nullptr, sizeof(XLDocument_eventDeleteSheet_Parms), Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_DeleteSheet()
 	{
 		static UFunction* ReturnFunction = nullptr;
 		if (!ReturnFunction)
 		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_DeleteProperty_Statics::FuncParams);
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_DeleteSheet_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
-	struct Z_Construct_UFunction_UXLDocument_IsValid_Statics
+	struct Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics
 	{
-		struct XLDocument_eventIsValid_Parms
+		struct XLDocument_eventExcelFileName_Parms
+		{
+			FString ReturnValue;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventExcelFileName_Parms, ReturnValue), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "Comment", "// Get the filename of the current document, e.g. \"spreadsheet.xlsx\".\n" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+		{ "ToolTip", "Get the filename of the current document, e.g. \"spreadsheet.xlsx\"." },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "ExcelFileName", nullptr, nullptr, sizeof(XLDocument_eventExcelFileName_Parms), Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_ExcelFileName()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_ExcelFileName_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics
+	{
+		struct XLDocument_eventExcelFullPath_Parms
+		{
+			FString ReturnValue;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventExcelFullPath_Parms, ReturnValue), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "Comment", "//Get the full path of the current document, e.g. \"drive/blah/spreadsheet.xlsx\"\n" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+		{ "ToolTip", "Get the full path of the current document, e.g. \"drive/blah/spreadsheet.xlsx\"" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "ExcelFullPath", nullptr, nullptr, sizeof(XLDocument_eventExcelFullPath_Parms), Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_ExcelFullPath()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_ExcelFullPath_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics
+	{
+		struct XLDocument_eventExcelIsValid_Parms
 		{
 			bool ReturnValue;
 		};
@@ -349,277 +458,35 @@ void EmptyLinkFunctionForGeneratedCodeXLDocument() {}
 #endif
 		static const UE4CodeGen_Private::FFunctionParams FuncParams;
 	};
-	void Z_Construct_UFunction_UXLDocument_IsValid_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+	void Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::NewProp_ReturnValue_SetBit(void* Obj)
 	{
-		((XLDocument_eventIsValid_Parms*)Obj)->ReturnValue = 1;
+		((XLDocument_eventExcelIsValid_Parms*)Obj)->ReturnValue = 1;
 	}
-	const UE4CodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UXLDocument_IsValid_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Bool | UE4CodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(XLDocument_eventIsValid_Parms), &Z_Construct_UFunction_UXLDocument_IsValid_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_IsValid_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_IsValid_Statics::NewProp_ReturnValue,
+	const UE4CodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Bool | UE4CodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(XLDocument_eventExcelIsValid_Parms), &Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::NewProp_ReturnValue,
 	};
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_IsValid_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "//\n" },
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
 		{ "ModuleRelativePath", "Public/XLDocument.h" },
 	};
 #endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_IsValid_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "IsValid", nullptr, nullptr, sizeof(XLDocument_eventIsValid_Parms), Z_Construct_UFunction_UXLDocument_IsValid_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_IsValid_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_IsValid_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_IsValid_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_IsValid()
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "ExcelIsValid", nullptr, nullptr, sizeof(XLDocument_eventExcelIsValid_Parms), Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_ExcelIsValid()
 	{
 		static UFunction* ReturnFunction = nullptr;
 		if (!ReturnFunction)
 		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_IsValid_Statics::FuncParams);
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_ExcelIsValid_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
-	struct Z_Construct_UFunction_UXLDocument_Name_Statics
+	struct Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics
 	{
-		struct XLDocument_eventName_Parms
+		struct XLDocument_eventGetCurrentSheet_Parms
 		{
-			FString ReturnValue;
-		};
-		static const UE4CodeGen_Private::FStrPropertyParams NewProp_ReturnValue;
-		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UE4CodeGen_Private::FFunctionParams FuncParams;
-	};
-	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_Name_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventName_Parms, ReturnValue), METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_Name_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_Name_Statics::NewProp_ReturnValue,
-	};
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_Name_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "// Get the filename of the current document, e.g. \"spreadsheet.xlsx\".\n" },
-		{ "ModuleRelativePath", "Public/XLDocument.h" },
-		{ "ToolTip", "Get the filename of the current document, e.g. \"spreadsheet.xlsx\"." },
-	};
-#endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_Name_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "Name", nullptr, nullptr, sizeof(XLDocument_eventName_Parms), Z_Construct_UFunction_UXLDocument_Name_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Name_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_Name_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Name_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_Name()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_Name_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_UXLDocument_Open_Statics
-	{
-		struct XLDocument_eventOpen_Parms
-		{
-			FString path;
-		};
-		static const UE4CodeGen_Private::FStrPropertyParams NewProp_path;
-		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UE4CodeGen_Private::FFunctionParams FuncParams;
-	};
-	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_Open_Statics::NewProp_path = { "path", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventOpen_Parms, path), METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_Open_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_Open_Statics::NewProp_path,
-	};
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_Open_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "//  Open the .xlsx file with the given path\n" },
-		{ "ModuleRelativePath", "Public/XLDocument.h" },
-		{ "ToolTip", "Open the .xlsx file with the given path" },
-	};
-#endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_Open_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "Open", nullptr, nullptr, sizeof(XLDocument_eventOpen_Parms), Z_Construct_UFunction_UXLDocument_Open_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Open_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_Open_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Open_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_Open()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_Open_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_UXLDocument_Path_Statics
-	{
-		struct XLDocument_eventPath_Parms
-		{
-			FString ReturnValue;
-		};
-		static const UE4CodeGen_Private::FStrPropertyParams NewProp_ReturnValue;
-		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UE4CodeGen_Private::FFunctionParams FuncParams;
-	};
-	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_Path_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventPath_Parms, ReturnValue), METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_Path_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_Path_Statics::NewProp_ReturnValue,
-	};
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_Path_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "//Get the full path of the current document, e.g. \"drive/blah/spreadsheet.xlsx\"\n" },
-		{ "ModuleRelativePath", "Public/XLDocument.h" },
-		{ "ToolTip", "Get the full path of the current document, e.g. \"drive/blah/spreadsheet.xlsx\"" },
-	};
-#endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_Path_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "Path", nullptr, nullptr, sizeof(XLDocument_eventPath_Parms), Z_Construct_UFunction_UXLDocument_Path_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Path_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_Path_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Path_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_Path()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_Path_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_UXLDocument_Property_Statics
-	{
-		struct XLDocument_eventProperty_Parms
-		{
-			EXLProperty prop;
-			FString ReturnValue;
-		};
-		static const UE4CodeGen_Private::FBytePropertyParams NewProp_prop_Underlying;
-		static const UE4CodeGen_Private::FEnumPropertyParams NewProp_prop;
-		static const UE4CodeGen_Private::FStrPropertyParams NewProp_ReturnValue;
-		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UE4CodeGen_Private::FFunctionParams FuncParams;
-	};
-	const UE4CodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UXLDocument_Property_Statics::NewProp_prop_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UE4CodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UXLDocument_Property_Statics::NewProp_prop = { "prop", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventProperty_Parms, prop), Z_Construct_UEnum_FreeExcel_EXLProperty, METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_Property_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventProperty_Parms, ReturnValue), METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_Property_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_Property_Statics::NewProp_prop_Underlying,
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_Property_Statics::NewProp_prop,
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_Property_Statics::NewProp_ReturnValue,
-	};
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_Property_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "//Get the requested document property.\n" },
-		{ "ModuleRelativePath", "Public/XLDocument.h" },
-		{ "ToolTip", "Get the requested document property." },
-	};
-#endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_Property_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "Property", nullptr, nullptr, sizeof(XLDocument_eventProperty_Parms), Z_Construct_UFunction_UXLDocument_Property_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Property_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_Property_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Property_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_Property()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_Property_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_UXLDocument_Save_Statics
-	{
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UE4CodeGen_Private::FFunctionParams FuncParams;
-	};
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_Save_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "//Save the current document using the current filename, overwriting the existing file.\n" },
-		{ "ModuleRelativePath", "Public/XLDocument.h" },
-		{ "ToolTip", "Save the current document using the current filename, overwriting the existing file." },
-	};
-#endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_Save_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "Save", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_Save_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Save_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_Save()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_Save_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_UXLDocument_SaveAs_Statics
-	{
-		struct XLDocument_eventSaveAs_Parms
-		{
-			FString path;
-		};
-		static const UE4CodeGen_Private::FStrPropertyParams NewProp_path;
-		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UE4CodeGen_Private::FFunctionParams FuncParams;
-	};
-	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_SaveAs_Statics::NewProp_path = { "path", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSaveAs_Parms, path), METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_SaveAs_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SaveAs_Statics::NewProp_path,
-	};
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SaveAs_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "//Save the document with a new name. If a file exists with that name, it will be overwritten.\n" },
-		{ "ModuleRelativePath", "Public/XLDocument.h" },
-		{ "ToolTip", "Save the document with a new name. If a file exists with that name, it will be overwritten." },
-	};
-#endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SaveAs_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SaveAs", nullptr, nullptr, sizeof(XLDocument_eventSaveAs_Parms), Z_Construct_UFunction_UXLDocument_SaveAs_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SaveAs_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SaveAs_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SaveAs_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_SaveAs()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SaveAs_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_UXLDocument_SetProperty_Statics
-	{
-		struct XLDocument_eventSetProperty_Parms
-		{
-			EXLProperty prop;
-			FString value;
-		};
-		static const UE4CodeGen_Private::FBytePropertyParams NewProp_prop_Underlying;
-		static const UE4CodeGen_Private::FEnumPropertyParams NewProp_prop;
-		static const UE4CodeGen_Private::FStrPropertyParams NewProp_value;
-		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UE4CodeGen_Private::FFunctionParams FuncParams;
-	};
-	const UE4CodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UXLDocument_SetProperty_Statics::NewProp_prop_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UE4CodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UXLDocument_SetProperty_Statics::NewProp_prop = { "prop", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSetProperty_Parms, prop), Z_Construct_UEnum_FreeExcel_EXLProperty, METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_SetProperty_Statics::NewProp_value = { "value", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSetProperty_Parms, value), METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_SetProperty_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SetProperty_Statics::NewProp_prop_Underlying,
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SetProperty_Statics::NewProp_prop,
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SetProperty_Statics::NewProp_value,
-	};
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SetProperty_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "//Set a property\n" },
-		{ "ModuleRelativePath", "Public/XLDocument.h" },
-		{ "ToolTip", "Set a property" },
-	};
-#endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SetProperty_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SetProperty", nullptr, nullptr, sizeof(XLDocument_eventSetProperty_Parms), Z_Construct_UFunction_UXLDocument_SetProperty_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SetProperty_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SetProperty_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SetProperty_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_SetProperty()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SetProperty_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_UXLDocument_Workbook_Statics
-	{
-		struct XLDocument_eventWorkbook_Parms
-		{
-			UXLWorkbook* ReturnValue;
+			UXLWorksheet* ReturnValue;
 		};
 		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
 		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
@@ -628,24 +495,470 @@ void EmptyLinkFunctionForGeneratedCodeXLDocument() {}
 #endif
 		static const UE4CodeGen_Private::FFunctionParams FuncParams;
 	};
-	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UXLDocument_Workbook_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventWorkbook_Parms, ReturnValue), Z_Construct_UClass_UXLWorkbook_NoRegister, METADATA_PARAMS(nullptr, 0) };
-	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_Workbook_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_Workbook_Statics::NewProp_ReturnValue,
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventGetCurrentSheet_Parms, ReturnValue), Z_Construct_UClass_UXLWorksheet_NoRegister, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::NewProp_ReturnValue,
 	};
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_Workbook_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "//Get the underlying workbook object, as a const object.\n" },
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
 		{ "ModuleRelativePath", "Public/XLDocument.h" },
-		{ "ToolTip", "Get the underlying workbook object, as a const object." },
 	};
 #endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_Workbook_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "Workbook", nullptr, nullptr, sizeof(XLDocument_eventWorkbook_Parms), Z_Construct_UFunction_UXLDocument_Workbook_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Workbook_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_Workbook_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_Workbook_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_UXLDocument_Workbook()
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "GetCurrentSheet", nullptr, nullptr, sizeof(XLDocument_eventGetCurrentSheet_Parms), Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_GetCurrentSheet()
 	{
 		static UFunction* ReturnFunction = nullptr;
 		if (!ReturnFunction)
 		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_Workbook_Statics::FuncParams);
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_GetCurrentSheet_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics
+	{
+		struct XLDocument_eventGetOrCreateSheetWithName_Parms
+		{
+			FString name;
+			UXLWorksheet* ReturnValue;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_name;
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::NewProp_name = { "name", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventGetOrCreateSheetWithName_Parms, name), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventGetOrCreateSheetWithName_Parms, ReturnValue), Z_Construct_UClass_UXLWorksheet_NoRegister, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::NewProp_name,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "GetOrCreateSheetWithName", nullptr, nullptr, sizeof(XLDocument_eventGetOrCreateSheetWithName_Parms), Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics
+	{
+		struct XLDocument_eventGetPreviousSheet_Parms
+		{
+			UXLWorksheet* ReturnValue;
+		};
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventGetPreviousSheet_Parms, ReturnValue), Z_Construct_UClass_UXLWorksheet_NoRegister, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "GetPreviousSheet", nullptr, nullptr, sizeof(XLDocument_eventGetPreviousSheet_Parms), Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_GetPreviousSheet()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_GetPreviousSheet_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics
+	{
+		struct XLDocument_eventGetSheetAt_Parms
+		{
+			int32 index;
+			UXLWorksheet* ReturnValue;
+		};
+		static const UE4CodeGen_Private::FIntPropertyParams NewProp_index;
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::NewProp_index = { "index", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventGetSheetAt_Parms, index), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventGetSheetAt_Parms, ReturnValue), Z_Construct_UClass_UXLWorksheet_NoRegister, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::NewProp_index,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "GetSheetAt", nullptr, nullptr, sizeof(XLDocument_eventGetSheetAt_Parms), Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_GetSheetAt()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_GetSheetAt_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics
+	{
+		struct XLDocument_eventIndexOfSheet_Parms
+		{
+			FString sheetName;
+			int32 ReturnValue;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_sheetName;
+		static const UE4CodeGen_Private::FIntPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::NewProp_sheetName = { "sheetName", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventIndexOfSheet_Parms, sheetName), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventIndexOfSheet_Parms, ReturnValue), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::NewProp_sheetName,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "IndexOfSheet", nullptr, nullptr, sizeof(XLDocument_eventIndexOfSheet_Parms), Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_IndexOfSheet()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_IndexOfSheet_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_OpenExcel_Statics
+	{
+		struct XLDocument_eventOpenExcel_Parms
+		{
+			FString path;
+			UXLDocument* ReturnValue;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_path;
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::NewProp_path = { "path", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventOpenExcel_Parms, path), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventOpenExcel_Parms, ReturnValue), Z_Construct_UClass_UXLDocument_NoRegister, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::NewProp_path,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "Comment", "//  Open the .xlsx file with the given path\n" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+		{ "ToolTip", "Open the .xlsx file with the given path" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "OpenExcel", nullptr, nullptr, sizeof(XLDocument_eventOpenExcel_Parms), Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04022401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_OpenExcel()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_OpenExcel_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_SaveExcel_Statics
+	{
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SaveExcel_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "Comment", "//Save the current document using the current filename, overwriting the existing file.\n" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+		{ "ToolTip", "Save the current document using the current filename, overwriting the existing file." },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SaveExcel_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SaveExcel", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SaveExcel_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SaveExcel_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_SaveExcel()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SaveExcel_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics
+	{
+		struct XLDocument_eventSaveExcelAs_Parms
+		{
+			FString path;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_path;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::NewProp_path = { "path", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSaveExcelAs_Parms, path), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::NewProp_path,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "Comment", "//Save the document with a new name. If a file exists with that name, it will be overwritten.\n" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+		{ "ToolTip", "Save the document with a new name. If a file exists with that name, it will be overwritten." },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SaveExcelAs", nullptr, nullptr, sizeof(XLDocument_eventSaveExcelAs_Parms), Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_SaveExcelAs()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SaveExcelAs_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics
+	{
+		struct XLDocument_eventSetCurrentSheet_Parms
+		{
+			UXLWorksheet* _New;
+		};
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp__New;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::NewProp__New = { "_New", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSetCurrentSheet_Parms, _New), Z_Construct_UClass_UXLWorksheet_NoRegister, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::NewProp__New,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SetCurrentSheet", nullptr, nullptr, sizeof(XLDocument_eventSetCurrentSheet_Parms), Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_SetCurrentSheet()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SetCurrentSheet_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_SetFullCalculationOnLoad_Statics
+	{
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SetFullCalculationOnLoad_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SetFullCalculationOnLoad_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SetFullCalculationOnLoad", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SetFullCalculationOnLoad_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SetFullCalculationOnLoad_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_SetFullCalculationOnLoad()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SetFullCalculationOnLoad_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics
+	{
+		struct XLDocument_eventSetSheetIndex_Parms
+		{
+			FString sheetName;
+			int32 index;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_sheetName;
+		static const UE4CodeGen_Private::FIntPropertyParams NewProp_index;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::NewProp_sheetName = { "sheetName", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSetSheetIndex_Parms, sheetName), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::NewProp_index = { "index", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSetSheetIndex_Parms, index), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::NewProp_sheetName,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::NewProp_index,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SetSheetIndex", nullptr, nullptr, sizeof(XLDocument_eventSetSheetIndex_Parms), Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_SetSheetIndex()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SetSheetIndex_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_SheetCount_Statics
+	{
+		struct XLDocument_eventSheetCount_Parms
+		{
+			int32 ReturnValue;
+		};
+		static const UE4CodeGen_Private::FIntPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UXLDocument_SheetCount_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSheetCount_Parms, ReturnValue), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_SheetCount_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SheetCount_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SheetCount_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SheetCount_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SheetCount", nullptr, nullptr, sizeof(XLDocument_eventSheetCount_Parms), Z_Construct_UFunction_UXLDocument_SheetCount_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SheetCount_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SheetCount_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SheetCount_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_SheetCount()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SheetCount_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_SheetExists_Statics
+	{
+		struct XLDocument_eventSheetExists_Parms
+		{
+			FString name;
+			bool ReturnValue;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_name;
+		static void NewProp_ReturnValue_SetBit(void* Obj);
+		static const UE4CodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_SheetExists_Statics::NewProp_name = { "name", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSheetExists_Parms, name), METADATA_PARAMS(nullptr, 0) };
+	void Z_Construct_UFunction_UXLDocument_SheetExists_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+	{
+		((XLDocument_eventSheetExists_Parms*)Obj)->ReturnValue = 1;
+	}
+	const UE4CodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UXLDocument_SheetExists_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Bool | UE4CodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(XLDocument_eventSheetExists_Parms), &Z_Construct_UFunction_UXLDocument_SheetExists_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_SheetExists_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SheetExists_Statics::NewProp_name,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SheetExists_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SheetExists_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SheetExists_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SheetExists", nullptr, nullptr, sizeof(XLDocument_eventSheetExists_Parms), Z_Construct_UFunction_UXLDocument_SheetExists_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SheetExists_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SheetExists_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SheetExists_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_SheetExists()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SheetExists_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UXLDocument_SheetNames_Statics
+	{
+		struct XLDocument_eventSheetNames_Parms
+		{
+			TArray<FString> ReturnValue;
+		};
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_ReturnValue_Inner;
+		static const UE4CodeGen_Private::FArrayPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UXLDocument_SheetNames_Statics::NewProp_ReturnValue_Inner = { "ReturnValue", nullptr, (EPropertyFlags)0x0000000000000000, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, 0, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FArrayPropertyParams Z_Construct_UFunction_UXLDocument_SheetNames_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(XLDocument_eventSheetNames_Parms, ReturnValue), EArrayPropertyFlags::None, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UXLDocument_SheetNames_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SheetNames_Statics::NewProp_ReturnValue_Inner,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UXLDocument_SheetNames_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UXLDocument_SheetNames_Statics::Function_MetaDataParams[] = {
+		{ "Category", "XLXS" },
+		{ "ModuleRelativePath", "Public/XLDocument.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UXLDocument_SheetNames_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UXLDocument, nullptr, "SheetNames", nullptr, nullptr, sizeof(XLDocument_eventSheetNames_Parms), Z_Construct_UFunction_UXLDocument_SheetNames_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SheetNames_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UXLDocument_SheetNames_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UXLDocument_SheetNames_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UXLDocument_SheetNames()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UXLDocument_SheetNames_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -668,24 +981,35 @@ void EmptyLinkFunctionForGeneratedCodeXLDocument() {}
 		(UObject* (*)())Z_Construct_UPackage__Script_FreeExcel,
 	};
 	const FClassFunctionLinkInfo Z_Construct_UClass_UXLDocument_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_UXLDocument_Colse, "Colse" }, // 3313051321
-		{ &Z_Construct_UFunction_UXLDocument_Create, "Create" }, // 1900542394
-		{ &Z_Construct_UFunction_UXLDocument_DeleteProperty, "DeleteProperty" }, // 1341521883
-		{ &Z_Construct_UFunction_UXLDocument_IsValid, "IsValid" }, // 3854916762
-		{ &Z_Construct_UFunction_UXLDocument_Name, "Name" }, // 3881567543
-		{ &Z_Construct_UFunction_UXLDocument_Open, "Open" }, // 726938079
-		{ &Z_Construct_UFunction_UXLDocument_Path, "Path" }, // 4141878097
-		{ &Z_Construct_UFunction_UXLDocument_Property, "Property" }, // 3397811829
-		{ &Z_Construct_UFunction_UXLDocument_Save, "Save" }, // 2228721646
-		{ &Z_Construct_UFunction_UXLDocument_SaveAs, "SaveAs" }, // 2112885906
-		{ &Z_Construct_UFunction_UXLDocument_SetProperty, "SetProperty" }, // 1495858212
-		{ &Z_Construct_UFunction_UXLDocument_Workbook, "Workbook" }, // 2240561964
+		{ &Z_Construct_UFunction_UXLDocument_CloneSheet, "CloneSheet" }, // 3914114129
+		{ &Z_Construct_UFunction_UXLDocument_CloseExcel, "CloseExcel" }, // 514216563
+		{ &Z_Construct_UFunction_UXLDocument_CreateExcel, "CreateExcel" }, // 641281994
+		{ &Z_Construct_UFunction_UXLDocument_DeleteNamedRanges, "DeleteNamedRanges" }, // 1523147541
+		{ &Z_Construct_UFunction_UXLDocument_DeleteSheet, "DeleteSheet" }, // 1898537662
+		{ &Z_Construct_UFunction_UXLDocument_ExcelFileName, "ExcelFileName" }, // 3667650591
+		{ &Z_Construct_UFunction_UXLDocument_ExcelFullPath, "ExcelFullPath" }, // 3637574438
+		{ &Z_Construct_UFunction_UXLDocument_ExcelIsValid, "ExcelIsValid" }, // 3896486921
+		{ &Z_Construct_UFunction_UXLDocument_GetCurrentSheet, "GetCurrentSheet" }, // 294913992
+		{ &Z_Construct_UFunction_UXLDocument_GetOrCreateSheetWithName, "GetOrCreateSheetWithName" }, // 106106215
+		{ &Z_Construct_UFunction_UXLDocument_GetPreviousSheet, "GetPreviousSheet" }, // 1038064465
+		{ &Z_Construct_UFunction_UXLDocument_GetSheetAt, "GetSheetAt" }, // 4229997320
+		{ &Z_Construct_UFunction_UXLDocument_IndexOfSheet, "IndexOfSheet" }, // 3596892828
+		{ &Z_Construct_UFunction_UXLDocument_OpenExcel, "OpenExcel" }, // 3615390647
+		{ &Z_Construct_UFunction_UXLDocument_SaveExcel, "SaveExcel" }, // 1816593481
+		{ &Z_Construct_UFunction_UXLDocument_SaveExcelAs, "SaveExcelAs" }, // 1669295512
+		{ &Z_Construct_UFunction_UXLDocument_SetCurrentSheet, "SetCurrentSheet" }, // 2006805604
+		{ &Z_Construct_UFunction_UXLDocument_SetFullCalculationOnLoad, "SetFullCalculationOnLoad" }, // 3640476914
+		{ &Z_Construct_UFunction_UXLDocument_SetSheetIndex, "SetSheetIndex" }, // 944410531
+		{ &Z_Construct_UFunction_UXLDocument_SheetCount, "SheetCount" }, // 1992144568
+		{ &Z_Construct_UFunction_UXLDocument_SheetExists, "SheetExists" }, // 3826357104
+		{ &Z_Construct_UFunction_UXLDocument_SheetNames, "SheetNames" }, // 3476382856
 	};
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UXLDocument_Statics::Class_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
 		{ "Comment", "/**\n * \n */" },
 		{ "IncludePath", "XLDocument.h" },
+		{ "IsBlueprintBase", "true" },
 		{ "ModuleRelativePath", "Public/XLDocument.h" },
 	};
 #endif
@@ -716,7 +1040,7 @@ void EmptyLinkFunctionForGeneratedCodeXLDocument() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(UXLDocument, 600661870);
+	IMPLEMENT_CLASS(UXLDocument, 1576397708);
 	template<> FREEEXCEL_API UClass* StaticClass<UXLDocument>()
 	{
 		return UXLDocument::StaticClass();
