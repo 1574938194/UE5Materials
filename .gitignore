@@ -363,6 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 Binaries/
+[Ww]in64/
 Content/
 DerivedDataCache/
 Intermediate/
