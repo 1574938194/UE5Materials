@@ -4,14 +4,15 @@
 #include "Demo1.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "OpenXLSX/include/headers/XLSheet.hpp"
-#include "XLWorksheet.h"
+#include "Sheet.h"
 #include <string>
 #include <iostream>
-#include "XLDocument.h"
+#include "ExcelDocument.h"
 #include <random>
 #include <algorithm>
 #include <numeric>
-#include <mutex>
+#include "FreeExcelFunctionLibrary.h"
+#include "CellValue.h"
 
 using namespace std;
 using namespace OpenXLSX;
@@ -40,24 +41,21 @@ void ADemo1::Tick(float DeltaTime)
  
 void ADemo1::RunDemo()
 {
-    // create doc
-    auto doc = UXLDocument::CreateExcel(TEXT("D:\\proj\\ueTest\\Demo01.xlsx"));
+    // Create excel document and get first sheet 
+    auto doc = NewObject<UExcelDocument>();
+    doc->Create(TEXT("D:\\proj\\ueTest\\Demo01.xlsx"));
     auto wks = doc->GetOrCreateSheetWithName(TEXT("Sheet1"));
+     
+    // Basic Usage
+    wks->Cell({1,1})->Value()->SetFloat(3.1415926);
+    wks->Cell(UFreeExcelFunctionLibrary::MakeCellReferenceWithString("B1"))->Value()->SetInt(42);
+    wks->Cell(UFreeExcelFunctionLibrary::MakeCellReference(1,3))->Value()->SetString(TEXT("Hello FreeExcel"));
+    wks->Cell("D1")->Value()->SetBool(true);
 
-    auto cell = wks->CellAt(1, 1);
-    cell->SetInteger(321);
-    UKismetSystemLibrary::PrintString(this, FString::FromInt(cell->GetInteger()));
-
-    // basic usage
-    wks->SetFloat(TEXT("A1"),3.1415926);
-    wks->SetIntegerAt(1,2,42);
-    wks->SetStringAt(1,3,TEXT("Hello OpenXLSX"));
-    wks->SetBool(TEXT("D1"),true);
-
-    auto A1 = wks->GetFloat("A1");
-    auto B1 = wks->GetInteger("B1");
-    auto C1 = wks->GetString("C1");
-    auto D1 = wks->GetBool("D1");
+    auto A1 = wks->Cell("A1")->Value()->ToFloat();
+    auto B1 = wks->Cell("B1")->Value()->ToInt();
+    auto C1 = wks->Cell("C1")->Value()->ToString();
+    auto D1 = wks->Cell("D1")->Value()->ToBool();
  
     UKismetSystemLibrary::PrintString(this,
         FString::SanitizeFloat(A1) + "," +
@@ -67,39 +65,31 @@ void ADemo1::RunDemo()
     );
 
     
-    wks->Cell("A2")->SetCellValue(wks->CellWithRef(UXLCellReference::MakeCellReference("C1")));
-    auto A2 = wks->Cell("A2");
-    UKismetSystemLibrary::PrintString(this, "," + A2->GetString());
+    wks->Cell("A2")->SetCellValue(wks->Cell("C1")->Value());
+    UKismetSystemLibrary::PrintString(this, "," + wks->Cell("A2")->ToString());
 
-    // dateTime usage
-    auto dt = FDateTime::Now();
+    // DateTime Value
+    wks->Cell(TEXT("B2"))->Value()->SetDateTime(FDateTime::Now());
+    UKismetSystemLibrary::PrintString(this, wks->Cell("B2")->Value()->ToDateTime().ToString(TEXT("%Y-%m-%d-%H-%M-%S")));
 
-    wks->Cell(TEXT("B2"))->SetDateTime(dt);
+    // Formula Usage
+    wks->Cell("C2")->SetFormula( "SQRT(B1)");
 
-    auto B2 = wks->Cell("B2");
-    auto result = B2->GetDateTime();
-    UKismetSystemLibrary::PrintString(this,   result.ToString(TEXT("%Y-%m-%d-%H-%M-%S")));
-
-    // formula usage
-    wks->SetFormula("C2", "SQRT(B1)"); 
-
-    // sheet handling
-    doc->GetOrCreateSheetWithName("Sheet2")->SetActive();
-    UKismetSystemLibrary::PrintString(this, "active :" + doc->GetOrCreateSheetWithName("Sheet2")->IsActive()?"true":"false" );
+    // Sheet handling 
     doc->CloneSheet("Sheet1", "Sheet3");
      
     doc->DeleteSheet("Sheet2");
-    doc->GetOrCreateSheetWithName("Sheet1")->SetIndex(2);
-    doc->GetOrCreateSheetWithName("Sheet3")->SetIndex(1);
+    doc->SetSheetIndex("Sheet1", 2);
+    doc->SetSheetIndex("Sheet3",1);
     
     //Unicode
-    wks->SetString("D2", TEXT("こんにちは世界"));
+    wks->Cell(TEXT("D2"))->Value()->SetString( TEXT("こんにちは世界"));
 
-    //TODO Iterators
+ 
     // Ranges and Iterators 
-   /* std::random_device                 rand_dev;
+    std::random_device                 rand_dev;
     std::mt19937                       generator(rand_dev());
-    std::uniform_int_distribution<int> distr(0, 99);*/
+    std::uniform_int_distribution<int> distr(0, 99);
 
     //auto rng = wks->Range(UXLCellReference::MakeCellReference("A3"), UXLCellReference::MakeCellReference2(100, 8));
 
@@ -125,7 +115,7 @@ void ADemo1::RunDemo()
       
     
     // save and close doc
-    doc->SaveExcel();
-    doc->CloseExcel();
+    doc->Save();
+    doc->Close();
 }
     

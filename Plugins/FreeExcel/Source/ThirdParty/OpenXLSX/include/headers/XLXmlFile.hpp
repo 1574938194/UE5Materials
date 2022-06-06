@@ -110,7 +110,7 @@ namespace OpenXLSX
          */
         XLXmlFile& operator=(XLXmlFile&& other) noexcept = default;
 
-    protected:    // ===== PROTECTED MEMBER FUNCTIONS
+    public:    // ===== PROTECTED MEMBER FUNCTIONS
         /**
          * @brief Method for getting the XML data represented by the object.
          * @return A std::string with the XML data.

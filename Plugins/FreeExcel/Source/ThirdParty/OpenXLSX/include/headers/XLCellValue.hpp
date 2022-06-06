@@ -522,7 +522,10 @@ namespace OpenXLSX
          * @return An XLCellValue object, corresponding to the cell value.
          */
         operator XLCellValue();    // NOLINT
-
+        operator XLCellValue()const
+        {
+            return getValue();
+        }
         /**
          * @brief
          * @tparam T

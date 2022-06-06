@@ -7,7 +7,9 @@ public class FreeExcelEditor : ModuleRules
 	public FreeExcelEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
- 
+
+		bEnableExceptions = true;
+
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...

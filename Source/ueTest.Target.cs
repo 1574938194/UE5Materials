@@ -9,6 +9,7 @@ public class ueTestTarget : TargetRules
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
+	 
 		ExtraModuleNames.Add("ueTest"); 
 	}
 }

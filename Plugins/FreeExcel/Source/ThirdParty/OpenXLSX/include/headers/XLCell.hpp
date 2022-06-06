@@ -183,7 +183,7 @@ namespace OpenXLSX
          * @param newFormula
          */
 
-    private:
+    public:
 
         /**
          * @brief

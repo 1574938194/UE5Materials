@@ -8,8 +8,7 @@
 #include "Templates/SharedPointer.h"
 #include "EdGraphUtilities.h"
  
- 
-
+  
 
 #define LOCTEXT_NAMESPACE "FFreeExcelEditorModule"
 

@@ -11,6 +11,7 @@ public class FreeExcel : ModuleRules
 		//PCHUsage = PCHUsageMode.NoSharedPCHs;
 		//PrivatePCHHeaderFile = "$pch.h";
 		//CppStandard = CppStandardVersion.Cpp17;
+		bEnableExceptions = true;
 
 		PublicIncludePaths.AddRange(
 			new string[] {

@@ -13,12 +13,15 @@ namespace OpenXLSX
     inline const uint32_t MAX_ROWS = 1'048'576;
 }    // namespace OpenXLSX
 #else 
+	/*
 class MaxConstant
 {
 public:
     static constexpr uint16_t MAX_COLS = 16'384;
     static constexpr uint32_t MAX_ROWS = 1'048'576;
-};
+};*/
+#define MAX_COLS 16'384
+#define MAX_ROWS 1'048'576
 #endif
 
 
