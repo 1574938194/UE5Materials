@@ -1,14 +1,17 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+#pragma optimize("",off)
 
 #include "FreeExcelFunctionLibrary.h"
 #include "OpenXLSX/include/headers/XLCellRange.hpp"
 #include "Sheet.h"
+#include "CellValue.h"
+#include "ExcelDocument.h"
+#include "UObject/Field.h"
 #include "Kismet/KismetArrayLibrary.h"
 
 
  
-	template <class T> T* FindFProperty2(const UStruct* Owner, FName FieldName)
+	template <class _Ty> _Ty* FindFProperty2(const UStruct* Owner, FName FieldName)
 	{
 		// We know that a "none" field won't exist in this Struct
 		if (FieldName.IsNone())
@@ -17,7 +20,7 @@
 		}
 
 		// Search by comparing FNames (INTs), not strings
-		for (TFieldIterator<T>It(Owner); It; ++It)
+		for (TFieldIterator<_Ty>It(Owner); It; ++It)
 		{
 			if ((It->GetFName() == FieldName) || (It->GetAuthoredName() == FieldName.ToString()))
 			{
@@ -153,17 +156,27 @@ void UFreeExcelFunctionLibrary::Offset(FCellReference Ref, int32 row, int32 col)
 	Ref.Row += col; 
 }
  
-bool  UFreeExcelFunctionLibrary::Equal(FCellReference A, FCellReference B)
+bool  UFreeExcelFunctionLibrary::Equal_CellReference(FCellReference A, FCellReference B)
 {
 	return A.Row == B.Col && A.Col == B.Col;
 }
 
 
-bool  UFreeExcelFunctionLibrary::NotEqual(FCellReference A, FCellReference B)
+bool  UFreeExcelFunctionLibrary::NotEqual_CellReference(FCellReference A, FCellReference B)
 {
 	return A.Row != B.Col && A.Col != B.Col;
 }
 
+bool  UFreeExcelFunctionLibrary::Equal_CellRange(FCellRange A, FCellRange B)
+{
+	return A.Min == B.Min && A.Max == B.Max;
+}
+
+
+bool  UFreeExcelFunctionLibrary::NotEqual_CellRange(FCellRange A, FCellRange B)
+{
+	return A.Min != B.Min && A.Max != B.Max;
+}
   
 void UFreeExcelFunctionLibrary::BreakCellReference(FCellReference Ref, int& Row, int& Col)
 {
@@ -178,18 +191,18 @@ FCellReference UFreeExcelFunctionLibrary::MakeCellReferenceWithString(FString re
 }
 
  
-FCellReference UFreeExcelFunctionLibrary::MakeCellReference(int32 row, int32 column) {
+FCellReference UFreeExcelFunctionLibrary::MakeCellReference(int32 row, int32 col) {
 	FCellReference ret;
-	if (FCellReference::address_is_valid(row, column))
+	if (FCellReference::address_is_valid(row, col))
 	{
-		ret.Row = row; ret.Col = column;
+		ret.Row = row; ret.Col = col;
 	}
 	return ret;
 }
  
- FString UFreeExcelFunctionLibrary::ToString_CellReference(FCellReference& ref)
+ FString UFreeExcelFunctionLibrary::ToString_CellReference(FCellReference ref)
 {
-	 return ref.ToString();
+	 return ref.to_string();
 }
   
 FCellRange UFreeExcelFunctionLibrary::MakeCellRangeWithString(FString ref)
@@ -213,10 +226,10 @@ FCellRange UFreeExcelFunctionLibrary::MakeCellRangeWithString(FString ref)
 FCellRange UFreeExcelFunctionLibrary::MakeCellRange(int32 MinRow, int32 MinCol, int32 MaxRow, int32 MaxCol)
  {
 	 FCellRange ret;
-	 ret.Min.Row = MinRow;
-	 ret.Min.Col = MinCol;
-	 ret.Max.Row = MaxRow;
-	 ret.Max.Col = MaxCol;
+	 ret.Min.Row = std::min(MinRow,MaxRow);
+	 ret.Min.Col = std::min(MinCol, MaxCol);
+	 ret.Max.Row = std::max(MinRow, MaxRow);
+	 ret.Max.Col = std::max(MinCol, MaxCol);
 
 	 return ret;
  }
@@ -244,3 +257,163 @@ FCellRange UFreeExcelFunctionLibrary::MakeCellRange2(USheet* sheet,int32 MinRow,
 
 	return ret;
 }
+ 
+ FCellValue UFreeExcelFunctionLibrary::MakeCellValue_Bool(bool val)
+{
+	 return FCellValue(val);
+}
+ 
+ FCellValue  UFreeExcelFunctionLibrary::MakeCellValue_Int(int32 val)
+{
+	 return FCellValue(val);
+}
+
+ FCellValue  UFreeExcelFunctionLibrary::MakeCellValue_Float(float val)
+{
+	 return FCellValue(val);
+}
+
+ FCellValue  UFreeExcelFunctionLibrary::MakeCellValue_String(FString val)
+{
+	 return FCellValue(val);
+}
+
+ FCellValue  UFreeExcelFunctionLibrary::MakeCellValue_DateTime(FDateTime val)
+{
+	 return FCellValue(val);
+}
+
+	bool  UFreeExcelFunctionLibrary::ToBool_CellValue(const FCellValue& val)
+{
+		return val;
+}
+
+	int32  UFreeExcelFunctionLibrary::ToInt_CellValue(const FCellValue& val)
+{
+		return val;
+}
+
+	float  UFreeExcelFunctionLibrary::ToFloat_CellValue(const FCellValue& val)
+{
+		return val;
+}
+
+	FString  UFreeExcelFunctionLibrary::ToString_CellValue(const FCellValue& val)
+{
+		return val;
+}
+
+	FDateTime  UFreeExcelFunctionLibrary::ToDateTime_CellValue(const FCellValue& val)
+{
+		return val;
+}
+
+	void  UFreeExcelFunctionLibrary::Clear_CellValue( FCellValue& val)
+{
+		val.clear();
+}
+
+	EXLValueType  UFreeExcelFunctionLibrary::Type_CellValue(const FCellValue& val)
+{
+		return val.type();
+}
+
+	void UFreeExcelFunctionLibrary::SetCellValue(const int32& Target, const int32& Ref, const int32& Value)
+	{
+		check(0)
+	}
+	void UFreeExcelFunctionLibrary::Generic_SetCellValue(FProperty* SelfProperty, void* Self, FProperty* RefProperty, void* Ref, FProperty* ValProperty, void* Value)
+	{
+		if (!Ref || !Value || !Self)
+		{
+			return;
+		}
+		
+		if (SelfProperty->GetCPPType() == "FCellValue")
+		{
+			auto cell = (FCellValue*)Self;
+			if (CastField<FFloatProperty>(ValProperty))
+			{
+				*cell = *(float*)Value;
+			}
+			else if (CastField<FStrProperty>(ValProperty))
+			{
+				*cell = std::string(TCHAR_TO_UTF8(**(FString*)Value));
+			}
+			else if (ValProperty->GetCPPType() == "FCellValue")
+			{
+				*cell = *(FCellValue*)Value;
+			}
+			else
+			if (CastField<FBoolProperty>(ValProperty))
+			{
+				*cell = *(bool*)Value;
+			}
+			else if (CastField<FIntProperty>(ValProperty))
+			{
+				*cell = *(int32*)Value;
+			}
+			else if (ValProperty->GetCPPType() == "FDateTime")
+			{
+				*cell = *(FDateTime*)Value;
+			}
+
+		}
+		else
+		{
+			FCellReference ref;
+			if (SelfProperty->GetCPPType() != "UCell")
+			{
+				if (RefProperty->GetCPPType() == "FCellReference")
+				{
+					ref = *(FCellReference*)Ref;
+				}
+				else if (CastField<FStrProperty>(RefProperty))
+				{
+					ref = { (TCHAR_TO_UTF8(**(FString*)Ref)) };
+				}
+				else if (RefProperty->GetCPPType() == "FIntPoint")
+				{
+					ref = { ((FIntPoint*)Ref)->X, ((FIntPoint*)Ref)->Y };
+				}
+				
+				
+			}
+			 auto&& cell = (SelfProperty->GetCPPType() == "UExcelDocument*") ? (*(UExcelDocument**)Self)->GetCurrentSheet()->_Inner.cell(ref.Row, ref.Col)
+				: ((SelfProperty->GetCPPType() == "USheet*") ? (*(USheet**)Self)->_Inner.cell(ref.Row, ref.Col) : (**(UCell**)Self)._Inner) ;
+			if (CastField<FFloatProperty>(ValProperty))
+			{
+				cell.value() = *(float*)Value;
+			}
+			else if (CastField<FStrProperty>(ValProperty))
+			{
+				cell.value() = std::string(TCHAR_TO_UTF8(**(FString*)Value));
+			}
+			else if (ValProperty->GetCPPType() == "FCellValue")
+			{
+				auto val = *(FCellValue*)Value;
+				cell.value() = OpenXLSX::XLCellValue{ val._Value, (OpenXLSX::XLValueType)val._Type };
+			}
+			else if (CastField<FBoolProperty>(ValProperty))
+			{
+				cell.value() = *(bool*)Value;
+			}
+			else if (CastField<FIntProperty>(ValProperty))
+			{
+				cell.value() = *(int32*)Value;
+			}
+			else if (ValProperty->GetCPPType() == "FDateTime")
+			{
+				auto val = (FDateTime*)Value;
+				std::tm tm;
+				tm.tm_year = val->GetYear() - 1900;
+				tm.tm_mon = val->GetMonth() - 1;
+				tm.tm_mday = val->GetDay();
+				tm.tm_hour = val->GetHour();
+				tm.tm_min = val->GetMinute();
+				tm.tm_sec = val->GetSecond();
+
+				cell.value() = OpenXLSX::XLDateTime(tm);
+			}
+		}
+	}

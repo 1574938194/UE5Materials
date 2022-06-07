@@ -87,27 +87,6 @@ public:
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
          USheet* GetCurrentSheet();
 
-
-	UFUNCTION(BlueprintCallable, CustomThunk, meta = (CustomStructureParam = "Ref,Value", BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
-		void SetCellValue(const int32& Ref, const int32& Value);
-	void Generic_SetCellValue(FProperty* RefProperty, void* Ref, FProperty* ValProperty, void* Value);
-	DECLARE_FUNCTION(execSetCellValue)
-	{
-
-		Stack.StepCompiledIn<FStructProperty>(NULL);
-		FProperty* RefProperty = CastField<FProperty>(Stack.MostRecentProperty);
-		void* RefPtr = Stack.MostRecentPropertyAddress;
-
-		Stack.StepCompiledIn<FStructProperty>(NULL);
-		FProperty* ValProperty = CastField<FProperty>(Stack.MostRecentProperty);
-		void* ValPtr = Stack.MostRecentPropertyAddress;
-
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->Generic_SetCellValue(RefProperty, RefPtr, ValProperty, ValPtr);
-		P_NATIVE_END;
-	}
-
 	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
 	void SetFormula(FCellReference& ref, FString val);
 

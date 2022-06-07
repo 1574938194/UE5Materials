@@ -2,6 +2,7 @@
 
 
 #include "CellReference.h"
+#include <cmath>
 
 FCellReference::FCellReference(FString ref)
 {  
@@ -18,7 +19,16 @@ FCellReference::FCellReference(FString ref)
 		auto numberCount = ref.Len() - letterCount;
 
 		Row = FCString::Atoi(*ref.Mid(letterCount, numberCount));
-		Col = FCString::Atoi(*ref.Mid(0, letterCount));
+
+        auto colStr = ref.Mid(0, letterCount);
+        int32 result = 0;
+
+        for (int32 i = static_cast<int32>(colStr.Len() - 1), j = 0; i >= 0; --i, ++j)
+        {
+            result += static_cast<int32>((colStr[static_cast<uint64_t>(i)] - asciiOffset) * std::pow(alphabetSize, j));
+        }
+         
+        Col = result;
 	}
 	if (!address_is_valid(Row,Col)) {
 		Row = 1;
@@ -26,7 +36,7 @@ FCellReference::FCellReference(FString ref)
 	}
 }
 
-FString FCellReference::ToString() const
+FString FCellReference::to_string() const
 {
     FString _Col; 
     if (Col <= alphabetSize)

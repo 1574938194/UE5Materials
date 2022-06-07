@@ -15,7 +15,17 @@ enum class EXLValueType:uint8 {
 	Boolean UMETA(DisplayName = "Boolean"),
 	Integer UMETA(DisplayName = "Integer"),
 	Float UMETA(DisplayName = "Float"),
-	Error UMETA(DisplayName = "Error"),
+	Error,
+	String UMETA(DisplayName = "String")
+};
+ 
+UENUM(BlueprintType)
+enum class EXLCellType :uint8 {
+	Empty UMETA(DisplayName = "Empty"),
+	Boolean UMETA(DisplayName = "Boolean"),
+	Integer UMETA(DisplayName = "Integer"),
+	Float UMETA(DisplayName = "Float"),
+	Error ,
 	String UMETA(DisplayName = "String"),
 	Formula UMETA(DisplayName = "Formula")
 };

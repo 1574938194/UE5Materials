@@ -57,12 +57,10 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 #include <string>
 #if __cplusplus >= 201703L
 #include <variant>
-template<class ..._Args>
-using variant = std::variant<_Args...>;
+using namespace std;
 #else
 #include "variant.hpp"
-template<class ..._Args>
-using variant = mapbox::util::variant<_Args...>;
+using namespace mapbox::util;
 #endif
 
 // ===== OpenXLSX Includes ===== //
@@ -71,6 +69,7 @@ using variant = mapbox::util::variant<_Args...>;
 #include "XLException.hpp"
 #include "XLXmlParser.hpp"
 
+class UCell;
 // ========== CLASS AND ENUM TYPE DEFINITIONS ========== //
 namespace OpenXLSX
 {
@@ -108,6 +107,9 @@ namespace OpenXLSX
          */
         XLCellValue();
 
+        XLCellValue(const variant<std::string, int32_t, float, bool>& val, XLValueType t)
+            : m_value(val),m_type(t)
+        {}
         /**
          * @brief A templated constructor. Any value convertible to a valid cell value can be used as argument.
          * @tparam T The type of the argument (will be automatically deduced).
@@ -134,7 +136,7 @@ namespace OpenXLSX
             // ===== If the argument is an integral type, set the m_type attribute to Integer.
             else if constexpr (std::is_integral_v<T> && !std::is_same_v<T, bool>) {
                 m_type = XLValueType::Integer;
-                m_value = int64_t(value);
+                m_value = int32_t(value);
             }
 
             // ===== If the argument is a string type (i.e. is constructable from *char),
@@ -153,7 +155,7 @@ namespace OpenXLSX
             // ===== If the argument is an XLDateTime, set the value to the date/time serial number.
             else if constexpr (std::is_same_v<T, XLDateTime>) {
                 m_type = XLValueType::Float;
-                m_value = value.serial();
+                m_value = (float)value.serial();
             }
 
             // ===== If the argument is a floating point type, set the m_type attribute to Float.
@@ -161,7 +163,7 @@ namespace OpenXLSX
             else {
                 static_assert(std::is_floating_point_v<T>, "Invalid argument for constructing XLCellValue object");
                 m_type = XLValueType::Float;
-                m_value = double(value);
+                m_value = float(value);
             }
         }
 
@@ -264,15 +266,15 @@ namespace OpenXLSX
 
                 if constexpr (std::is_integral_v<T> && !std::is_same_v<T, bool>) 
 #if __cplusplus >= 201703L
-                    return static_cast<T>(std::get<int64_t>(m_value));
+                    return static_cast<T>(std::get<int32_t>(m_value));
 #else
-                    return static_cast<T>(mapbox::util::get<int64_t>(m_value));
+                    return static_cast<T>(mapbox::util::get<int32_t>(m_value));
 #endif
                 if constexpr (std::is_floating_point_v<T>) 
 #if __cplusplus >= 201703L
-                    return static_cast<T>(std::get<double>(m_value));
+                    return static_cast<T>(std::get<float>(m_value));
 #else
-                    return static_cast<T>(mapbox::util::get<double>(m_value));
+                    return static_cast<T>(mapbox::util::get<float>(m_value));
 #endif
                 if constexpr (std::is_same_v<std::decay_t<T>, std::string> ||
 #if __cplusplus >=201703L
@@ -289,9 +291,9 @@ namespace OpenXLSX
 
                 if constexpr (std::is_same_v<T, XLDateTime>) 
 #if __cplusplus >= 201703L
-                    return XLDateTime(std::get<double>(m_value));
+                    return XLDateTime(std::get<float>(m_value));
 #else
-                    return XLDateTime(mapbox::util::get<double>(m_value));
+                    return XLDateTime(mapbox::util::get<float>(m_value));
 #endif
             }
 #if __cplusplus >= 201703L
@@ -350,8 +352,10 @@ namespace OpenXLSX
     private:
         //---------- Private Member Variables ---------- //
 
-        variant<std::string, int64_t, double, bool> m_value{ std::string("") };                /**< The value contained in the cell. */
+        variant<std::string, int32_t, float, bool> m_value{ std::string("") };                /**< The value contained in the cell. */
         XLValueType                                      m_type { XLValueType::Empty }; /**< The value type of the cell. */
+
+        friend class ::UCell;
     };
 
     /**
@@ -435,10 +439,10 @@ namespace OpenXLSX
                         setBoolean(value.template get<bool>());
                         break;
                     case XLValueType::Integer:
-                        setInteger(value.template get<int64_t>());
+                        setInteger(value.template get<int32_t>());
                         break;
                     case XLValueType::Float:
-                        setFloat(value.template get<double>());
+                        setFloat(value.template get<float>());
                         break;
                     case XLValueType::String:
                         setString(value.template get<const char*>());
@@ -577,7 +581,7 @@ namespace OpenXLSX
          * @brief Set cell to an integer value.
          * @param numberValue The value to be set.
          */
-        void setInteger(int64_t numberValue);
+        void setInteger(int32_t numberValue);
 
         /**
          * @brief Set the cell to a bool value.
@@ -589,7 +593,7 @@ namespace OpenXLSX
          * @brief Set the cell to a floating point value.
          * @param numberValue The value to be set.
          */
-        void setFloat(double numberValue);
+        void setFloat(float numberValue);
 
         /**
          * @brief Set the cell to a string value.
@@ -695,9 +699,9 @@ namespace OpenXLSX
             case XLValueType::Boolean:
                 return os << value.get<bool>();
             case XLValueType::Integer:
-                return os << value.get<int64_t>();
+                return os << value.get<int32_t>();
             case XLValueType::Float:
-                return os << value.get<double>();
+                return os << value.get<float>();
             case XLValueType::String:
 #if __cplusplus >=201703L
                 return os << value.get<std::string_view>();
@@ -717,9 +721,9 @@ namespace OpenXLSX
             case XLValueType::Boolean:
                 return os << value.get<bool>();
             case XLValueType::Integer:
-                return os << value.get<int64_t>();
+                return os << value.get<int32_t>();
             case XLValueType::Float:
-                return os << value.get<double>();
+                return os << value.get<float>();
             case XLValueType::String:
 #if __cplusplus >=201703L
                 return os << value.get<std::string_view>();
@@ -741,7 +745,7 @@ namespace std
     {
         std::size_t operator()(const OpenXLSX::XLCellValue& value) const noexcept
         {
-            return std::hash<variant<std::string, int64_t, double, bool>> {}(value.m_value);
+            return std::hash<variant<std::string, int32_t, float, bool>> {}(value.m_value);
         }
     };
 }    // namespace std

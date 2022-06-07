@@ -164,66 +164,7 @@ USheet* UExcelDocument::GetCurrentSheet()
 {
 	return _curSheet;
 }
- 
-void UExcelDocument::SetCellValue(const int32& Ref, const int32& Value)
-{
-	check(0)
-}
-void UExcelDocument::Generic_SetCellValue(FProperty* RefProperty, void* Ref, FProperty* ValProperty, void* Value)
-{
-	if (!Ref || !Value || !_curSheet)
-	{
-		return;
-	}
-	FCellReference ref;
-	if (RefProperty->GetCPPType() == "FIntPoint")
-	{
-		ref = { ((FIntPoint*)Ref)->X, ((FIntPoint*)Ref)->Y };
-	}
-	else if (RefProperty->GetCPPType() == "FString")
-	{
-		ref = { (TCHAR_TO_UTF8(**(FString*)Ref)) };
-	}
-	else if (RefProperty->GetCPPType() == "CellRef")
-	{
-		ref = *(FCellReference*)Ref;
-	}
-	else
-	{
-		return;
-	}
-	if (ValProperty->GetCPPType() == "bool")
-	{
-		_curSheet->_Inner.cell(ref.Row,ref.Col).value() = *(bool*)Value;
-	}
-	else if (ValProperty->GetCPPType() == "int32")
-	{
-		_curSheet->_Inner.cell(ref.Row, ref.Col).value() = *(int64*)Value;
-	}
-	else if (ValProperty->GetCPPType() == "float")
-	{
-		_curSheet->_Inner.cell(ref.Row, ref.Col).value() = *(float*)Value;
-	}
-	else if (ValProperty->GetCPPType() == "FString")
-	{
-		_curSheet->_Inner.cell(ref.Row, ref.Col).value() = std::string(TCHAR_TO_UTF8(**(FString*)Value));
-	}
-	else if (ValProperty->GetCPPType() == "FDateTime")
-	{
-		auto val = (FDateTime*)Value;
-		std::tm tm;
-		tm.tm_year = val->GetYear() - 1900;
-		tm.tm_mon = val->GetMonth() - 1;
-		tm.tm_mday = val->GetDay();
-		tm.tm_hour = val->GetHour();
-		tm.tm_min = val->GetMinute();
-		tm.tm_sec = val->GetSecond();
 
-		_curSheet->_Inner.cell(ref.Row, ref.Col).value() = OpenXLSX::XLDateTime(tm);
-	}
-
-}
- 
 void UExcelDocument::SetFormula(FCellReference& ref, FString val)
 {
 	std::string _Str(TCHAR_TO_UTF8(*val));

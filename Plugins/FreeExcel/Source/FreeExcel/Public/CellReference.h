@@ -31,7 +31,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		int32 Col {1};
 	 
-	FString ToString() const;
+	FString to_string() const;
 	 
 	inline static bool address_is_valid(uint32_t row, uint16_t column)  {
 		return !(row < 1 || row >  max_rows || column < 1 || column >  max_cols);

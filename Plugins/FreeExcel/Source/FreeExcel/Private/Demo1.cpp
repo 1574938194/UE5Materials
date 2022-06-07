@@ -1,5 +1,5 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+#pragma optimize("",off)
 
 #include "Demo1.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -47,35 +47,37 @@ void ADemo1::RunDemo()
     auto wks = doc->GetOrCreateSheetWithName(TEXT("Sheet1"));
      
     // Basic Usage
-    wks->Cell({1,1})->Value()->SetFloat(3.1415926);
-    wks->Cell(UFreeExcelFunctionLibrary::MakeCellReferenceWithString("B1"))->Value()->SetInt(42);
-    wks->Cell(UFreeExcelFunctionLibrary::MakeCellReference(1,3))->Value()->SetString(TEXT("Hello FreeExcel"));
-    wks->Cell("D1")->Value()->SetBool(true);
-
-    auto A1 = wks->Cell("A1")->Value()->ToFloat();
-    auto B1 = wks->Cell("B1")->Value()->ToInt();
-    auto C1 = wks->Cell("C1")->Value()->ToString();
-    auto D1 = wks->Cell("D1")->Value()->ToBool();
+    wks->Cell({1,1})->SetFloat(3.1415926);
+    wks->Cell(UFreeExcelFunctionLibrary::MakeCellReferenceWithString("B1"))->SetInt(42);
+    wks->Cell(UFreeExcelFunctionLibrary::MakeCellReference(1,3))->SetString(TEXT("Hello FreeExcel"));
+    wks->Cell("D1")->SetBool(true);
+    
+    auto A1 = wks->Cell("A1")->ToFloat();
+    auto B1 = wks->Cell("B1")->ToInt();
+    auto C1 = wks->Cell("C1")->ToString();
+    auto D1 = wks->Cell("D1")->ToBool();
  
     UKismetSystemLibrary::PrintString(this,
         FString::SanitizeFloat(A1) + "," +
         FString::FromInt(B1) + "," +
-        C1 + "," +
+        C1 + "," + 
         FString(D1 ? TEXT("true") : TEXT("flase"))
     );
-
     
+    std::string str = wks->_Inner.cell("A2").formula();
+
     wks->Cell("A2")->SetCellValue(wks->Cell("C1")->Value());
     UKismetSystemLibrary::PrintString(this, "," + wks->Cell("A2")->ToString());
 
     // DateTime Value
-    wks->Cell(TEXT("B2"))->Value()->SetDateTime(FDateTime::Now());
-    UKismetSystemLibrary::PrintString(this, wks->Cell("B2")->Value()->ToDateTime().ToString(TEXT("%Y-%m-%d-%H-%M-%S")));
+    wks->Cell(TEXT("B2"))->SetDateTime(FDateTime::Now());
+    UKismetSystemLibrary::PrintString(this, wks->Cell("B2")->ToDateTime().ToString(TEXT("%Y-%m-%d-%H-%M-%S")));
 
     // Formula Usage
     wks->Cell("C2")->SetFormula( "SQRT(B1)");
 
     // Sheet handling 
+    doc->GetOrCreateSheetWithName("Sheet2");
     doc->CloneSheet("Sheet1", "Sheet3");
      
     doc->DeleteSheet("Sheet2");
@@ -83,7 +85,7 @@ void ADemo1::RunDemo()
     doc->SetSheetIndex("Sheet3",1);
     
     //Unicode
-    wks->Cell(TEXT("D2"))->Value()->SetString( TEXT("こんにちは世界"));
+    wks->Cell(TEXT("D2"))->SetString( TEXT("こんにちは世界"));
 
  
     // Ranges and Iterators 

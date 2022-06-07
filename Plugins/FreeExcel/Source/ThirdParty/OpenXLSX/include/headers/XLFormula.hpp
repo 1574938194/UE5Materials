@@ -56,12 +56,10 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 #include <string>
 #if __cplusplus >=201703L
 #include <variant>
-template<class ..._Args>
-using variant = std::variant<_Args...>;
+using namespace std;
 #else
 #include "variant.hpp"
-template<class ..._Args>
-using variant = mapbox::util::variant<_Args...>;
+using namespace mapbox::util;
 #endif
 
 // ===== OpenXLSX Includes ===== //

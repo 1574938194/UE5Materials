@@ -56,7 +56,7 @@ public:
 
     UPROPERTY(EditAnywhere)
     FCellReference          Current;
-private:
+protected:
     std::unique_ptr<OpenXLSX::XMLNode> dataNode;             /**< */
     FCellReference          min;              /**< The cell reference of the first cell in the range */
     FCellReference          max;          /**< The cell reference of the last cell in the range */

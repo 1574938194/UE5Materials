@@ -1,5 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#pragma optimize("",off)
+//#pragma optimize("",off)
 
 #include "MyActor.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -30,15 +30,12 @@ void AMyActor::BeginPlay()
  
 }
 void AMyActor::Test()
-{
-
-
+{ 
 	FMyStruct stru;
 	stru.IntValue = 3;
 	stru.StrValue = FString(TEXT("Str1"));
 	stru.StrValue2 = FString(TEXT("Str2")),
-		stru.VecValue = FVector(1.f, 2.f, 3.f);
-
+	stru.VecValue = FVector(1.f, 2.f, 3.f);
 	stru.SafeObjectPointer = this;
 
 	for (TFieldIterator<FProperty> it(stru.StaticStruct()); it; ++it)

@@ -22,9 +22,8 @@ void USheet::SetName(FString sheetName)
     
 UCell* USheet::Cell(FCellReference ref)const
 { 
-	auto ret =  NewObject<UCell>();
-	ret->_Inner = std::move(_Inner.cell(ref.Row,ref.Col));
-
+	auto ret =  NewObject<UCell>();  
+	ret->_Inner = _Inner.cell(ref.Row, ref.Col);
 	return ret;
 }
   
@@ -34,7 +33,13 @@ FCellReference USheet::LastCell()const
 
 	return { (decltype(FCellReference::Row))last.row(),(decltype(FCellReference::Col))last.column()} ;
 }
- 
+
+bool USheet::HasCell(FCellReference ref)const
+{
+	return _Inner.cell(ref.Row, ref.Col).value().type() == OpenXLSX::XLValueType::Empty;
+}
+
+
 void USheet::SheetSize(int32& RowSize,int32& ColSize) const
 {
 	RowSize = _Inner.rowCount();

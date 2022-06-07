@@ -39,6 +39,7 @@ class FREEEXCELEDITOR_API UK2Node_SetCellValue : public  UK2Node
 	virtual void NotifyPinConnectionListChanged(UEdGraphPin* Pin) override;
 	//~ End UK2Node Interface
  
+	 virtual bool DoesInputWildcardPinAcceptArray(const UEdGraphPin* Pin) const { return false; }
 
 	/** Get the then output pin */
 	UEdGraphPin* GetThenPin()const { return Pins[1]; }
@@ -52,11 +53,13 @@ class FREEEXCELEDITOR_API UK2Node_SetCellValue : public  UK2Node
 	TArray<FString> GetPropertyNames();
 
 private:
-	/** Propagates Value pin type to the between the input and output pins */
-	void PropagateValuePinType();
+	void PropagateSelfPinType(UEdGraphPin* Pin);
+	void PropagateRefPinType(UEdGraphPin* Pin);
+	void PropagateValuePinType(UEdGraphPin* Pin);
+
+	void SetPinToolTip(UEdGraphPin& MutatablePin, const FText& PinDescription) const;
 
 	/** Tooltip text for this node. */
-	FText NodeTooltip;
-
+	FText NodeTooltip; 
 	 
 };

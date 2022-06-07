@@ -41,7 +41,7 @@ CellIterator& CellIterator::operator++()
             if (!node || (xRef.row() != ref.Row || xRef.column() != ref.Col))
             {
                 node = cell.m_cellNode->parent().insert_child_after("c", *cell.m_cellNode);
-                node.append_attribute("r").set_value(std::string(TCHAR_TO_UTF8(*ref.ToString())).c_str());
+                node.append_attribute("r").set_value(std::string(TCHAR_TO_UTF8(*ref.to_string())).c_str());
             }
             cell = OpenXLSX::XLCell(node, shared_string);
         }
