@@ -203,7 +203,7 @@ protected:
     variant<std::string, int32, float, bool> _Value{std::string( "") };                /**< The value contained in the cell. */
     EXLValueType                                      _Type{ EXLValueType::Empty }; /**< The value type of the cell. */
 	friend class UCell;
-    friend class UFreeExcelFunctionLibrary;
+    friend class UFreeExcelLibrary;
 };
 
  

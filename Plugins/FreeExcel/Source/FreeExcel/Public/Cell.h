@@ -81,8 +81,8 @@ protected:
 	OpenXLSX::XLCell _Inner;       
 
     friend class USheet;
-    friend class CellIterator;
+    friend struct FCellIterator;
     friend class ADemo1;
 	friend class UCell;
-	friend class UFreeExcelFunctionLibrary;
+	friend class UFreeExcelLibrary;
 };

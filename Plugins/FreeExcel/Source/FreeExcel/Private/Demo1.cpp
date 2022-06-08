@@ -11,7 +11,7 @@
 #include <random>
 #include <algorithm>
 #include <numeric>
-#include "FreeExcelFunctionLibrary.h"
+#include "FreeExcelLibrary.h"
 #include "CellValue.h"
 
 using namespace std;
@@ -45,25 +45,25 @@ void ADemo1::RunDemo()
     auto doc = NewObject<UExcelDocument>();
     doc->Create(TEXT("D:\\proj\\ueTest\\Demo01.xlsx"));
     auto wks = doc->GetOrCreateSheetWithName(TEXT("Sheet1"));
-     
+
     // Basic Usage
-    wks->Cell({1,1})->SetFloat(3.1415926);
-    wks->Cell(UFreeExcelFunctionLibrary::MakeCellReferenceWithString("B1"))->SetInt(42);
-    wks->Cell(UFreeExcelFunctionLibrary::MakeCellReference(1,3))->SetString(TEXT("Hello FreeExcel"));
+    wks->Cell({ 1,1 })->SetFloat(3.1415926);
+    wks->Cell(UFreeExcelLibrary::MakeCellReferenceWithString("B1"))->SetInt(42);
+    wks->Cell(UFreeExcelLibrary::MakeCellReference(1, 3))->SetString(TEXT("Hello FreeExcel"));
     wks->Cell("D1")->SetBool(true);
-    
+
     auto A1 = wks->Cell("A1")->ToFloat();
     auto B1 = wks->Cell("B1")->ToInt();
     auto C1 = wks->Cell("C1")->ToString();
     auto D1 = wks->Cell("D1")->ToBool();
- 
+
     UKismetSystemLibrary::PrintString(this,
         FString::SanitizeFloat(A1) + "," +
         FString::FromInt(B1) + "," +
-        C1 + "," + 
+        C1 + "," +
         FString(D1 ? TEXT("true") : TEXT("flase"))
     );
-    
+
     std::string str = wks->_Inner.cell("A2").formula();
 
     wks->Cell("A2")->SetCellValue(wks->Cell("C1")->Value());
@@ -72,7 +72,7 @@ void ADemo1::RunDemo()
     // DateTime Value
     wks->Cell(TEXT("B2"))->SetDateTime(FDateTime::Now());
     UKismetSystemLibrary::PrintString(this, wks->Cell("B2")->ToDateTime().ToString(TEXT("%Y-%m-%d-%H-%M-%S")));
-
+ 
     // Formula Usage
     wks->Cell("C2")->SetFormula( "SQRT(B1)");
 
@@ -82,39 +82,38 @@ void ADemo1::RunDemo()
      
     doc->DeleteSheet("Sheet2");
     doc->SetSheetIndex("Sheet1", 2);
-    doc->SetSheetIndex("Sheet3",1);
-    
+    doc->SetSheetIndex("Sheet3",1); 
     //Unicode
     wks->Cell(TEXT("D2"))->SetString( TEXT("こんにちは世界"));
 
- 
+    // Row Handling
+    auto values = wks->GetRowData(1);
+    for (auto it : values)
+    {
+        switch (it.type())  
+        {
+        case EXLValueType::Boolean: UKismetSystemLibrary::PrintString(this, FString((bool)it?TEXT("true"):TEXT("false"))); break;
+        case EXLValueType::Integer: UKismetSystemLibrary::PrintString(this, FString::FromInt((int32)it)); break;
+        case EXLValueType::Float: UKismetSystemLibrary::PrintString(this, FString::SanitizeFloat((float)it)); break;
+        case EXLValueType::String: UKismetSystemLibrary::PrintString(this, (FString)it); break;
+        default:
+            break;
+        }
+    }
+
     // Ranges and Iterators 
     std::random_device                 rand_dev;
     std::mt19937                       generator(rand_dev());
     std::uniform_int_distribution<int> distr(0, 99);
 
-    //auto rng = wks->Range(UXLCellReference::MakeCellReference("A3"), UXLCellReference::MakeCellReference2(100, 8));
-
-    //// pre cell handling
-    //for (auto begin = rng->Begin(); begin!= rng->End(); begin->Forward())
+//    auto range = UFreeExcelLibrary::MakeCellRangeWithString("A3:D4");
+ 
+    //for (auto it = range.begin() ; it!= range.end() ; ++it)
     //{
-    //    auto it = begin->Get();
-    //    it->Value()->SetInteger(  distr(generator));
+    //    auto ref = it.Current;
+
+    //    int i = 3;
     //}
-    // OR row handling (using containers
-   /* std::vector<XLCellValue> writeValues;
-    for (auto& row : wks.rows(MAX_ROWS)) {
-        writeValues.clear();
-        for (int i = 0; i < 8; ++i) writeValues.emplace_back(distr(generator));
-
-        row.values() = writeValues;
-    }*/
-    // using iterators
-   /* for (auto& row : wks.rows(MAX_ROWS)) {
-        for (auto cell : row.cells(8)) cell.value() = distr(generator);
-
-    }*/
-      
     
     // save and close doc
     doc->Save();

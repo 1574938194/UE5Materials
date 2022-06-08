@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "K2Node_SetCellValue.h"
+#include "K2Node_GetCellValue.h"
 #include "EdGraphSchema_K2.h"
 #include "BlueprintActionDatabaseRegistrar.h"
 #include "BlueprintNodeSpawner.h"
@@ -12,17 +12,25 @@
 #include "K2Node_Self.h"
 #include "ExcelDocument.h"
  
-#define LOCTEXT_NAMESPACE "K2Node_SetCellValue"
+#define LOCTEXT_NAMESPACE "K2Node_GetCellValue"
 
- 
-
-UK2Node_SetCellValue::UK2Node_SetCellValue(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+namespace ArraySortHelper
 {
-	NodeTooltip = LOCTEXT("SetCellValue_NodeTooltip", "Set cell value from given context");
+	const FName TargetArrayPinName = "TargetArray";
+	const FName PropertyNamePinName = "PropertyName";
+	const FName AscendingPinName = "bAscending";
 }
 
-void UK2Node_SetCellValue::SetPinToolTip(UEdGraphPin& MutatablePin, const FText& PinDescription) const
+
+
+
+UK2Node_GetCellValue::UK2Node_GetCellValue(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	NodeTooltip = LOCTEXT("GetCellValue_NodeTooltip", "Get cell value from given context");
+}
+
+void UK2Node_GetCellValue::SetPinToolTip(UEdGraphPin& MutatablePin, const FText& PinDescription) const
 {
 	MutatablePin.PinToolTip = UEdGraphSchema_K2::TypeToText(MutatablePin.PinType).ToString();
 
@@ -36,7 +44,7 @@ void UK2Node_SetCellValue::SetPinToolTip(UEdGraphPin& MutatablePin, const FText&
 	MutatablePin.PinToolTip += FString(TEXT("\n")) + PinDescription.ToString();
 }
 
-void UK2Node_SetCellValue::AllocateDefaultPins()
+void UK2Node_GetCellValue::AllocateDefaultPins()
 {
 	  
 
@@ -49,13 +57,13 @@ void UK2Node_SetCellValue::AllocateDefaultPins()
 	
 	 
 	auto SelfPin = CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Wildcard, UEdGraphSchema_K2::PN_Self);
-	SetPinToolTip(*SelfPin, LOCTEXT("SetCellValue_SelfPinDesc", "[ExcelDocument,Sheet,Cell,CellValue] In"));
+	SetPinToolTip(*SelfPin, LOCTEXT("GetCellValue_SelfPinDesc", "[ExcelDocument,Sheet,Cell,CellValue] In"));
 
 	auto RefPin = CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Wildcard,  "Ref");
-	SetPinToolTip(*RefPin, LOCTEXT("SetCellValue_RefPinDesc", "[IntPoint,String,CellReference] In"));
+	SetPinToolTip(*RefPin, LOCTEXT("GetCellValue_RefPinDesc", "[IntPoint,String,CellReference] In"));
 
-	auto ValPin = CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Wildcard,  "Value");
-	SetPinToolTip(*ValPin, LOCTEXT("SetCellValue_ValuePinDesc", "[Integer,Boolean,Float,String,DateTime,CellValue] In"));
+	auto ValPin = CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Wildcard,  "ReturnValue");
+	SetPinToolTip(*ValPin, LOCTEXT("GetCellValue_ReturnValuePinDesc", "[Integer,Boolean,Float,String,DateTime,CellValue] Out"));
 
 	Super::AllocateDefaultPins();
 }
@@ -64,7 +72,7 @@ void UK2Node_SetCellValue::AllocateDefaultPins()
 
  
 
-void UK2Node_SetCellValue::GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const
+void UK2Node_GetCellValue::GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const
 {
 	// actions get registered under specific object-keys; the idea is that 
 	// actions might have to be updated (or deleted) if their object-key is  
@@ -84,32 +92,32 @@ void UK2Node_SetCellValue::GetMenuActions(FBlueprintActionDatabaseRegistrar& Act
 	}
 }
 
-FText UK2Node_SetCellValue::GetMenuCategory() const
+FText UK2Node_GetCellValue::GetMenuCategory() const
 {
-	return LOCTEXT("SetCellValue_GetMenuCategory", "FreeExcel");
+	return LOCTEXT("GetCellValue_GetMenuCategory", "FreeExcel");
 }
 
 
-void UK2Node_SetCellValue::PinDefaultValueChanged(UEdGraphPin* ChangedPin)
+void UK2Node_GetCellValue::PinDefaultValueChanged(UEdGraphPin* ChangedPin)
 {
 	if (ChangedPin == FindPin(TEXT("Self"))) PropagateSelfPinType(ChangedPin);
 	else if (ChangedPin == FindPin(TEXT("Ref"))) PropagateRefPinType(ChangedPin);
-	else if (ChangedPin == FindPin(TEXT("Value"))) PropagateValuePinType(ChangedPin);
+	else if (ChangedPin == FindPin(TEXT("ReturnValue"))) PropagateReturnValuePinType(ChangedPin);
 }
  
 
-FText UK2Node_SetCellValue::GetTooltipText() const
+FText UK2Node_GetCellValue::GetTooltipText() const
 {
 	return NodeTooltip;
 }
 
 
-FText UK2Node_SetCellValue::GetNodeTitle(ENodeTitleType::Type TitleType) const
+FText UK2Node_GetCellValue::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return LOCTEXT("SetCellValue_NodeTitle", "Set Cell Value");
+	return LOCTEXT("GetCellValue_NodeTitle", "Get Cell Value");
 }
 
-void UK2Node_SetCellValue::ExpandNode(class FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
+void UK2Node_GetCellValue::ExpandNode(class FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph)
 {
 	Super::ExpandNode(CompilerContext, SourceGraph);
 
@@ -118,7 +126,7 @@ void UK2Node_SetCellValue::ExpandNode(class FKismetCompilerContext& CompilerCont
 
 	UK2Node_CallFunction* CallFuncNode = CompilerContext.SpawnIntermediateNode<UK2Node_CallFunction>(this, SourceGraph);
 	//CallFuncNode->SetFromFunction(Function);
-	const FName DstFunctionName = GET_FUNCTION_NAME_CHECKED(UFreeExcelLibrary, SetCellValue);
+	const FName DstFunctionName = GET_FUNCTION_NAME_CHECKED(UFreeExcelLibrary, GetCellValue);
 	CallFuncNode->FunctionReference.SetExternalMember(DstFunctionName, UFreeExcelLibrary::StaticClass());
 	CallFuncNode->AllocateDefaultPins();
 	UEdGraphPin* CallFuncSelfPin = Schema->FindSelfPin(*CallFuncNode, EGPD_Input);
@@ -185,22 +193,22 @@ void UK2Node_SetCellValue::ExpandNode(class FKismetCompilerContext& CompilerCont
   
 }
 
-FSlateIcon UK2Node_SetCellValue::GetIconAndTint(FLinearColor& OutColor) const
+FSlateIcon UK2Node_GetCellValue::GetIconAndTint(FLinearColor& OutColor) const
 {
 	OutColor = GetNodeTitleColor();
 	static FSlateIcon Icon("EditorStyle", "Kismet.AllClasses.FunctionIcon");
 	return Icon;
 }
 
-void UK2Node_SetCellValue::PostReconstructNode()
+void UK2Node_GetCellValue::PostReconstructNode()
 {
 	Super::PostReconstructNode();
 	PropagateSelfPinType(FindPin(TEXT("Self")));
 	PropagateRefPinType(FindPin(TEXT("Ref")));
-	PropagateValuePinType(FindPin(TEXT("Value")));
+	PropagateReturnValuePinType(FindPin(TEXT("ReturnValue")));
 }
 
-void UK2Node_SetCellValue::EarlyValidation(class FCompilerResultsLog& MessageLog) const
+void UK2Node_GetCellValue::EarlyValidation(class FCompilerResultsLog& MessageLog) const
 {
 	Super::EarlyValidation(MessageLog);
 
@@ -239,7 +247,7 @@ void UK2Node_SetCellValue::EarlyValidation(class FCompilerResultsLog& MessageLog
 }
 
  
-void UK2Node_SetCellValue::NotifyPinConnectionListChanged(UEdGraphPin* Pin)
+void UK2Node_GetCellValue::NotifyPinConnectionListChanged(UEdGraphPin* Pin)
 {
 	Super::NotifyPinConnectionListChanged(Pin);
  
@@ -250,10 +258,10 @@ void UK2Node_SetCellValue::NotifyPinConnectionListChanged(UEdGraphPin* Pin)
 		ReconstructNode();
 	}
 	else if (Pin == FindPin(TEXT("Ref"))) PropagateRefPinType(Pin);
-	else if (Pin == FindPin(TEXT("Value"))) PropagateValuePinType(Pin);
+	else if (Pin == FindPin(TEXT("ReturnValue"))) PropagateReturnValuePinType(Pin);
 } 
 
-void UK2Node_SetCellValue::PropagateSelfPinType(UEdGraphPin* Pin)
+void UK2Node_GetCellValue::PropagateSelfPinType(UEdGraphPin* Pin)
 { 
 	if (Pin)
 	{ 
@@ -313,7 +321,7 @@ void UK2Node_SetCellValue::PropagateSelfPinType(UEdGraphPin* Pin)
 		Pin->PinType.PinCategory = UEdGraphSchema_K2::PC_Wildcard;
 	}
 }
-void UK2Node_SetCellValue::PropagateRefPinType(UEdGraphPin* Pin)
+void UK2Node_GetCellValue::PropagateRefPinType(UEdGraphPin* Pin)
 {
 	if (Pin)
 	{
@@ -348,7 +356,7 @@ void UK2Node_SetCellValue::PropagateRefPinType(UEdGraphPin* Pin)
 		Pin->PinType.PinCategory = UEdGraphSchema_K2::PC_Wildcard;
 	}
 }
-void UK2Node_SetCellValue::PropagateValuePinType(UEdGraphPin* Pin)
+void UK2Node_GetCellValue::PropagateReturnValuePinType(UEdGraphPin* Pin)
 {
 	  
 	if (Pin) 

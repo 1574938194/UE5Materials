@@ -4,7 +4,6 @@
 #include "Core.h"
 #include "Modules/ModuleManager.h"
 #include "Interfaces/IPluginManager.h"
-#include "FreeExcelBPPinFactory.h"
 #include "Templates/SharedPointer.h"
 #include "EdGraphUtilities.h"
  
@@ -14,8 +13,8 @@
 
 void FFreeExcelEditorModule::StartupModule()
 {
-	TSharedPtr<FFreeExcelBPPinFactory> BlueprintGraphPanelPinFactory = MakeShareable(new FFreeExcelBPPinFactory());
-	FEdGraphUtilities::RegisterVisualPinFactory(BlueprintGraphPanelPinFactory);
+	//TSharedPtr<FFreeExcelBPPinFactory> BlueprintGraphPanelPinFactory = MakeShareable(new FFreeExcelBPPinFactory());
+	//FEdGraphUtilities::RegisterVisualPinFactory(BlueprintGraphPanelPinFactory);
 }
 
 void FFreeExcelEditorModule::ShutdownModule()

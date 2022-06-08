@@ -40,12 +40,7 @@ class FREEEXCELEDITOR_API UK2Node_SetCellValue : public  UK2Node
 	//~ End UK2Node Interface
  
 	 virtual bool DoesInputWildcardPinAcceptArray(const UEdGraphPin* Pin) const { return false; }
-
-	/** Get the then output pin */
-	UEdGraphPin* GetThenPin()const { return Pins[1]; }
-
- 
-
+  
 	/** Helper function to set default value of PropertyNamePin */
 	void SetDefaultValueOfPropertyNamePin();
 

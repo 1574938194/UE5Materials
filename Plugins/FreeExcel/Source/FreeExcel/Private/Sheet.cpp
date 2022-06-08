@@ -2,8 +2,8 @@
 
 
 #include "Sheet.h"
-
-  
+#include "OpenXLSX/include/headers/XLCellValue.hpp"
+ 
  
 FString USheet::Name() const
 {
@@ -46,8 +46,19 @@ void USheet::SheetSize(int32& RowSize,int32& ColSize) const
 	ColSize=	_Inner.columnCount();
 }
   
-int32 USheet::GetRowCellCount(int32 rowNo)const
+int32 USheet::GetRowCellCount(int32 row)const
 {
-	return _Inner.row(rowNo).cellCount();
+	return _Inner.row(row).cellCount();
 }
- 
+  
+TArray<FCellValue> USheet::GetRowData(int32 row)const
+{
+	TArray<FCellValue> ret;
+	std::vector<OpenXLSX::XLCellValue> ls = _Inner.row(row).values();
+	ret.Reserve(ls.size());
+	for (auto& it : ls)
+	{ 
+		ret.Emplace(FCellValue(it.m_value, (EXLValueType)it.m_type));
+	}
+	return ret;
+}

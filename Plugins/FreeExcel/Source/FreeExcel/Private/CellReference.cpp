@@ -3,7 +3,7 @@
 
 #include "CellReference.h"
 #include <cmath>
-
+#pragma optimize("",off)
 FCellReference::FCellReference(FString ref)
 {  
 	if (!ref.IsEmpty())

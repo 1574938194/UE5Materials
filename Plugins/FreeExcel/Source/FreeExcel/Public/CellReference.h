@@ -7,8 +7,8 @@
 #include "OpenXLSX/include/headers/XLCellReference.hpp"
 #include "CellReference.generated.h"
 
-class UXLDocument;
-class UFreeExcelFunctionLibrary;
+ 
+class UFreeExcelLibrary;
 /**
  * 
  */
@@ -18,6 +18,7 @@ struct FREEEXCEL_API FCellReference
 	GENERATED_BODY()
 public:
 	FCellReference() {}
+	FCellReference(const FCellReference&) = default;
 	FCellReference(int32 r, int32 c) :Row(r),Col(c){ }
 	FCellReference(FString ref);
 	FCellReference(const std::string& ref) :FCellReference(FString(ref.c_str())){}
@@ -53,7 +54,5 @@ protected:
 
 
 	friend class USheet;
-	friend class UXLCell;
-	friend class UXLDocument;
-	friend class UFreeExcelFunctionLibrary;
+	friend class UFreeExcelLibrary;
 };

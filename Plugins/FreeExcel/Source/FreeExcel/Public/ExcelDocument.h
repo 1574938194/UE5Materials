@@ -87,47 +87,7 @@ public:
     UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
          USheet* GetCurrentSheet();
 
-	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
-	void SetFormula(FCellReference& ref, FString val);
 
-	UFUNCTION(BlueprintPure, Category = "FreeExcel")
-	bool HasFormula(FCellReference& ref) const;
-	
-	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
-		void SetBool(FCellReference& ref,bool val);
-
-	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
-		void SetInt(FCellReference& ref, int32 val);
-
-	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
-		void SetString(FCellReference& ref, FString val);
-
-	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
-		void SetDateTime(FCellReference& ref, FDateTime val);
-
-	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
-		void SetFloat(FCellReference& ref, float val);
-
-	UFUNCTION(BlueprintPure, Category = "FreeExcel")
-		bool ToBool(FCellReference& ref )const;
-
-	UFUNCTION(BlueprintPure, Category = "FreeExcel")
-		int32 ToInt(FCellReference& ref )const;
-
-	UFUNCTION(BlueprintPure, Category = "FreeExcel")
-		float ToFloat(FCellReference& ref)const;
-
-	UFUNCTION(BlueprintPure, Category = "FreeExcel")
-		FString ToString(FCellReference& ref )const;
-
-	UFUNCTION(BlueprintPure, Category = "FreeExcel")
-		FDateTime ToDateTime(FCellReference& ref )const;
-
-	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
-		void Clear(FCellReference& ref );
-
-	UFUNCTION(BlueprintPure, Category = "FreeExcel")
-		EXLValueType Type(FCellReference& rer)const;
 	 
 protected:
 	TUniquePtr<OpenXLSX::XLDocument> _Inner; 

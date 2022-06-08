@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#pragma optimize("",off)
 
 #include "Cell.h"
 #include "CellValue.h"
- 
+#pragma optimize("",off)
+
 FCellReference UCell::GetReference()const
 { 
 	auto ref = _Inner.cellReference();
@@ -57,7 +57,7 @@ void UCell::SetFormula(FString formula)
 }
  
 bool UCell::HasValue() const
-{
+{ 
 	return _Inner.value().type() == OpenXLSX::XLValueType::Empty;
 }
 

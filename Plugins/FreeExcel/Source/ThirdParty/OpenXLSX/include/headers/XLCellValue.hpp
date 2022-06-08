@@ -70,6 +70,8 @@ using namespace mapbox::util;
 #include "XLXmlParser.hpp"
 
 class UCell;
+class USheet;
+class UFreeExcelLibrary;
 // ========== CLASS AND ENUM TYPE DEFINITIONS ========== //
 namespace OpenXLSX
 {
@@ -356,6 +358,8 @@ namespace OpenXLSX
         XLValueType                                      m_type { XLValueType::Empty }; /**< The value type of the cell. */
 
         friend class ::UCell;
+        friend class ::USheet;
+        friend class ::UFreeExcelLibrary;
     };
 
     /**

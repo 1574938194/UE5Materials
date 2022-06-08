@@ -7,68 +7,10 @@
 #include "OpenXLSX/include/headers/XLCellRange.hpp"
 #include "CellReference.h"
 #include "Cell.h"
+#include "CellIterator.h"
 #include "CellRange.generated.h"
- 
-struct FCellRange;
-
-class FREEEXCEL_API CellIterator
-{
-public:
-    using iterator_category = std::forward_iterator_tag;
-    using value_type = UCell;
-    using difference_type = int64_t;
-    using pointer = UCell*;
-    using reference = UCell&;
   
-    CellIterator() = default;
-    CellIterator(const CellIterator& right)
-    {
-        if (&right != this) {
-            *dataNode = *right.dataNode;
-            min = right.min;
-            max = right.max;
-            cell = right.cell;
-            Current = right.Current;
-            shared_string = right.shared_string;
-        }
-         
-    }
-
-    CellIterator& operator++();
-     
-    CellIterator operator++(int);    // NOLINT
-     
-    reference operator*();
-     
-    pointer operator->(); 
-
-    bool operator==(const CellIterator& right)const
-    {
-        if (dataNode) return cell == right.cell;
-        return Current == right.Current;
-    }
-
-    bool operator!=(const CellIterator& right) const
-    {
-        if (dataNode) return cell != right.cell;
-        return Current != right.Current;
-    }
-
-    UPROPERTY(EditAnywhere)
-    FCellReference          Current;
-protected:
-    std::unique_ptr<OpenXLSX::XMLNode> dataNode;             /**< */
-    FCellReference          min;              /**< The cell reference of the first cell in the range */
-    FCellReference          max;          /**< The cell reference of the last cell in the range */
-    OpenXLSX::XLCell         cell;          /**< */
-    OpenXLSX::XLSharedStrings  shared_string;        /**< */
-    bool       reached{ false }; /**< */
-
-    friend struct FCellRange;
-};
-
- 
-
+class UFreeExcelLibrary;
 /**
  * 
  */
@@ -79,17 +21,32 @@ struct FREEEXCEL_API FCellRange
 public: 
     FCellRange() = default;
     FCellRange(const FCellRange& right)
+        :Min(right.Min),Max(right.Max)
     { 
-            *dataNode = *right.dataNode;
+        if (right.dataNode)
+        { 
+            dataNode = std::make_unique<OpenXLSX::XMLNode>( *right.dataNode);
             sharedStrings = right.sharedStrings;
-        
+        }
     }
     FCellRange& operator=(const FCellRange& right)
     {
         if (&right != this)
         {
-            *dataNode = *right.dataNode; 
-            sharedStrings = right.sharedStrings;
+            if (right.dataNode)
+            {
+                if (dataNode)
+                {
+                    *dataNode = *right.dataNode;
+                }
+                else
+                {
+                    dataNode = std::make_unique<OpenXLSX::XMLNode>(*right.dataNode);
+                }
+                sharedStrings = right.sharedStrings;
+            }
+            Min = right.Min;
+            Max = right.Max;
         }
         return *this;
     }
@@ -104,9 +61,9 @@ public:
         return Max.Col + 1 - Min.Col;
     }
 
-    CellIterator begin() const;
+    FCellIterator begin() const;
 
-    CellIterator end() const;
+    FCellIterator end() const;
 
     /**< The cell reference of the first cell in the range */
     UPROPERTY(EditAnywhere)
@@ -121,6 +78,6 @@ protected:
     OpenXLSX::XLSharedStrings          sharedStrings;
     
     friend class USheet; 
-    friend class UCellIterator;
-    friend class UFreeExcelFunctionLibrary;
+    friend struct FCellIterator;
+    friend class UFreeExcelLibrary;
 };
