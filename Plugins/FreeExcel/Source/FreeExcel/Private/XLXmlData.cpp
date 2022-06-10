@@ -43,125 +43,109 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 
  */
 
-#ifndef OPENXLSX_XLZIPARCHIVE_HPP
-#define OPENXLSX_XLZIPARCHIVE_HPP
-
-#pragma warning(push)
-#pragma warning(disable : 4251)
-#pragma warning(disable : 4275)
+// ===== External Includes ===== //
+#include <pugixml.hpp>
 
 // ===== OpenXLSX Includes ===== //
-#include "OpenXLSX-Exports.hpp"
+#include "XLDocument.hpp"
+#include "XLXmlData.hpp"
 
-namespace Zippy
+using namespace OpenXLSX;
+
+/**
+ * @details
+ */
+XLXmlData::XLXmlData(OpenXLSX::XLDocument* parentDoc, const std::string& xmlPath, const std::string& xmlId, OpenXLSX::XLContentType xmlType)
+    : m_parentDoc(parentDoc),
+      m_xmlPath(xmlPath),
+      m_xmlID(xmlId),
+      m_xmlType(xmlType),
+      m_xmlDoc(std::make_unique<XMLDocument>())
 {
-    class ZipArchive;
-}    // namespace Zippy
+    m_xmlDoc->reset();
+}
 
-namespace OpenXLSX
+/**
+ * @details
+ */
+XLXmlData::~XLXmlData() = default;
+
+/**
+ * @details
+ */
+void XLXmlData::setRawData(const std::string& data)
 {
-    /**
-     * @brief
-     */
-    class OPENXLSX_EXPORT XLZipArchive
-    {
-    public:
-        /**
-         * @brief
-         */
-        XLZipArchive();
+    m_xmlDoc->load_string(data.c_str(), pugi::parse_default | pugi::parse_ws_pcdata);
+}
 
-        /**
-         * @brief
-         * @param other
-         */
-        XLZipArchive(const XLZipArchive& other) = default;
+/**
+ * @details
+ */
+std::string XLXmlData::getRawData() const
+{
+    std::ostringstream ostr;
+    getXmlDocument()->save(ostr, "", pugi::format_raw);
+    return ostr.str();
+}
 
-        /**
-         * @brief
-         * @param other
-         */
-        XLZipArchive(XLZipArchive&& other) = default;
+/**
+ * @details
+ */
+XLDocument* XLXmlData::getParentDoc()
+{
+    return m_parentDoc;
+}
 
-        /**
-         * @brief
-         */
-        ~XLZipArchive();
+/**
+ * @details
+ */
+const XLDocument* XLXmlData::getParentDoc() const
+{
+    return m_parentDoc;
+}
 
-        /**
-         * @brief
-         * @param other
-         * @return
-         */
-        XLZipArchive& operator=(const XLZipArchive& other) = default;
+/**
+ * @details
+ */
+std::string XLXmlData::getXmlPath() const
+{
+    return m_xmlPath;
+}
 
-        /**
-         * @brief
-         * @param other
-         * @return
-         */
-        XLZipArchive& operator=(XLZipArchive&& other) = default;
+/**
+ * @details
+ */
+std::string XLXmlData::getXmlID() const
+{
+    return m_xmlID;
+}
 
-        /**
-         * @brief
-         * @return
-         */
-        explicit operator bool() const;
+/**
+ * @details
+ */
+XLContentType XLXmlData::getXmlType() const
+{
+    return m_xmlType;
+}
 
-        /**
-         * @brief
-         * @return
-         */
-        bool isOpen();
+/**
+ * @details
+ */
+XMLDocument* XLXmlData::getXmlDocument()
+{
+    if (!m_xmlDoc->document_element())
+        m_xmlDoc->load_string(m_parentDoc->extractXmlFromArchive(m_xmlPath).c_str(), pugi::parse_default | pugi::parse_ws_pcdata);
 
-        /**
-         * @brief
-         * @param fileName
-         */
-        void open(const std::string& fileName);
+    return m_xmlDoc.get();
+}
 
-        /**
-         * @brief
-         */
-        void close();
+/**
+ * @details
+ */
+const XMLDocument* XLXmlData::getXmlDocument() const
+{
+    if (!m_xmlDoc->document_element())
+        m_xmlDoc->load_string(m_parentDoc->extractXmlFromArchive(m_xmlPath).c_str(), pugi::parse_default | pugi::parse_ws_pcdata);
 
-        /**
-         * @brief
-         * @param path
-         */
-        void save(const std::string& path = "");
-
-        /**
-         * @brief
-         * @param name
-         * @param data
-         */
-        void addEntry(const std::string& name, const std::string& data);
-
-        /**
-         * @brief
-         * @param entryName
-         */
-        void deleteEntry(const std::string& entryName);
-
-        /**
-         * @brief
-         * @param name
-         * @return
-         */
-        std::string getEntry(const std::string& name);
-
-        /**
-         * @brief
-         * @param entryName
-         * @return
-         */
-        bool hasEntry(const std::string& entryName);
-
-    private:
-        std::shared_ptr<Zippy::ZipArchive> m_archive; /**< */
-    };
-}    // namespace OpenXLSX
-
-#pragma warning(pop)
-#endif    // OPENXLSX_XLZIPARCHIVE_HPP
+    return m_xmlDoc.get();
+}

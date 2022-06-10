@@ -50,7 +50,7 @@ private:
 	void PropagatePinType(UEdGraphPin* Pin);
 
 	void SetPinToolTip(UEdGraphPin& MutatablePin, const FText& PinDescription) const;
-
+	FName GetDestCall()const;
 	/** Tooltip text for this node. */
 	FText NodeTooltip; 
 

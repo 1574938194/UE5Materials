@@ -43,113 +43,60 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 
  */
 
-#ifndef OPENXLSX_XLEXCEPTION_HPP
-#define OPENXLSX_XLEXCEPTION_HPP
+#ifndef OPENXLSX_XLDOCUMENT_HPP
+#define OPENXLSX_XLDOCUMENT_HPP
 
 #pragma warning(push)
 #pragma warning(disable : 4251)
 #pragma warning(disable : 4275)
 
 // ===== External Includes ===== //
-#include <stdexcept>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <map>
+#include <string>
 
 // ===== OpenXLSX Includes ===== //
 #include "OpenXLSX-Exports.hpp"
+#include "XLCommandQuery.hpp"
+#include "XLContentTypes.hpp"
+#include "XLException.hpp"
+#include "XLProperties.hpp"
+#include "XLRelationships.hpp"
+#include "XLSharedStrings.hpp"
+#include "XLWorkbook.hpp"
+#include "XLXmlData.hpp"
+#include "XLZipArchive.hpp"
 
 namespace OpenXLSX
 {
     /**
-     * @brief
+     * @brief The XLDocumentProperties class is an enumeration of the possible properties (metadata) that can be set
+     * for a XLDocument object (and .xlsx file)
      */
-    class OPENXLSX_EXPORT XLException : public std::runtime_error
-    {
-    public:
-        inline explicit XLException(const std::string& err) : runtime_error(err) {};
-    };
+   
 
     /**
-     * @brief
+     * @brief This class encapsulates the concept of an excel file. It is different from the XLWorkbook, in that an
+     * XLDocument holds an XLWorkbook together with its metadata, as well as methods for opening,
+     * closing and saving the document.\n<b><em>The XLDocument is the entrypoint for clients
+     * using the RapidXLSX library.</em></b>
      */
-    class OPENXLSX_EXPORT XLOverflowError : public XLException
+    class OPENXLSX_EXPORT XLDocument final
     {
-    public:
-        inline explicit XLOverflowError(const std::string& err) : XLException(err) {};
+        //----- Friends
+        friend class XLXmlFile;
+        friend class XLWorkbook;
+        friend class XLSheet;
+        friend class XLXmlData;
+         
+    public: 
+       
     };
-
-    /**
-     * @brief
-     */
-    class OPENXLSX_EXPORT XLValueTypeError : public XLException
-    {
-    public:
-        inline explicit XLValueTypeError(const std::string& err) : XLException(err) {};
-    };
-
-    /**
-     * @brief
-     */
-    class OPENXLSX_EXPORT XLCellAddressError : public XLException
-    {
-    public:
-        inline explicit XLCellAddressError(const std::string& err) : XLException(err) {};
-    };
-
-    /**
-     * @brief
-     */
-    class OPENXLSX_EXPORT XLInputError : public XLException
-    {
-    public:
-        inline explicit XLInputError(const std::string& err) : XLException(err) {};
-    };
-
-    /**
-     * @brief
-     */
-    class OPENXLSX_EXPORT XLInternalError : public XLException
-    {
-    public:
-        inline explicit XLInternalError(const std::string& err) : XLException(err) {};
-    };
-
-    /**
-     * @brief
-     */
-    class OPENXLSX_EXPORT XLPropertyError : public XLException
-    {
-    public:
-        inline explicit XLPropertyError(const std::string& err) : XLException(err) {};
-    };
-
-    /**
-     * @brief
-     */
-    class OPENXLSX_EXPORT XLSheetError : public XLException
-    {
-    public:
-        inline explicit XLSheetError(const std::string& err) : XLException(err) {};
-    };
-
-    /**
-     * @brief
-     */
-    class OPENXLSX_EXPORT XLDateTimeError : public XLException
-    {
-    public:
-        inline explicit XLDateTimeError(const std::string& err) : XLException(err) {};
-    };
-
-    /**
-     * @brief
-     */
-    class OPENXLSX_EXPORT XLFormulaError : public XLException
-    {
-    public:
-        inline explicit XLFormulaError(const std::string& err) : XLException(err) {};
-    };
-
 
 }    // namespace OpenXLSX
 
 #pragma warning(pop)
-#endif    // OPENXLSX_XLEXCEPTION_HPP
+#endif    // OPENXLSX_XLDOCUMENT_HPP

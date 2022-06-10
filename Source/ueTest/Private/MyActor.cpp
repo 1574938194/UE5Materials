@@ -1,10 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-//#pragma optimize("",off)
+#pragma optimize("",off)
 
 #include "MyActor.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include <memory>
+
+#include "Engine/UserDefinedStruct.h"
 
 struct _FMemoryDeleter
 {
@@ -37,7 +39,8 @@ void AMyActor::Test()
 	stru.StrValue2 = FString(TEXT("Str2")),
 	stru.VecValue = FVector(1.f, 2.f, 3.f);
 	stru.SafeObjectPointer = this;
-
+  
+ 
 	for (TFieldIterator<FProperty> it(stru.StaticStruct()); it; ++it)
 	{ 
 		auto name = it->GetName();

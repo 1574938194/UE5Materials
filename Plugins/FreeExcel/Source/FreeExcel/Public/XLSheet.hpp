@@ -62,14 +62,11 @@ using namespace mapbox::util;
 #include <vector>
 
 // ===== OpenXLSX Includes ===== //
-#include "OpenXLSX-Exports.hpp"
 #include "XLCell.hpp"
 #include "XLCellReference.hpp"
-#include "XLColor.hpp"
 #include "XLColumn.hpp"
 #include "XLCommandQuery.hpp"
 #include "XLDocument.hpp"
-#include "XLException.hpp"
 #include "XLRow.hpp"
 #include "XLXmlFile.hpp"
 

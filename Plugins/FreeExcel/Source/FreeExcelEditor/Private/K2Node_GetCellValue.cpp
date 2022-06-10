@@ -11,7 +11,10 @@
 #include "FreeExcelLibrary.h"
 #include "K2Node_Self.h"
 #include "ExcelDocument.h"
- 
+#include "Sheet.h"
+#include "Cell.h"
+#include "CellValue.h"
+
 #define LOCTEXT_NAMESPACE "K2Node_GetCellValue"
 
 namespace ArraySortHelper
@@ -60,8 +63,8 @@ void UK2Node_GetCellValue::AllocateDefaultPins()
 	auto SelfPin = CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Wildcard, UEdGraphSchema_K2::PN_Self);
 	SetPinToolTip(*SelfPin, LOCTEXT("GetCellValue_SelfPinDesc", "[ExcelDocument,Sheet,Cell,CellValue] In"));
 
-	auto RefPin = CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Wildcard,  "Ref");
-	SetPinToolTip(*RefPin, LOCTEXT("GetCellValue_RefPinDesc", "[IntPoint,String,CellReference] In"));
+	auto RefPin = CreatePin(EGPD_Input, UEdGraphSchema_K2::PC_Struct,FCellReference::StaticStruct(),  "Ref");
+	SetPinToolTip(*RefPin, LOCTEXT("GetCellValue_RefPinDesc", "Cell Reference In"));
 
 	auto ValPin = CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Wildcard,  "ReturnValue");
 	SetPinToolTip(*ValPin, LOCTEXT("GetCellValue_ReturnValuePinDesc", "[Integer,Boolean,Float,String,DateTime,CellValue] Out"));
@@ -101,7 +104,7 @@ FText UK2Node_GetCellValue::GetMenuCategory() const
 
 void UK2Node_GetCellValue::PinDefaultValueChanged(UEdGraphPin* ChangedPin)
 {
-	TArray<FName> ls = { TEXT("Self"), TEXT("Ref"), TEXT("Value") };
+	TArray<FName> ls = { TEXT("Self"), TEXT("Value") };
 	if (ls.Contains(ChangedPin->GetFName()))
 	{
 		PropagatePinType(ChangedPin);
@@ -129,7 +132,7 @@ void UK2Node_GetCellValue::ExpandNode(class FKismetCompilerContext& CompilerCont
 
 	UK2Node_CallFunction* CallFuncNode = CompilerContext.SpawnIntermediateNode<UK2Node_CallFunction>(this, SourceGraph);
 	//CallFuncNode->SetFromFunction(Function);
-	const FName DstFunctionName = GET_FUNCTION_NAME_CHECKED(UFreeExcelLibrary, GetCellValue);
+	const FName DstFunctionName = GetDestCall();
 	CallFuncNode->FunctionReference.SetExternalMember(DstFunctionName, UFreeExcelLibrary::StaticClass());
 	CallFuncNode->AllocateDefaultPins();
 	UEdGraphPin* CallFuncSelfPin = Schema->FindSelfPin(*CallFuncNode, EGPD_Input);
@@ -167,15 +170,7 @@ void UK2Node_GetCellValue::ExpandNode(class FKismetCompilerContext& CompilerCont
 		if (SrcPin != NULL && SrcPin->PinName!= UEdGraphSchema_K2::PN_Self) // check its not the self pin
 		{
 			if(SrcPin->PinName == "Ref" &&SrcPin->bHidden == true)
-			{ 
-				UEdGraphPin* DestPin = CallFuncNode->FindPin(SrcPin->PinName);
-				if (DestPin != NULL)
-				{
-					auto proxy = FindPin(UEdGraphSchema_K2::PN_Self);
-					DestPin->PinType = proxy->PinType;
-					DestPin->PinType.PinSubCategoryObject = proxy->PinType.PinSubCategoryObject;
-					CompilerContext.MovePinLinksToIntermediate(*proxy, *DestPin); // Source node is assumed to be owner...
-				}
+			{  
 			}
 			else
 			{
@@ -206,7 +201,7 @@ FSlateIcon UK2Node_GetCellValue::GetIconAndTint(FLinearColor& OutColor) const
 void UK2Node_GetCellValue::PostReconstructNode()
 {
 	Super::PostReconstructNode();
-	for (auto& it : { FindPin(TEXT("Self")) , FindPin(TEXT("Ref")) ,FindPin(TEXT("Value")) })
+	for (auto& it : { FindPin(TEXT("Self")) ,FindPin(TEXT("Value")) })
 	{
 		PropagatePinType(it);
 	}
@@ -230,17 +225,12 @@ void UK2Node_GetCellValue::NotifyPinConnectionListChanged(UEdGraphPin* Pin)
 		auto cond = Pin->PinType.PinSubCategoryObject.IsValid() && names.Contains( Pin->PinType.PinSubCategoryObject->GetFName());
 
 		auto _Ref = FindPin(TEXT("Ref"));
-		if (_Ref->bHidden == cond)
-		{
-			PropagatePinType(Pin);
-		}
-		else
+		if (_Ref->bHidden != cond)
 		{
 			_Ref->bHidden = cond;
 			ReconstructNode();
 		}
 	}
-	else if (Pin == FindPin(TEXT("Ref"))) PropagatePinType(Pin);
 	else if (Pin == FindPin(TEXT("Value"))) PropagatePinType(Pin);
 } 
  
@@ -294,28 +284,6 @@ bool UK2Node_GetCellValue::IsConnectionDisallowed(const UEdGraphPin* MyPin, cons
 		OutReason = InputCheck.ToString();
 		return true;
 	}
-	else if (MyPin->PinName == "Ref")
-	{
-		if (OtherPin->PinType.IsContainer())
-		{
-			OutReason = InputCheck.ToString();
-			return true;
-		}
-		else if (OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Struct)
-		{
-			static TArray<FName> names = { "CellReference", "IntPoint" };
-			if (OtherPin->PinType.PinSubCategoryObject.IsValid() && names.Contains(OtherPin->PinType.PinSubCategoryObject->GetFName()))
-			{
-				return false;
-			}
-		}
-		else if (OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_String)
-		{
-			return false;
-		}
-		OutReason = InputCheck.ToString();
-		return true;
-	}
 	else if (MyPin->PinName == "Value")
 	{
 		if (OtherPin->PinType.IsContainer())
@@ -343,4 +311,55 @@ bool UK2Node_GetCellValue::IsConnectionDisallowed(const UEdGraphPin* MyPin, cons
 	}
 	return false;
 }
+FName UK2Node_GetCellValue::GetDestCall()const
+{
+	auto Target = FindPin(UEdGraphSchema_K2::PN_Self);
+	auto Value = FindPin(TEXT("Value"));
+
+	FString FunctionName = TEXT("GetCellValue_");
+	if (Target->PinType.PinSubCategoryObject->IsA<UExcelDocument>())
+	{
+		FunctionName.Append(TEXT("Doc"));
+	}
+	else if (Target->PinType.PinSubCategoryObject->IsA<USheet>())
+	{
+		FunctionName.Append(TEXT("Sheet"));
+	}
+	else if (Target->PinType.PinSubCategoryObject->IsA<UCell>())
+	{
+		FunctionName.Append(TEXT("Cell"));
+	}
+	else  if (Target->PinType.PinSubCategoryObject == FCellValue::StaticStruct())
+	{
+		FunctionName.Append(TEXT("CellValue"));
+	}
+
+	if (Value->PinType.PinCategory == UEdGraphSchema_K2::PC_Boolean)
+	{
+		FunctionName.Append(TEXT("Bool"));
+	}
+	else if (Value->PinType.PinCategory == UEdGraphSchema_K2::PC_Int)
+	{
+		FunctionName.Append(TEXT("Int"));
+	}
+	else if (Value->PinType.PinCategory == UEdGraphSchema_K2::PC_Float)
+	{
+		FunctionName.Append(TEXT("Float"));
+	}
+	else  if (Value->PinType.PinCategory == UEdGraphSchema_K2::PC_String)
+	{
+		FunctionName.Append(TEXT("String"));
+	}
+	else  if (Value->PinType.PinSubCategoryObject->GetFName() == "FDateTime")
+	{
+		FunctionName.Append(TEXT("DateTime"));
+	}
+	else  if (Value->PinType.PinSubCategoryObject == FCellValue::StaticStruct())
+	{
+		FunctionName.Append(TEXT("CellValue"));
+	}
+
+	return *FunctionName;
+}
+
 #undef LOCTEXT_NAMESPACE

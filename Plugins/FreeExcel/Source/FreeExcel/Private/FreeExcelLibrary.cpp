@@ -18,6 +18,7 @@
 #include "Dom/JsonValue.h"
 #include "Dom/JsonObject.h"
 #include "Engine/UserDefinedStruct.h"
+ 
 
 const TCHAR* JSONTypeToString(const EJson InType)
 {
@@ -201,213 +202,6 @@ EXLValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
 {
 	return val.type();
 }
-
-void UFreeExcelLibrary::SetCellValue(const int32& Target, const int32& Ref, const int32& Value)
-{
-	check(0)
-}
-void UFreeExcelLibrary::Generic_SetCellValue(FProperty* SelfProperty, void* Self, FProperty* RefProperty, void* Ref, FProperty* ValProperty, void* Value)
-{
-	if (!Ref || !Value || !Self)
-	{
-		return;
-	}
-
-	if (SelfProperty->GetCPPType() == "FCellValue")
-	{
-		auto cell = (FCellValue*)Self;
-		if (CastField<FFloatProperty>(ValProperty))
-		{
-			*cell = *(float*)Value;
-		}
-		else if (CastField<FStrProperty>(ValProperty))
-		{
-			*cell = std::string(TCHAR_TO_UTF8(**(FString*)Value));
-		}
-		else if (ValProperty->GetCPPType() == "FCellValue")
-		{
-			*cell = *(FCellValue*)Value;
-		}
-		else
-			if (CastField<FBoolProperty>(ValProperty))
-			{
-				*cell = *(bool*)Value;
-			}
-			else if (CastField<FIntProperty>(ValProperty))
-			{
-				*cell = *(int32*)Value;
-			}
-			else if (ValProperty->GetCPPType() == "FDateTime")
-			{
-				*cell = *(FDateTime*)Value;
-			}
-
-	}
-	else
-	{
-		FCellReference ref;
-		if (SelfProperty->GetCPPType() != "UCell")
-		{
-			if (RefProperty->GetCPPType() == "FCellReference")
-			{
-				ref = *(FCellReference*)Ref;
-			}
-			else if (CastField<FStrProperty>(RefProperty))
-			{
-				ref = { (TCHAR_TO_UTF8(**(FString*)Ref)) };
-			}
-			else if (RefProperty->GetCPPType() == "FIntPoint")
-			{
-				ref = { ((FIntPoint*)Ref)->X, ((FIntPoint*)Ref)->Y };
-			}
-
-
-		}
-		auto&& cell = (SelfProperty->GetCPPType() == "UExcelDocument*") ? (*(UExcelDocument**)Self)->GetCurrentSheet()->_Inner.cell(ref.Row, ref.Col)
-			: ((SelfProperty->GetCPPType() == "USheet*") ? (*(USheet**)Self)->_Inner.cell(ref.Row, ref.Col) : (**(UCell**)Self)._Inner);
-		if (CastField<FFloatProperty>(ValProperty))
-		{
-			cell.value() = *(float*)Value;
-		}
-		else if (CastField<FStrProperty>(ValProperty))
-		{
-			cell.value() = std::string(TCHAR_TO_UTF8(**(FString*)Value));
-		}
-		else if (ValProperty->GetCPPType() == "FCellValue")
-		{
-			auto val = *(FCellValue*)Value;
-			cell.value() = OpenXLSX::XLCellValue{ val._Value, (OpenXLSX::XLValueType)val._Type };
-		}
-		else if (CastField<FBoolProperty>(ValProperty))
-		{
-			cell.value() = *(bool*)Value;
-		}
-		else if (CastField<FIntProperty>(ValProperty))
-		{
-			cell.value() = *(int32*)Value;
-		}
-		else if (ValProperty->GetCPPType() == "FDateTime")
-		{
-			auto val = (FDateTime*)Value;
-			std::tm tm;
-			tm.tm_year = val->GetYear() - 1900;
-			tm.tm_mon = val->GetMonth() - 1;
-			tm.tm_mday = val->GetDay();
-			tm.tm_hour = val->GetHour();
-			tm.tm_min = val->GetMinute();
-			tm.tm_sec = val->GetSecond();
-
-			cell.value() = OpenXLSX::XLDateTime(tm);
-		}
-	}
-}
-
-void UFreeExcelLibrary::GetCellValue(const int32& Target, const int32& Ref , int32& ReturnValue)
-{
-	check(0)
-}
-void UFreeExcelLibrary::Generic_GetCellValue(FProperty* SelfProperty, void* Self, FProperty* RefProperty, void* Ref , FProperty* RetProperty, void* Ret)
-{
-	if (!Ref || !RetProperty || !Self)
-	{
-		return;
-	}
-
-	if (SelfProperty->GetCPPType() == "FCellValue")
-	{
-		auto cell = (FCellValue*)Self;
-		if (CastField<FFloatProperty>(RetProperty))
-		{ 
-			if (cell->type() ==EXLValueType::Integer)
-			{
-				(*(float*)Ret) = (float)cell->template operator int32();
-			}
-			else
-			{
-				(*(float*)Ret) = *cell;
-			}
-		}
-		else if (CastField<FStrProperty>(RetProperty))
-		{
-			(*(FString*)Ret) = cell->template operator FString();
-		}
-		else if (RetProperty->GetCPPType() == "FCellValue")
-		{
-			(*(FCellValue*)Ret) = *cell;
-		}
-		else if (CastField<FBoolProperty>(RetProperty))
-		{
-			(*(bool*)Ret) = *cell;
-		}
-		else if (CastField<FIntProperty>(RetProperty))
-		{
-			(*(int32*)Ret) = *cell;
-		}
-			else if (RetProperty->GetCPPType() == "FDateTime")
-		{
-			(*(FDateTime*)Ret) = *cell;
-		}
-
-	}
-	else
-	{
-		FCellReference ref;
-		if (SelfProperty->GetCPPType() != "UCell")
-		{
-			if (RefProperty->GetCPPType() == "FCellReference")
-			{
-				ref = *(FCellReference*)Ref;
-			}
-			else if (CastField<FStrProperty>(RefProperty))
-			{
-				ref = { (TCHAR_TO_UTF8(**(FString*)Ref)) };
-			}
-			else if (RefProperty->GetCPPType() == "FIntPoint")
-			{
-				ref = { ((FIntPoint*)Ref)->X, ((FIntPoint*)Ref)->Y };
-			}
-
-
-		}
-	 
-		auto&& cell = (SelfProperty->GetCPPType() == "UExcelDocument*") ? (*(UExcelDocument**)Self)->GetCurrentSheet()->_Inner.cell(ref.Row, ref.Col)
-			: ((SelfProperty->GetCPPType() == "USheet*") ? (*(USheet**)Self)->_Inner.cell(ref.Row, ref.Col) : (**(UCell**)Self)._Inner);
-		if (auto _Prop = CastField<FFloatProperty>(RetProperty))
-		{
-			auto&& val = cell.value();
-			if (val.type() == OpenXLSX::XLValueType::Integer)
-			{
-				(*(float*)Ret) = (float)val.template operator int32();
-			}
-			else
-			{
-				(*(float*)Ret) = val;
-			}
-		}
-		else if (CastField<FStrProperty>(RetProperty))
-		{ 
-			(*(FString*)Ret) = FString(cell.value().get<std::string>().c_str());
-		}
-		else if (RetProperty->GetCPPType() == "FCellValue")
-		{
-			OpenXLSX::XLCellValue val = cell.value();
-			(*(FCellValue*)Ret) = { val.m_value, (EXLValueType)val.m_type };
-		}
-		else if (CastField<FBoolProperty>(RetProperty))
-		{
-			(*(bool*)Ret) = cell.value();
-		}
-		else if (CastField<FIntProperty>(RetProperty))
-		{
-			(*(int32*)Ret) = cell.value();
-		}
-		else if (RetProperty->GetCPPType() == "FDateTime")
-		{ 
-			std::tm  tm = cell.value().get< OpenXLSX::XLDateTime>().tm(); 
-			(*(FDateTime*)Ret) = FDateTime(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-		}
-	}
-}
  
  void UFreeExcelLibrary::CellIterator_Forward(const FCellIterator& Target)
 {
@@ -450,32 +244,54 @@ void UFreeExcelLibrary::Generic_GetCellValue(FProperty* SelfProperty, void* Self
 
  bool ReadContainerEntry(const TSharedRef<FJsonValue>& InParsedPropertyValue, const int32 InArrayEntryIndex, FProperty* InProperty, void* InPropertyData);
   
- void UFreeExcelLibrary::Generic_ToTemplateArray(FProperty* SelfProperty, void* Self,  FArrayProperty* RetProperty, void* Ret)
+ void UFreeExcelLibrary::Generic_ToTemplateArray(FObjectProperty* SelfProperty, void* Self,  FArrayProperty* RetProperty, void* Ret)
  {
 	 if (!Ret || !Self)
 	 {
 		 return;
 	 }
-	 auto sheet = (SelfProperty->GetCPPType() == "UExcelDocument*") ? (*(UExcelDocument**)Self)->GetCurrentSheet() : *(USheet**)Self;
+	 
+	 auto sheet = (SelfProperty->PropertyClass== UExcelDocument::StaticClass()) ? (*(UExcelDocument**)Self)->GetCurrentSheet() : *(USheet**)Self;
 	 std::vector<FProperty*> PropertyIndex;
 	 UScriptStruct* RowStruct = CastField<FStructProperty>(RetProperty->Inner)->Struct;
-	 auto b1 = RowStruct->IsA<UUserDefinedStruct>(); 
-	 UUserDefinedStruct* BPRowStruct = Cast<UUserDefinedStruct>(RowStruct);
-	 
+
 	 FScriptArrayHelper ArrayHelper(RetProperty, Ret);
 	 
 	 auto fields = sheet->GetRowData(1);
 	 auto field = fields.begin();
-	 for (; field != fields.end(); ++field)
-	 {
-		 auto name = (FString)*field;
-		 if (auto prop = BPRowStruct->FindPropertyByName(*name))
+
+	 if (RowStruct->IsA<UUserDefinedStruct>())
+	 { 
+		 TMap<FName, FProperty*> props;
+		 for (auto p = RowStruct->ChildProperties; p; p = p->Next)
 		 {
-			 PropertyIndex.push_back(prop);
+			 props.Add(MakeTuple(FName(*p->GetDisplayNameText().ToString()), CastField<FProperty>(p)));
 		 }
-		 else
+		 for (; field != fields.end(); ++field)
+		 {  
+			 if (auto prop = props.Find(FName(* (FString)(*field))))
+			 {
+				 PropertyIndex.push_back(*prop);
+			 }
+			 else
+			 {
+				 PropertyIndex.push_back(nullptr);
+			 }
+		 }
+	 }
+	 else
+	 { 
+		 for (; field != fields.end(); ++field)
 		 {
-			 PropertyIndex.push_back(nullptr);
+			 auto name = (FString)*field;
+			 if (auto prop = RowStruct->FindPropertyByName(*name))
+			 {
+				 PropertyIndex.push_back(prop);
+			 }
+			 else
+			 {
+				 PropertyIndex.push_back(nullptr);
+			 }
 		 }
 	 }
 	 if (!fields.Num()) return ;
@@ -492,7 +308,7 @@ void UFreeExcelLibrary::Generic_GetCellValue(FProperty* SelfProperty, void* Self
 		 auto p = PropertyIndex.begin();
 		 for (int i = 0; i < PropertyIndex.size(); ++i, ++p, ++it)
 		 {
-			 if (!*p)  continue;
+			 if (!*p || (*it).type() ==EXLValueType::Empty)  continue;
 
 
 			 FProperty* BaseProp = *p;
@@ -518,7 +334,7 @@ void UFreeExcelLibrary::Generic_GetCellValue(FProperty* SelfProperty, void* Self
 			 else if (auto StructProperty = CastField<FStructProperty>(BaseProp))
 			 {
 
-				 TSharedPtr<FJsonObject> ParsedPropertyValue = MakeShareable(new FJsonObject);
+				 TSharedPtr<FJsonObject> ParsedPropertyValue ;
 				 auto reader = FJsonStringReader::Create((FString)*it);
 				 FJsonSerializer::Deserialize(reader.Get(), ParsedPropertyValue);
 
@@ -533,10 +349,135 @@ void UFreeExcelLibrary::Generic_GetCellValue(FProperty* SelfProperty, void* Self
 				 void* Data = BoolProperty->ContainerPtrToValuePtr<void>(InStructData);
 				 BoolProperty->SetPropertyValue(Data, bool(*it));
 			 }
-			 //FEnumProperty
-			 //FArrayProperty
-			 //FSetProperty
-			 //FMapProperty
+			 else if (auto EnumProp = CastField<FEnumProperty>(BaseProp))
+			 {
+				 void* Data = EnumProp->ContainerPtrToValuePtr<void>(InStructData);
+				 if ((*it).type() == EXLValueType::String)
+				 {
+					 EnumProp->GetUnderlyingProperty()->SetIntPropertyValue(Data, 
+						 (int64)EnumProp->GetEnum()->GetValueByName(*(FString)*it));
+				 }
+				 else
+				 {  
+					 EnumProp->GetUnderlyingProperty()->SetIntPropertyValue(Data, (int64)int32(*it));
+				 }
+			 }
+			 else if (auto ArrayProp = CastField<FArrayProperty>(BaseProp))
+			 { 
+				 TSharedPtr<FJsonValue> ParsedPropertyValues; 
+				 FString str = FString(*it);
+				 if (str.IsEmpty()) continue;
+				 if(str[0] != TCHAR('['))
+				 {
+					  if (str[0] == TCHAR('('))
+					  {
+						  str[0] = TCHAR('[');
+						  str[str.Len() - 1] = TCHAR(']');
+					  }
+					  else
+					  {
+						  str = TEXT("[") + str + TEXT("]");
+					  }
+				 }
+
+				 auto reader = FJsonStringReader::Create(str);
+				 FJsonSerializer::Deserialize(reader.Get(), ParsedPropertyValues);
+				  
+
+				 const TArray< TSharedPtr<FJsonValue> >* ArrPtr;
+				 if (!ParsedPropertyValues.IsValid() || !ParsedPropertyValues->TryGetArray(ArrPtr)) continue;
+
+				 void* Data = ArrayProp->ContainerPtrToValuePtr<void>(InStructData);
+				 FScriptArrayHelper _ArrayHelper(ArrayProp, Data);
+				 _ArrayHelper.EmptyValues();
+				 for (const TSharedPtr<FJsonValue>& PropertyValueEntry : *ArrPtr)
+				 {
+					 const int32 NewEntryIndex = _ArrayHelper.AddValue();
+					 uint8* ArrayEntryData = _ArrayHelper.GetRawPtr(NewEntryIndex);
+					 ReadContainerEntry(PropertyValueEntry.ToSharedRef(), NewEntryIndex, ArrayProp->Inner, ArrayEntryData);
+				 }
+			 }
+			 else if (FSetProperty* SetProp = CastField<FSetProperty>(BaseProp))
+			 { 
+				 TSharedPtr<FJsonValue> ParsedPropertyValues;
+				 FString str = FString(*it);
+				 if (str.IsEmpty()) continue;
+				 if (str[0] != TCHAR('['))
+				 {
+					 if (str[0] == TCHAR('('))
+					 {
+						 str[0] = TCHAR('[');
+						 str[str.Len() - 1] = TCHAR(']');
+					 }
+					 else
+					 {
+						 str = TEXT("[") + str + TEXT("]");
+					 }
+				 }
+
+				 auto reader = FJsonStringReader::Create(str);
+				 FJsonSerializer::Deserialize(reader.Get(), ParsedPropertyValues);
+
+				 const TArray< TSharedPtr<FJsonValue> >* ArrPtr;
+				 if (!ParsedPropertyValues.IsValid() || ! ParsedPropertyValues->TryGetArray(ArrPtr)) continue;
+
+				 void* Data = SetProp->ContainerPtrToValuePtr<void>(InStructData);
+				 FScriptSetHelper SetHelper(SetProp, Data);
+				 SetHelper.EmptyElements();
+				 for (const TSharedPtr<FJsonValue>& PropertyValueEntry : *ArrPtr)
+				 {
+					 const int32 NewEntryIndex = SetHelper.AddDefaultValue_Invalid_NeedsRehash();
+					 uint8* SetEntryData = SetHelper.GetElementPtr(NewEntryIndex);
+					 ReadContainerEntry(PropertyValueEntry.ToSharedRef(), NewEntryIndex, SetHelper.GetElementProperty(), SetEntryData);
+				 }
+				 SetHelper.Rehash();
+			 }
+			 else if (FMapProperty* MapProp = CastField<FMapProperty>(BaseProp))
+			 { 
+				 TSharedPtr<FJsonObject> ParsedPropertyValues;
+				 FString str = FString(*it);
+				 if (str.IsEmpty()) continue;
+				 if (str[0] != TCHAR('{'))
+				 {
+					 if (str[0] == TCHAR('('))
+					 {
+						 str[0] = TCHAR('{');
+						 str[str.Len() - 1] = TCHAR('}');
+					 }
+					 else
+					 {
+						 str = TEXT("{") + str + TEXT("}");
+					 }
+				 }
+
+				 auto reader = FJsonStringReader::Create(str);
+				 FJsonSerializer::Deserialize(reader.Get(), ParsedPropertyValues);
+
+				 if (!ParsedPropertyValues.IsValid() ) continue;
+
+				 void* Data = MapProp->ContainerPtrToValuePtr<void>(InStructData);
+				 FScriptMapHelper MapHelper(MapProp, Data);
+				 MapHelper.EmptyValues();
+				 for (const auto& PropertyValuePair : ParsedPropertyValues->Values)
+				 {
+					 const int32 NewEntryIndex = MapHelper.AddDefaultValue_Invalid_NeedsRehash();
+					 uint8* MapKeyData = MapHelper.GetKeyPtr(NewEntryIndex);
+					 uint8* MapValueData = MapHelper.GetValuePtr(NewEntryIndex);
+
+					 // JSON object keys are always strings
+					 const FString KeyError = DataTableUtils::AssignStringToPropertyDirect(PropertyValuePair.Key, MapHelper.GetKeyProperty(), MapKeyData);
+					 if (KeyError.Len() > 0)
+					 {
+						 MapHelper.RemoveAt(NewEntryIndex); continue;
+					 }
+
+					 if (!ReadContainerEntry(PropertyValuePair.Value.ToSharedRef(), NewEntryIndex, MapHelper.GetValueProperty(), MapValueData))
+					 {
+						 MapHelper.RemoveAt(NewEntryIndex); continue;
+					 }
+				 }
+				 MapHelper.Rehash();
+			 }
 		 }
 		 /*Array.Emplace(InStructData);*/
 		 
@@ -829,3 +770,233 @@ void UFreeExcelLibrary::Generic_GetCellValue(FProperty* SelfProperty, void* Self
 	 return true;
  }
 
+ 
+ void UFreeExcelLibrary::SetCellValue_DocBool( UExcelDocument* Target, const FCellReference& Ref, const bool& Value)
+ {
+	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_DocInt(UExcelDocument* Target, const FCellReference& Ref, const int32& Value)
+ {
+	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_DocFloat(UExcelDocument* Target, const FCellReference& Ref, const float& Value)
+ {
+	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_DocString(UExcelDocument* Target, const FCellReference& Ref, const FString& Value)
+ {
+	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = std::string(TCHAR_TO_UTF8(*Value));
+ }
+ void UFreeExcelLibrary::SetCellValue_DocDateTime(UExcelDocument* Target, const FCellReference& Ref, const FDateTime& Value)
+ {
+	 std::tm t;
+	 t.tm_year = Value.GetYear() - 1900;
+	 t.tm_mon = Value.GetMonth() - 1;
+	 t.tm_mday = Value.GetDay();
+	 t.tm_hour = Value.GetHour();
+	 t.tm_min = Value.GetMinute();
+	 t.tm_sec = Value.GetSecond();
+	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = OpenXLSX::XLDateTime(t);
+ } 
+ void UFreeExcelLibrary::SetCellValue_DocCellValue(UExcelDocument* Target, const FCellReference& Ref, const FCellValue& Value)
+ {
+	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = 
+		 OpenXLSX::XLCellValue{ Value._Value,(OpenXLSX::XLValueType)Value._Type};
+ } 
+ void UFreeExcelLibrary::SetCellValue_SheetBool(  USheet* Target, const FCellReference& Ref, const bool& Value)
+ {
+	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_SheetInt(USheet* Target, const FCellReference& Ref, const int32& Value)
+ {
+	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+ } 
+ void UFreeExcelLibrary::SetCellValue_SheetFloat(USheet* Target, const FCellReference& Ref, const float& Value)
+ {
+	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+ } 
+ void UFreeExcelLibrary::SetCellValue_SheetString(USheet* Target, const FCellReference& Ref, const FString& Value)
+ {
+	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = std::string(TCHAR_TO_UTF8(*Value));
+ } 
+ void UFreeExcelLibrary::SetCellValue_SheetDateTime(USheet* Target, const FCellReference& Ref, const FDateTime& Value)
+ {
+	 std::tm t;
+	 t.tm_year = Value.GetYear() - 1900;
+	 t.tm_mon = Value.GetMonth() - 1;
+	 t.tm_mday = Value.GetDay();
+	 t.tm_hour = Value.GetHour();
+	 t.tm_min = Value.GetMinute();
+	 t.tm_sec = Value.GetSecond();
+	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = OpenXLSX::XLDateTime(t);
+ } 
+ void UFreeExcelLibrary::SetCellValue_SheetCellValue(USheet* Target, const FCellReference& Ref, const FCellValue& Value)
+ {
+	 Target->_Inner.cell(Ref.Row, Ref.Col).value() =
+		 OpenXLSX::XLCellValue{ Value._Value,(OpenXLSX::XLValueType)Value._Type };
+ }
+ 
+ void UFreeExcelLibrary::SetCellValue_CellBool( UCell* Target,  const bool& Value)
+ {
+	 Target->_Inner.value() = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_CellInt(UCell* Target, const int32& Value)
+ {
+	 Target->_Inner.value() = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_CellFloat(UCell* Target, const float& Value)
+ {
+	 Target->_Inner.value() = Value;
+ } 
+ void UFreeExcelLibrary::SetCellValue_CellString(UCell* Target, const FString& Value)
+ {
+	 Target->_Inner.value() = std::string(TCHAR_TO_UTF8(*Value));
+ }  
+ void UFreeExcelLibrary::SetCellValue_CellDateTime(UCell* Target,  const FDateTime& Value)
+ {
+	 std::tm t;
+	 t.tm_year = Value.GetYear() - 1900;
+	 t.tm_mon = Value.GetMonth() - 1;
+	 t.tm_mday = Value.GetDay();
+	 t.tm_hour = Value.GetHour();
+	 t.tm_min = Value.GetMinute();
+	 t.tm_sec = Value.GetSecond();
+	 Target->_Inner.value() = OpenXLSX::XLDateTime(t);
+ }
+ void UFreeExcelLibrary::SetCellValue_CellCellValue(UCell* Target, const FCellValue& Value)
+ {
+	 Target->_Inner.value() =
+		 OpenXLSX::XLCellValue{ Value._Value,(OpenXLSX::XLValueType)Value._Type };
+ }
+ 
+ void UFreeExcelLibrary::SetCellValue_CellValueBool(const FCellValue& Target,  const bool& Value)
+ {
+	 const_cast<FCellValue&>(Target) = Value;
+ } 
+ void UFreeExcelLibrary::SetCellValue_CellValueInt(const FCellValue& Target, const int32& Value)
+ {
+	 const_cast<FCellValue&>(Target) = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_CellValueFloat(const FCellValue& Target, const float& Value)
+ {
+	 const_cast<FCellValue&>(Target) = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_CellValueString(const FCellValue& Target, const FString& Value)
+ {
+	 const_cast<FCellValue&>(Target) = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_CellValueDateTime(const FCellValue& Target, const FDateTime& Value)
+ { 
+	 const_cast<FCellValue&>(Target) = Value;
+ }
+ void UFreeExcelLibrary::SetCellValue_CellValueCellValue(const FCellValue&  Target, const FCellValue& Value)
+ {
+	 const_cast<FCellValue&>(Target) = Value;
+ }
+  
+ void UFreeExcelLibrary::GetCellValue_DocBool(UExcelDocument* Target, const FCellReference& Ref,  bool& Value)
+ {
+	 Value = Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() ;
+ }
+ void UFreeExcelLibrary::GetCellValue_DocInt(UExcelDocument* Target, const FCellReference& Ref,  int32& Value)
+ {
+	 Value =  Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() ;
+ }
+ void UFreeExcelLibrary::GetCellValue_DocFloat(UExcelDocument* Target, const FCellReference& Ref,  float& Value)
+ {
+	 Value =  Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() ;
+ }
+ void UFreeExcelLibrary::GetCellValue_DocString(UExcelDocument* Target, const FCellReference& Ref,  FString& Value)
+ {
+	 Value = Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value().template operator std::string().c_str();
+ }
+ void UFreeExcelLibrary::GetCellValue_DocDateTime(UExcelDocument* Target, const FCellReference& Ref,  FDateTime& Value)
+ {
+	 std::tm t = (Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value().get<OpenXLSX::XLDateTime>()).tm();
+	 Value = FDateTime(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
+ }
+ void UFreeExcelLibrary::GetCellValue_DocCellValue(UExcelDocument* Target, const FCellReference& Ref,  FCellValue& Value)
+ {
+	 auto val = OpenXLSX::XLCellValue(Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value());
+	Value =  { val.m_value,(EXLValueType)val.m_type };
+ }
+ 
+ void UFreeExcelLibrary::GetCellValue_SheetBool(USheet* Target, const FCellReference& Ref,  bool& Value)
+ {
+	 Value = Target->_Inner.cell(Ref.Row, Ref.Col).value() ;
+ }
+ void UFreeExcelLibrary::GetCellValue_SheetInt(USheet* Target, const FCellReference& Ref,  int32& Value)
+ {
+	 Value = Target->_Inner.cell(Ref.Row, Ref.Col).value();
+ }
+ void UFreeExcelLibrary::GetCellValue_SheetFloat(USheet* Target, const FCellReference& Ref,  float& Value)
+ {
+	 Value = Target->_Inner.cell(Ref.Row, Ref.Col).value() ;
+ }
+ void UFreeExcelLibrary::GetCellValue_SheetString(USheet* Target, const FCellReference& Ref,  FString& Value)
+ {
+	 Value = Target->_Inner.cell(Ref.Row, Ref.Col).value().template operator std::string().c_str();
+ }
+ void UFreeExcelLibrary::GetCellValue_SheetDateTime(USheet* Target, const FCellReference& Ref,  FDateTime& Value)
+ {
+	 std::tm t = (Target->_Inner.cell(Ref.Row, Ref.Col).value().get<OpenXLSX::XLDateTime>()).tm();
+	 Value = FDateTime(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
+ }
+ void UFreeExcelLibrary::GetCellValue_SheetCellValue(USheet* Target, const FCellReference& Ref,  FCellValue& Value)
+ {
+	 auto val = OpenXLSX::XLCellValue(Target->_Inner.cell(Ref.Row, Ref.Col).value());
+		 Value = { val.m_value,(EXLValueType)val.m_type };
+ }
+
+ void UFreeExcelLibrary::GetCellValue_CellBool(UCell* Target,  bool& Value)
+ {
+	 Value = Target->_Inner.value() ;
+ }
+ void UFreeExcelLibrary::GetCellValue_CellInt(UCell* Target,  int32& Value)
+ {
+	 Value= Target->_Inner.value() ;
+ }
+ void UFreeExcelLibrary::GetCellValue_CellFloat(UCell* Target,  float& Value)
+ {
+	 Value= Target->_Inner.value() ;
+ }
+ void UFreeExcelLibrary::GetCellValue_CellString(UCell* Target,  FString& Value)
+ {
+	 Value = Target->_Inner.value().template operator std::string().c_str();
+ }
+ void UFreeExcelLibrary::GetCellValue_CellDateTime(UCell* Target,  FDateTime& Value)
+ {  
+	 std::tm t = (Target->_Inner.value().get<OpenXLSX::XLDateTime>()).tm();
+	 Value = FDateTime(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
+ }
+ void UFreeExcelLibrary::GetCellValue_CellCellValue(UCell* Target,  FCellValue& Value)
+ {
+	 auto val = OpenXLSX::XLCellValue(Target->_Inner.value());
+	 Value = { val.m_value,(EXLValueType)val.m_type };
+ }
+ void UFreeExcelLibrary::GetCellValue_CellValueBool(const FCellValue& Target, bool& Value)
+ {
+	 Value = Target;
+ }
+ void UFreeExcelLibrary::GetCellValue_CellValueInt(const FCellValue& Target, int32& Value)
+ {
+	 Value = Target;
+ }
+ void UFreeExcelLibrary::GetCellValue_CellValueFloat(const FCellValue& Target, float& Value)
+ {
+	 Value = Target;
+ }
+ void UFreeExcelLibrary::GetCellValue_CellValueString(const FCellValue& Target, FString& Value)
+ {
+	 Value = (FString)Target;
+ }
+ void UFreeExcelLibrary::GetCellValue_CellValueDateTime(const FCellValue& Target, FDateTime& Value)
+ { 
+	 Value = Target;
+ }
+ void UFreeExcelLibrary::GetCellValue_CellValueCellValue(const FCellValue& Target, FCellValue& Value)
+ { 
+	 Value = Target;
+ }
+ 
+#undef LOCAL_UFUNCTION_DEFINE

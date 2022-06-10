@@ -1,7 +1,5 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
-
-#pragma optimize("",off)
-
+ 
 #include "DataTableJSON.h"
 #include "UObject/UnrealType.h"
 #include "UObject/EnumProperty.h"

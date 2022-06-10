@@ -10,7 +10,9 @@
 #include "FreeExcelLibrary.generated.h"
 
 
-
+class UExcelDocument;
+class USheet;
+class UCell;
  
 /**
  *
@@ -97,52 +99,6 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Type (CellValue)"), Category = "FreeExcel")
 		static	EXLValueType  Type_CellValue(const FCellValue& val);
-	   
-	UFUNCTION(BlueprintCallable, CustomThunk, meta = (CustomStructureParam = "Target,Ref,Value", BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
-		static void SetCellValue(const int32& Target, const int32& Ref, const int32& Value);
-	static void Generic_SetCellValue(FProperty* SelfProperty, void* Self, FProperty* RefProperty, void* Ref, FProperty* ValProperty, void* Value);
-	DECLARE_FUNCTION(execSetCellValue)
-	{
-		Stack.StepCompiledIn<FStructProperty>(NULL);
-		FProperty* SelfProperty = CastField<FProperty>(Stack.MostRecentProperty);
-		void* SelfPtr = Stack.MostRecentPropertyAddress;
-
-		Stack.StepCompiledIn<FStructProperty>(NULL);
-		FProperty* RefProperty = CastField<FProperty>(Stack.MostRecentProperty);
-		void* RefPtr = Stack.MostRecentPropertyAddress;
-
-		Stack.StepCompiledIn<FStructProperty>(NULL);
-		FProperty* ValProperty = CastField<FProperty>(Stack.MostRecentProperty);
-		void* ValPtr = Stack.MostRecentPropertyAddress;
-
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->Generic_SetCellValue(SelfProperty, SelfPtr,RefProperty, RefPtr, ValProperty, ValPtr);
-		P_NATIVE_END;
-	}
-
-	UFUNCTION(BlueprintCallable, CustomThunk, meta = (CustomStructureParam = "Target,Ref,ReturnValue", BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
-		static void GetCellValue(const int32& Target, const int32& Ref ,  int32& ReturnValue);
-	static void Generic_GetCellValue(FProperty* SelfProperty, void* Self, FProperty* RefProperty, void* Ref , FProperty* RetProperty, void* Ret);
-	DECLARE_FUNCTION(execGetCellValue)
-	{
-		Stack.StepCompiledIn<FStructProperty>(NULL);
-		FProperty* SelfProperty = CastField<FProperty>(Stack.MostRecentProperty);
-		void* SelfPtr = Stack.MostRecentPropertyAddress;
-
-		Stack.StepCompiledIn<FStructProperty>(NULL);
-		FProperty* RefProperty = CastField<FProperty>(Stack.MostRecentProperty);
-		void* RefPtr = Stack.MostRecentPropertyAddress;
-		 
-		Stack.StepCompiledInRef<FStructProperty,void*>(NULL);
-		FProperty* RetProperty = CastField<FProperty>(Stack.MostRecentProperty);
-		void* RetPtr = Stack.MostRecentPropertyAddress;
-
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->Generic_GetCellValue(SelfProperty, SelfPtr, RefProperty, RefPtr, RetProperty, RetPtr);
-		P_NATIVE_END;
-	}
 
 	UFUNCTION(BlueprintCallable, meta = ( BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
 	static void CellIterator_Forward(const FCellIterator& Target);
@@ -164,11 +120,11 @@ public:
 	 
 	UFUNCTION(BlueprintCallable, CustomThunk, meta = (CustomStructureParam = "Target,ReturnValue", BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
 		static void ToTemplateArray(const int32& Target,  TArray<int32>& ReturnValue);
-	static void Generic_ToTemplateArray(FProperty* SelfProperty, void* Self, FArrayProperty* RetProperty, void* Ret);
+	static void Generic_ToTemplateArray(FObjectProperty* SelfProperty, void* Self, FArrayProperty* RetProperty, void* Ret);
 	DECLARE_FUNCTION(execToTemplateArray)
 	{
 		Stack.StepCompiledIn<FStructProperty>(NULL);
-		FProperty* SelfProperty = CastField<FProperty>(Stack.MostRecentProperty);
+		FObjectProperty* SelfProperty = CastField<FObjectProperty>(Stack.MostRecentProperty);
 		void* SelfPtr = Stack.MostRecentPropertyAddress;
 		 
 		Stack.StepCompiledInRef<FStructProperty, void*>(NULL);
@@ -185,6 +141,74 @@ public:
 		P_THIS->Generic_ToTemplateArray(SelfProperty, SelfPtr, RetProperty, RetPtr);
 		P_NATIVE_END;
 	}
-
  
+#define LOCAL_UFUNCTION_DECLARE(FuncName,TypeTarget,TypeValue)\
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "FreeExcel")\
+		static void SetCellValue_##FuncName( TypeTarget Target, const FCellReference& Ref, const TypeValue& Value);
+	 
+	LOCAL_UFUNCTION_DECLARE(DocBool, UExcelDocument*, bool)
+	LOCAL_UFUNCTION_DECLARE(DocInt, UExcelDocument*, int32)
+	LOCAL_UFUNCTION_DECLARE(DocFloat, UExcelDocument*, float)
+	LOCAL_UFUNCTION_DECLARE(DocString, UExcelDocument*, FString)
+	LOCAL_UFUNCTION_DECLARE(DocDateTime, UExcelDocument*, FDateTime)
+	LOCAL_UFUNCTION_DECLARE(DocCellValue, UExcelDocument*, FCellValue)
+	LOCAL_UFUNCTION_DECLARE(SheetBool, USheet*, bool)
+	LOCAL_UFUNCTION_DECLARE(SheetInt, USheet*, int32)
+	LOCAL_UFUNCTION_DECLARE(SheetFloat, USheet*, float)
+	LOCAL_UFUNCTION_DECLARE(SheetString, USheet*, FString)
+	LOCAL_UFUNCTION_DECLARE(SheetDateTime, USheet*, FDateTime)
+	LOCAL_UFUNCTION_DECLARE(SheetCellValue, USheet*, FCellValue)
+#undef LOCAL_UFUNCTION_DECLARE
+#define LOCAL_UFUNCTION_DECLARE(FuncName,TypeTarget,TypeValue)\
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"), Category = "FreeExcel")\
+		static void SetCellValue_##FuncName( TypeTarget Target,const TypeValue& Value);
+
+	LOCAL_UFUNCTION_DECLARE(CellBool, UCell*, bool)
+	LOCAL_UFUNCTION_DECLARE(CellInt, UCell*, int32)
+	LOCAL_UFUNCTION_DECLARE(CellFloat, UCell*, float)
+	LOCAL_UFUNCTION_DECLARE(CellString, UCell*, FString)
+	LOCAL_UFUNCTION_DECLARE(CellDateTime, UCell*, FDateTime)
+	LOCAL_UFUNCTION_DECLARE(CellCellValue, UCell*, FCellValue)
+	LOCAL_UFUNCTION_DECLARE(CellValueBool, const FCellValue&, bool)
+	LOCAL_UFUNCTION_DECLARE(CellValueInt, const FCellValue&, int32)
+	LOCAL_UFUNCTION_DECLARE(CellValueFloat, const FCellValue&, float)
+	LOCAL_UFUNCTION_DECLARE(CellValueString, const FCellValue&, FString)
+	LOCAL_UFUNCTION_DECLARE(CellValueDateTime, const FCellValue&, FDateTime)
+	LOCAL_UFUNCTION_DECLARE(CellValueCellValue, const FCellValue&, FCellValue)
+#undef LOCAL_UFUNCTION_DECLARE
+#define LOCAL_UFUNCTION_DECLARE(FuncName,TypeTarget,TypeValue)\
+	UFUNCTION(BlueprintCallable, meta = ( BlueprintInternalUseOnly = "true"), Category = "FreeExcel")\
+	static void GetCellValue_##FuncName( TypeTarget Target, const FCellReference& Ref, TypeValue& ReturnValue);
+
+	LOCAL_UFUNCTION_DECLARE(DocBool, UExcelDocument*, bool)
+	LOCAL_UFUNCTION_DECLARE(DocInt, UExcelDocument*, int32)
+	LOCAL_UFUNCTION_DECLARE(DocFloat, UExcelDocument*, float)
+	LOCAL_UFUNCTION_DECLARE(DocString, UExcelDocument*, FString)
+	LOCAL_UFUNCTION_DECLARE(DocDateTime, UExcelDocument*, FDateTime)
+	LOCAL_UFUNCTION_DECLARE(DocCellValue, UExcelDocument*, FCellValue)
+	LOCAL_UFUNCTION_DECLARE(SheetBool, USheet*, bool)
+	LOCAL_UFUNCTION_DECLARE(SheetInt, USheet*, int32)
+	LOCAL_UFUNCTION_DECLARE(SheetFloat, USheet*, float)
+	LOCAL_UFUNCTION_DECLARE(SheetString, USheet*, FString)
+	LOCAL_UFUNCTION_DECLARE(SheetDateTime, USheet*, FDateTime)
+	LOCAL_UFUNCTION_DECLARE(SheetCellValue, USheet*, FCellValue)
+#undef LOCAL_UFUNCTION_DECLARE
+#define LOCAL_UFUNCTION_DECLARE(FuncName,TypeTarget,TypeValue)\
+	UFUNCTION(BlueprintCallable, meta = ( BlueprintInternalUseOnly = "true"), Category = "FreeExcel")\
+	static void GetCellValue_##FuncName( TypeTarget Target, TypeValue& ReturnValue);
+
+	LOCAL_UFUNCTION_DECLARE(CellBool, UCell*, bool)
+	LOCAL_UFUNCTION_DECLARE(CellInt, UCell*, int32)
+	LOCAL_UFUNCTION_DECLARE(CellFloat, UCell*, float)
+	LOCAL_UFUNCTION_DECLARE(CellString, UCell*, FString)
+	LOCAL_UFUNCTION_DECLARE(CellDateTime, UCell*, FDateTime)
+	LOCAL_UFUNCTION_DECLARE(CellCellValue, UCell*, FCellValue)
+	LOCAL_UFUNCTION_DECLARE(CellValueBool, const FCellValue&, bool)
+	LOCAL_UFUNCTION_DECLARE(CellValueInt, const FCellValue&, int32)
+	LOCAL_UFUNCTION_DECLARE(CellValueFloat, const FCellValue&, float)
+	LOCAL_UFUNCTION_DECLARE(CellValueString, const FCellValue&, FString)
+	LOCAL_UFUNCTION_DECLARE(CellValueDateTime, const FCellValue&, FDateTime)
+	LOCAL_UFUNCTION_DECLARE(CellValueCellValue, const FCellValue&, FCellValue)
+#undef LOCAL_UFUNCTION_DECLARE
+	 
 };

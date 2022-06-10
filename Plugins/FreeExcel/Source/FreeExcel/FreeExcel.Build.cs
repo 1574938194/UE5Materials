@@ -16,7 +16,6 @@ public class FreeExcel : ModuleRules
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
-				"D:\\proj\\ueTest\\Plugins\\FreeExcel\\Source\\ThirdParty",
 			}
 			);
 				
@@ -56,7 +55,10 @@ public class FreeExcel : ModuleRules
 			}
 			);
 			
-			PublicAdditionalLibraries.Add(
-			"D:\\proj\\ueTest\\Plugins\\FreeExcel\\Source\\ThirdParty\\OpenXLSX\\lib\\OpenXLSX.lib");
+		PublicAdditionalLibraries.AddRange(
+			new string[]
+			{
+			}
+			);
 	}
 }
