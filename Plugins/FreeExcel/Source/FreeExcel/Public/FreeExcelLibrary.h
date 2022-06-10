@@ -161,6 +161,30 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
 		static void CellIterator_NotEqual(const FCellIterator& A, const FCellIterator& B, bool& ReturnValue);
+	 
+	UFUNCTION(BlueprintCallable, CustomThunk, meta = (CustomStructureParam = "Target,ReturnValue", BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
+		static void ToTemplateArray(const int32& Target,  TArray<int32>& ReturnValue);
+	static void Generic_ToTemplateArray(FProperty* SelfProperty, void* Self, FArrayProperty* RetProperty, void* Ret);
+	DECLARE_FUNCTION(execToTemplateArray)
+	{
+		Stack.StepCompiledIn<FStructProperty>(NULL);
+		FProperty* SelfProperty = CastField<FProperty>(Stack.MostRecentProperty);
+		void* SelfPtr = Stack.MostRecentPropertyAddress;
+		 
+		Stack.StepCompiledInRef<FStructProperty, void*>(NULL);
+		FArrayProperty* RetProperty = CastField<FArrayProperty>(Stack.MostRecentProperty);
+		void* RetPtr = Stack.MostRecentPropertyAddress;
+		if (!RetProperty)
+		{
+			Stack.bArrayContextFailed = true;
+			return;
+		}
+
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->Generic_ToTemplateArray(SelfProperty, SelfPtr, RetProperty, RetPtr);
+		P_NATIVE_END;
+	}
 
  
 };

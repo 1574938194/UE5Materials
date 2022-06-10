@@ -188,6 +188,8 @@ public:
 
     }
   
+    FString ToString() const;
+
     void clear()
     {
         _Type = EXLValueType::Empty;

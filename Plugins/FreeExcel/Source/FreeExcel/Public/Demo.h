@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Demo1.generated.h"
+#include "Demo.generated.h"
 
 UCLASS(Blueprintable)
-class FREEEXCEL_API ADemo1 : public AActor
+class FREEEXCEL_API ADemo : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ADemo1();
+	ADemo();
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,6 +23,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
 	 void RunDemo();
 
+	UFUNCTION(BlueprintCallable, Category = "FreeExcel")
+		void RunDemo2();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

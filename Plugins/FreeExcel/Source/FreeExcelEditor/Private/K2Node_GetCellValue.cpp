@@ -28,6 +28,7 @@ UK2Node_GetCellValue::UK2Node_GetCellValue(const FObjectInitializer& ObjectIniti
 	: Super(ObjectInitializer)
 {
 	NodeTooltip = LOCTEXT("GetCellValue_NodeTooltip", "Get cell value from given context");
+	InputCheck = LOCTEXT("GetCellValue_InputCheck", "Cannot input this type!");
 }
 
 void UK2Node_GetCellValue::SetPinToolTip(UEdGraphPin& MutatablePin, const FText& PinDescription) const
@@ -100,9 +101,11 @@ FText UK2Node_GetCellValue::GetMenuCategory() const
 
 void UK2Node_GetCellValue::PinDefaultValueChanged(UEdGraphPin* ChangedPin)
 {
-	if (ChangedPin == FindPin(TEXT("Self"))) PropagateSelfPinType(ChangedPin);
-	else if (ChangedPin == FindPin(TEXT("Ref"))) PropagateRefPinType(ChangedPin);
-	else if (ChangedPin == FindPin(TEXT("ReturnValue"))) PropagateReturnValuePinType(ChangedPin);
+	TArray<FName> ls = { TEXT("Self"), TEXT("Ref"), TEXT("Value") };
+	if (ls.Contains(ChangedPin->GetFName()))
+	{
+		PropagatePinType(ChangedPin);
+	}
 }
  
 
@@ -203,47 +206,16 @@ FSlateIcon UK2Node_GetCellValue::GetIconAndTint(FLinearColor& OutColor) const
 void UK2Node_GetCellValue::PostReconstructNode()
 {
 	Super::PostReconstructNode();
-	PropagateSelfPinType(FindPin(TEXT("Self")));
-	PropagateRefPinType(FindPin(TEXT("Ref")));
-	PropagateReturnValuePinType(FindPin(TEXT("ReturnValue")));
+	for (auto& it : { FindPin(TEXT("Self")) , FindPin(TEXT("Ref")) ,FindPin(TEXT("Value")) })
+	{
+		PropagatePinType(it);
+	}
 }
 
 void UK2Node_GetCellValue::EarlyValidation(class FCompilerResultsLog& MessageLog) const
 {
 	Super::EarlyValidation(MessageLog);
-
-	//	const UEdGraphPin* TargetArrayPin = GetTargetArrayPin();
-	//	const UEdGraphPin* RowNamePin = GetRowNamePin();
-	//	if (!TargetArrayPin || !RowNamePin)
-	//	{
-	//		MessageLog.Error(*LOCTEXT("MissingPins", "Missing pins in @@").ToString(), this);
-	//		return;
-	//	}
-	//
-	//	if (TargetArrayPin->LinkedTo.Num() == 0)
-	//	{
-	//		const UTargetArray* TargetArray = Cast<UTargetArray>(TargetArrayPin->DefaultObject);
-	//		if (!TargetArray)
-	//		{
-	//			MessageLog.Error(*LOCTEXT("NoTargetArray", "No TargetArray in @@").ToString(), this);
-	//			return;
-	//		}
-	//
-	//		if (!RowNamePin->LinkedTo.Num())
-	//		{
-	//			const FName CurrentName = FName(*RowNamePin->GetDefaultAsString());
-	//			if (!TargetArray->GetRowNames().Contains(CurrentName))
-	//			{
-	//				const FString Msg = FText::Format(
-	//					LOCTEXT("WrongRowNameFmt", "'{0}' row name is not stored in '{1}'. @@"),
-	//					FText::FromString(CurrentName.ToString()),
-	//					FText::FromString(GetFullNameSafe(TargetArray))
-	//				).ToString();
-	//				MessageLog.Error(*Msg, this);
-	//				return;
-	//			}
-	//		}
-	//	}
+	 
 }
 
  
@@ -251,77 +223,28 @@ void UK2Node_GetCellValue::NotifyPinConnectionListChanged(UEdGraphPin* Pin)
 {
 	Super::NotifyPinConnectionListChanged(Pin);
  
-	 
 	if (Pin == FindPin(TEXT("Self")))
 	{
-		//PropagateSelfPinType(Pin);
-		ReconstructNode();
+		static TArray<FName> names = { "CellValue"  , "Cell" };
+
+		auto cond = Pin->PinType.PinSubCategoryObject.IsValid() && names.Contains( Pin->PinType.PinSubCategoryObject->GetFName());
+
+		auto _Ref = FindPin(TEXT("Ref"));
+		if (_Ref->bHidden == cond)
+		{
+			PropagatePinType(Pin);
+		}
+		else
+		{
+			_Ref->bHidden = cond;
+			ReconstructNode();
+		}
 	}
-	else if (Pin == FindPin(TEXT("Ref"))) PropagateRefPinType(Pin);
-	else if (Pin == FindPin(TEXT("ReturnValue"))) PropagateReturnValuePinType(Pin);
+	else if (Pin == FindPin(TEXT("Ref"))) PropagatePinType(Pin);
+	else if (Pin == FindPin(TEXT("Value"))) PropagatePinType(Pin);
 } 
-
-void UK2Node_GetCellValue::PropagateSelfPinType(UEdGraphPin* Pin)
-{ 
-	if (Pin)
-	{ 
-		if (Pin->LinkedTo.Num() == 0)
-		{
-			Pin->ResetDefaultValue();
-			Pin->PinType.PinCategory = UEdGraphSchema_K2::PC_Wildcard;
-			auto _Ref = FindPin(TEXT("Ref"));
-			_Ref->bHidden = false;
-			_Ref->ResetDefaultValue();
-			_Ref->PinType.PinCategory = UEdGraphSchema_K2::PC_Wildcard;
  
-			return;
-		}
-
-		auto pt = Pin->LinkedTo[0]->PinType;
-		if (!pt.IsContainer())
-		{
-			if (pt.PinCategory == UEdGraphSchema_K2::PC_Object)
-			{
-				auto name = pt.PinSubCategoryObject->GetName();
-				if (name == "ExcelDocument" || name == "Sheet")
-				{
-					auto _Ref = FindPin(TEXT("Ref"));
-					_Ref->bHidden = false;
-					Pin->PinType = Pin->LinkedTo[0]->PinType;
- 
-					return;
-				}
-				else if (name == "Cell")
-				{
-					auto _Ref = FindPin(TEXT("Ref"));
-					_Ref->bHidden = true;
-					_Ref->BreakAllPinLinks();
-					Pin->PinType = Pin->LinkedTo[0]->PinType;
- 
-					return;
-				}
-			}
-			else if (pt.PinCategory == UEdGraphSchema_K2::PC_Struct)
-			{
-				auto name = pt.PinSubCategoryObject->GetName();
-				if (name == "CellValue")
-				{
-					auto _Ref = FindPin(TEXT("Ref"));
-					_Ref->bHidden = true;
-					_Ref->BreakAllPinLinks();
-					Pin->PinType = Pin->LinkedTo[0]->PinType;
- 
-					return;
-				}
-			}
-		}
-		 
-		Pin->BreakAllPinLinks();
-		Pin->ResetDefaultValue();
-		Pin->PinType.PinCategory = UEdGraphSchema_K2::PC_Wildcard;
-	}
-}
-void UK2Node_GetCellValue::PropagateRefPinType(UEdGraphPin* Pin)
+void UK2Node_GetCellValue::PropagatePinType(UEdGraphPin* Pin)
 {
 	if (Pin)
 	{
@@ -331,73 +254,93 @@ void UK2Node_GetCellValue::PropagateRefPinType(UEdGraphPin* Pin)
 			Pin->PinType.PinCategory = UEdGraphSchema_K2::PC_Wildcard;
 			return;
 		}
+		Pin->PinType = Pin->LinkedTo[0]->PinType;
 
-		auto pt = Pin->LinkedTo[0]->PinType;
-		if (!pt.IsContainer())
-		{
-			if (pt.PinCategory == UEdGraphSchema_K2::PC_String)
-			{
-				Pin->PinType = Pin->LinkedTo[0]->PinType;
-				return;
-			}
-			else if (pt.PinCategory == UEdGraphSchema_K2::PC_Struct)
-			{
-				auto name = pt.PinSubCategoryObject->GetName();
-				if (name == "IntPoint" || name=="CellReference")
-				{ 
-					Pin->PinType = Pin->LinkedTo[0]->PinType;
-					return;
-				}
-			}
-		}
-
-		Pin->BreakAllPinLinks();
-		Pin->ResetDefaultValue();
-		Pin->PinType.PinCategory = UEdGraphSchema_K2::PC_Wildcard;
 	}
+	 
 }
-void UK2Node_GetCellValue::PropagateReturnValuePinType(UEdGraphPin* Pin)
+
+
+bool UK2Node_GetCellValue::IsConnectionDisallowed(const UEdGraphPin* MyPin, const UEdGraphPin* OtherPin, FString& OutReason) const
 {
-	  
-	if (Pin) 
+	if (!ensure(OtherPin))
 	{
-		if (Pin->LinkedTo.Num() == 0)
-		{
-			Pin->ResetDefaultValue();
-			Pin->PinType.PinCategory = UEdGraphSchema_K2::PC_Wildcard;
-			return;
-		}
-
-		auto pt = Pin->LinkedTo[0]->PinType;
-		if (!pt.IsContainer())
-		{
-			if (pt.PinCategory == UEdGraphSchema_K2::PC_String ||
-				pt.PinCategory == UEdGraphSchema_K2::PC_Int ||
-				pt.PinCategory == UEdGraphSchema_K2::PC_Boolean ||
-				pt.PinCategory == UEdGraphSchema_K2::PC_Float
-
-				/*!= UEdGraphSchema_K2::PC_Wildcard*/)
-			{
-				Pin->PinType = Pin->LinkedTo[0]->PinType;
-				//ValuePin->PinType.bIsReference = true;
-				return;
-			}
-			else if (pt.PinCategory == UEdGraphSchema_K2::PC_Struct)
-			{
-				auto t = pt.PinSubCategoryObject->GetName();
-				if (t == "DateTime" ||
-					t == "CellValue")
-				{
-					Pin->PinType = Pin->LinkedTo[0]->PinType;
-					return;
-				}
-			}
-		}
-		Pin->BreakAllPinLinks();
-		Pin->ResetDefaultValue();
-		Pin->PinType.PinCategory = UEdGraphSchema_K2::PC_Wildcard;
+		return true;
 	}
 
-
+	if (MyPin->PinName == "Self")
+	{
+		if (OtherPin->PinType.IsContainer())
+		{
+			OutReason = InputCheck.ToString();
+			return true;
+		}
+		else if (OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Object)
+		{
+			static TArray<FName> names = { "ExcelDocument","Sheet","Cell" };
+			if (OtherPin->PinType.PinSubCategoryObject.IsValid() && names.Contains(OtherPin->PinType.PinSubCategoryObject->GetFName()))
+			{
+				return false;
+			}
+		}
+		else if (OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Struct)
+		{
+			static TArray<FName> names = { "CellValue" };
+			if (OtherPin->PinType.PinSubCategoryObject.IsValid() && names.Contains(OtherPin->PinType.PinSubCategoryObject->GetFName()))
+			{
+				return false;
+			}
+		}
+		OutReason = InputCheck.ToString();
+		return true;
+	}
+	else if (MyPin->PinName == "Ref")
+	{
+		if (OtherPin->PinType.IsContainer())
+		{
+			OutReason = InputCheck.ToString();
+			return true;
+		}
+		else if (OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Struct)
+		{
+			static TArray<FName> names = { "CellReference", "IntPoint" };
+			if (OtherPin->PinType.PinSubCategoryObject.IsValid() && names.Contains(OtherPin->PinType.PinSubCategoryObject->GetFName()))
+			{
+				return false;
+			}
+		}
+		else if (OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_String)
+		{
+			return false;
+		}
+		OutReason = InputCheck.ToString();
+		return true;
+	}
+	else if (MyPin->PinName == "Value")
+	{
+		if (OtherPin->PinType.IsContainer())
+		{
+			OutReason = InputCheck.ToString();
+			return true;
+		}
+		else if (OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_String ||
+			OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Int ||
+			OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Boolean ||
+			OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Float)
+		{
+			return false;
+		}
+		else if (OtherPin->PinType.PinCategory == UEdGraphSchema_K2::PC_Struct)
+		{
+			static TArray<FName> names = { "DateTime", "CellValue" };
+			if (OtherPin->PinType.PinSubCategoryObject.IsValid() && names.Contains(OtherPin->PinType.PinSubCategoryObject->GetFName()))
+			{
+				return false;
+			}
+		}
+		OutReason = InputCheck.ToString();
+		return true;
+	}
+	return false;
 }
 #undef LOCTEXT_NAMESPACE

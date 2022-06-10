@@ -34,12 +34,11 @@ class FREEEXCELEDITOR_API UK2Node_SetCellValue : public  UK2Node
 	virtual bool IsNodeSafeToIgnore() const override { return true; }
 	virtual void GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const override;
 	virtual FText GetMenuCategory() const override;
-	//virtual bool IsConnectionDisallowed(const UEdGraphPin* MyPin, const UEdGraphPin* OtherPin, FString& OutReason) const override;
+	virtual bool IsConnectionDisallowed(const UEdGraphPin* MyPin, const UEdGraphPin* OtherPin, FString& OutReason) const override;
 	virtual void EarlyValidation(class FCompilerResultsLog& MessageLog) const override;
 	virtual void NotifyPinConnectionListChanged(UEdGraphPin* Pin) override;
 	//~ End UK2Node Interface
- 
-	 virtual bool DoesInputWildcardPinAcceptArray(const UEdGraphPin* Pin) const { return false; }
+  
   
 	/** Helper function to set default value of PropertyNamePin */
 	void SetDefaultValueOfPropertyNamePin();
@@ -48,13 +47,13 @@ class FREEEXCELEDITOR_API UK2Node_SetCellValue : public  UK2Node
 	TArray<FString> GetPropertyNames();
 
 private:
-	void PropagateSelfPinType(UEdGraphPin* Pin);
-	void PropagateRefPinType(UEdGraphPin* Pin);
-	void PropagateValuePinType(UEdGraphPin* Pin);
+	void PropagatePinType(UEdGraphPin* Pin);
 
 	void SetPinToolTip(UEdGraphPin& MutatablePin, const FText& PinDescription) const;
 
 	/** Tooltip text for this node. */
 	FText NodeTooltip; 
+
+	FText InputCheck;
 	 
 };

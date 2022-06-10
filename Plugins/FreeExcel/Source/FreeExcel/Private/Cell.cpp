@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Cell.h"
-#include "CellValue.h"
-#pragma optimize("",off)
+#include "CellValue.h" 
 
 FCellReference UCell::GetReference()const
 { 

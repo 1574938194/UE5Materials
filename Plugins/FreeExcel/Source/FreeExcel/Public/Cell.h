@@ -11,8 +11,6 @@
 #include "Cell.generated.h"
 
  
-class UCellValue;
-class ADemo1;
 /**
  * 
  */
@@ -81,8 +79,7 @@ protected:
 	OpenXLSX::XLCell _Inner;       
 
     friend class USheet;
-    friend struct FCellIterator;
-    friend class ADemo1;
+    friend struct FCellIterator;  
 	friend class UCell;
 	friend class UFreeExcelLibrary;
 };

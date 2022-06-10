@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #pragma optimize("",off)
 
-#include "Demo1.h"
+#include "Demo.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "OpenXLSX/include/headers/XLSheet.hpp"
 #include "Sheet.h"
@@ -13,12 +13,14 @@
 #include <numeric>
 #include "FreeExcelLibrary.h"
 #include "CellValue.h"
+#include "DataTableJSON.h" 
+
 
 using namespace std;
 using namespace OpenXLSX;
 
 // Sets default values
-ADemo1::ADemo1()
+ADemo::ADemo()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -26,20 +28,20 @@ ADemo1::ADemo1()
 }
 
 // Called when the game starts or when spawned
-void ADemo1::BeginPlay()
+void ADemo::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void ADemo1::Tick(float DeltaTime)
+void ADemo::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
  
-void ADemo1::RunDemo()
+void ADemo::RunDemo()
 {
     // Create excel document and get first sheet 
     auto doc = NewObject<UExcelDocument>();
@@ -64,8 +66,7 @@ void ADemo1::RunDemo()
         FString(D1 ? TEXT("true") : TEXT("flase"))
     );
 
-    std::string str = wks->_Inner.cell("A2").formula();
-
+    
     wks->Cell("A2")->SetCellValue(wks->Cell("C1")->Value());
     UKismetSystemLibrary::PrintString(this, "," + wks->Cell("A2")->ToString());
 
@@ -117,6 +118,18 @@ void ADemo1::RunDemo()
     
     // save and close doc
     doc->Save();
+    doc->Close();
+}
+
+
+void ADemo::RunDemo2()
+{ 
+    auto doc = NewObject<UExcelDocument>();
+    doc->Open(TEXT("D:\\proj\\ueTest\\Demo02.xlsx"));
+    auto wks = doc->GetOrCreateSheetWithName(TEXT("Sheet1"));
+      
+    
+
     doc->Close();
 }
     

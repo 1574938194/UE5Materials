@@ -39,11 +39,11 @@ void AMyActor::Test()
 	stru.SafeObjectPointer = this;
 
 	for (TFieldIterator<FProperty> it(stru.StaticStruct()); it; ++it)
-	{
+	{ 
 		auto name = it->GetName();
 		if (it->GetCPPType() == "int32")
-		{
-			auto prop = CastField<FIntProperty>(*it);
+		{ 
+			auto prop = Cast<FIntProperty>(*it);
 			auto ptr = prop->ContainerPtrToValuePtr<int32>(&stru);
 			prop->SetPropertyValue(&stru, 3333);
 			UKismetSystemLibrary::PrintString(this, name + "(int32):" + FString::FromInt(*ptr));

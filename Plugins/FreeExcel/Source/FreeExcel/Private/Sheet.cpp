@@ -3,8 +3,8 @@
 
 #include "Sheet.h"
 #include "OpenXLSX/include/headers/XLCellValue.hpp"
- 
- 
+
+
 FString USheet::Name() const
 {
 	return FString(_Inner.name().c_str());
@@ -62,3 +62,22 @@ TArray<FCellValue> USheet::GetRowData(int32 row)const
 	}
 	return ret;
 }
+
+TArray<float> USheet::GetRowFloatData(int32 row ,bool skip0)const
+{
+	TArray<float> ret;
+	std::vector<OpenXLSX::XLCellValue> ls = _Inner.row(row).values();
+	ret.Reserve(ls.size());
+	auto it = ls.begin();
+	if (skip0)
+	{
+		if (ls.size() == 0) return ret;
+		++it;
+	}
+	for (; it!= ls.end(); ++it)
+	{
+		ret.Emplace((float)*it);
+	}
+	return ret;
+}
+ 

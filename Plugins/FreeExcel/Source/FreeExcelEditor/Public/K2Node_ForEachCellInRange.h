@@ -44,6 +44,7 @@ public:
 
 	virtual void EarlyValidation(class FCompilerResultsLog& MessageLog) const override;
 	virtual void NotifyPinConnectionListChanged(UEdGraphPin* Pin) override;
+	/*virtual bool IsConnectionDisallowed(const UEdGraphPin* MyPin, const UEdGraphPin* OtherPin, FString& OutReason) const override;*/
 	//~ End UK2Node Interface
 
 private:

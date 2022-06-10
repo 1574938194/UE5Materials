@@ -1,5 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
+#pragma optimize("",off)
 
 #include "FreeExcelLibrary.h"
 #include "OpenXLSX/include/headers/XLCellRange.hpp"
@@ -8,8 +9,38 @@
 #include "ExcelDocument.h"
 #include "UObject/Field.h"
 #include "Kismet/KismetArrayLibrary.h"
-#pragma optimize("",off)
+#include "UObject/UnrealType.h"
+#include "UObject/EnumProperty.h"
+#include "DataTableUtils.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
+#include "Policies/PrettyJsonPrintPolicy.h"
+#include "Dom/JsonValue.h"
+#include "Dom/JsonObject.h"
+#include "Engine/UserDefinedStruct.h"
 
+const TCHAR* JSONTypeToString(const EJson InType)
+{
+	switch (InType)
+	{
+	case EJson::None:
+		return TEXT("None");
+	case EJson::Null:
+		return TEXT("Null");
+	case EJson::String:
+		return TEXT("String");
+	case EJson::Number:
+		return TEXT("Number");
+	case EJson::Boolean:
+		return TEXT("Boolean");
+	case EJson::Array:
+		return TEXT("Array");
+	case EJson::Object:
+		return TEXT("Object");
+	default:
+		return TEXT("Unknown");
+	}
+}
   
  
 void UFreeExcelLibrary::Offset(FCellReference Ref, int32 row, int32 col)
@@ -407,3 +438,394 @@ void UFreeExcelLibrary::Generic_GetCellValue(FProperty* SelfProperty, void* Self
 {
 	ReturnValue = (Target != Right);
 }
+
+  void ToTemplateArray(const int32& Target, const int32& Template, TArray<int32>& ReturnValue)
+ {
+	 check(0)
+ }
+
+ bool ReadStruct(const TSharedRef<FJsonObject>& InParsedObject, UScriptStruct* InStruct, void* InStructData);
+
+ bool ReadStructEntry(const TSharedRef<FJsonValue>& InParsedPropertyValue, void* InStructData, FProperty* InProperty, void* InPropertyData);
+
+ bool ReadContainerEntry(const TSharedRef<FJsonValue>& InParsedPropertyValue, const int32 InArrayEntryIndex, FProperty* InProperty, void* InPropertyData);
+  
+ void UFreeExcelLibrary::Generic_ToTemplateArray(FProperty* SelfProperty, void* Self,  FArrayProperty* RetProperty, void* Ret)
+ {
+	 if (!Ret || !Self)
+	 {
+		 return;
+	 }
+	 auto sheet = (SelfProperty->GetCPPType() == "UExcelDocument*") ? (*(UExcelDocument**)Self)->GetCurrentSheet() : *(USheet**)Self;
+	 std::vector<FProperty*> PropertyIndex;
+	 UScriptStruct* RowStruct = CastField<FStructProperty>(RetProperty->Inner)->Struct;
+	 auto b1 = RowStruct->IsA<UUserDefinedStruct>(); 
+	 UUserDefinedStruct* BPRowStruct = Cast<UUserDefinedStruct>(RowStruct);
+	 
+	 FScriptArrayHelper ArrayHelper(RetProperty, Ret);
+	 
+	 auto fields = sheet->GetRowData(1);
+	 auto field = fields.begin();
+	 for (; field != fields.end(); ++field)
+	 {
+		 auto name = (FString)*field;
+		 if (auto prop = BPRowStruct->FindPropertyByName(*name))
+		 {
+			 PropertyIndex.push_back(prop);
+		 }
+		 else
+		 {
+			 PropertyIndex.push_back(nullptr);
+		 }
+	 }
+	 if (!fields.Num()) return ;
+	 auto row = 0, col = 0;
+	 sheet->SheetSize(row, col);
+	 /*Array.Reserve(row - 1);*/
+
+	 for (int32 RowIdx = 2; RowIdx <= row; ++RowIdx)
+	 {
+		 auto rowData = sheet->GetRowData(RowIdx);
+		 auto it = rowData.begin();
+		 auto index = ArrayHelper.AddValue();
+		 void* InStructData = ArrayHelper.GetRawPtr(index);
+		 auto p = PropertyIndex.begin();
+		 for (int i = 0; i < PropertyIndex.size(); ++i, ++p, ++it)
+		 {
+			 if (!*p)  continue;
+
+
+			 FProperty* BaseProp = *p;
+			 check(BaseProp);
+
+			 if (auto NumericProperty = CastField<FNumericProperty>(BaseProp))
+			 {
+				 void* Data = BaseProp->ContainerPtrToValuePtr<void>(InStructData);
+				 if (NumericProperty->IsFloatingPoint())
+				 {
+					 NumericProperty->SetFloatingPointPropertyValue(Data, float(*it));
+				 }
+				 else
+				 {
+					 NumericProperty->SetIntPropertyValue(Data, (int64)int32(*it));
+				 }
+			 }
+			 else if (auto StrProperty = CastField<FStrProperty>(BaseProp))
+			 {
+				 void* Data = StrProperty->ContainerPtrToValuePtr<void>(InStructData);
+				 StrProperty->ImportText(*(*it).ToString(), Data, EPropertyPortFlags::PPF_None, nullptr, nullptr);
+			 }
+			 else if (auto StructProperty = CastField<FStructProperty>(BaseProp))
+			 {
+
+				 TSharedPtr<FJsonObject> ParsedPropertyValue = MakeShareable(new FJsonObject);
+				 auto reader = FJsonStringReader::Create((FString)*it);
+				 FJsonSerializer::Deserialize(reader.Get(), ParsedPropertyValue);
+
+				 if (!ParsedPropertyValue.IsValid()) continue;
+
+				 void* Data = StructProperty->ContainerPtrToValuePtr<void>(InStructData);
+				 ReadStruct(ParsedPropertyValue.ToSharedRef(), StructProperty->Struct, Data);
+				 continue;
+			 }
+			 else if (auto BoolProperty = CastField<FBoolProperty>(BaseProp))
+			 {
+				 void* Data = BoolProperty->ContainerPtrToValuePtr<void>(InStructData);
+				 BoolProperty->SetPropertyValue(Data, bool(*it));
+			 }
+			 //FEnumProperty
+			 //FArrayProperty
+			 //FSetProperty
+			 //FMapProperty
+		 }
+		 /*Array.Emplace(InStructData);*/
+		 
+	 }
+	  
+
+ }
+
+ bool ReadStruct(const TSharedRef<FJsonObject>& InParsedObject, UScriptStruct* InStruct, void* InStructData)
+ {
+	 for (TFieldIterator<FProperty> It(InStruct); It; ++It)
+	 {
+		 FProperty* BaseProp = *It;
+		 check(BaseProp);
+
+		 TSharedPtr<FJsonValue> ParsedPropertyValue;
+
+
+		 ParsedPropertyValue = InParsedObject->TryGetField(BaseProp->GetName());
+		 if (!ParsedPropertyValue.IsValid()) continue;
+
+		 if (BaseProp->ArrayDim == 1)
+		 {
+			 void* Data = BaseProp->ContainerPtrToValuePtr<void>(InStructData, 0);
+			 ReadStructEntry(ParsedPropertyValue.ToSharedRef(), InStructData, BaseProp, Data);
+		 }
+		 else
+		 {
+			 const TCHAR* const ParsedPropertyType = JSONTypeToString(ParsedPropertyValue->Type);
+
+			 const TArray< TSharedPtr<FJsonValue> >* PropertyValuesPtr;
+			 if (!ParsedPropertyValue->TryGetArray(PropertyValuesPtr)) return false;
+
+			 for (int32 ArrayEntryIndex = 0; ArrayEntryIndex < BaseProp->ArrayDim; ++ArrayEntryIndex)
+			 {
+				 if (PropertyValuesPtr->IsValidIndex(ArrayEntryIndex))
+				 {
+					 void* Data = BaseProp->ContainerPtrToValuePtr<void>(&InStructData, ArrayEntryIndex);
+					 const TSharedPtr<FJsonValue>& PropertyValueEntry = (*PropertyValuesPtr)[ArrayEntryIndex];
+					 ReadContainerEntry(PropertyValueEntry.ToSharedRef(), ArrayEntryIndex, BaseProp, Data);
+				 }
+			 }
+		 }
+	 }
+
+	 return true;
+ }
+
+ bool ReadStructEntry(const TSharedRef<FJsonValue>& InParsedPropertyValue, void* InStructData, FProperty* InProperty, void* InPropertyData)
+ {
+	 const TCHAR* const ParsedPropertyType = JSONTypeToString(InParsedPropertyValue->Type);
+
+	 if (FEnumProperty* EnumProp = CastField<FEnumProperty>(InProperty))
+	 {
+		 FString EnumValue;
+		 if (InParsedPropertyValue->TryGetString(EnumValue))
+		 {
+			 FString Error = DataTableUtils::AssignStringToProperty(EnumValue, InProperty, (uint8*)InStructData);
+			 if (!Error.IsEmpty()) return false;
+
+		 }
+		 else
+		 {
+			 int64 PropertyValue = 0;
+			 if (!InParsedPropertyValue->TryGetNumber(PropertyValue)) return false;
+
+			 EnumProp->GetUnderlyingProperty()->SetIntPropertyValue(InPropertyData, PropertyValue);
+		 }
+	 }
+	 else if (FNumericProperty* NumProp = CastField<FNumericProperty>(InProperty))
+	 {
+		 FString EnumValue;
+		 if (NumProp->IsEnum() && InParsedPropertyValue->TryGetString(EnumValue))
+		 {
+			 FString Error = DataTableUtils::AssignStringToProperty(EnumValue, InProperty, (uint8*)InStructData);
+			 if (!Error.IsEmpty()) return false;
+
+		 }
+		 else if (NumProp->IsInteger())
+		 {
+			 int64 PropertyValue = 0;
+			 if (!InParsedPropertyValue->TryGetNumber(PropertyValue)) return false;
+
+
+			 NumProp->SetIntPropertyValue(InPropertyData, PropertyValue);
+		 }
+		 else
+		 {
+			 double PropertyValue = 0.0;
+			 if (!InParsedPropertyValue->TryGetNumber(PropertyValue)) return false;
+
+
+			 NumProp->SetFloatingPointPropertyValue(InPropertyData, PropertyValue);
+		 }
+	 }
+	 else if (FBoolProperty* BoolProp = CastField<FBoolProperty>(InProperty))
+	 {
+		 bool PropertyValue = false;
+		 if (!InParsedPropertyValue->TryGetBool(PropertyValue)) return false;
+
+		 BoolProp->SetPropertyValue(InPropertyData, PropertyValue);
+	 }
+	 else if (FArrayProperty* ArrayProp = CastField<FArrayProperty>(InProperty))
+	 {
+		 const TArray< TSharedPtr<FJsonValue> >* PropertyValuesPtr;
+		 if (!InParsedPropertyValue->TryGetArray(PropertyValuesPtr)) return false;
+
+
+		 FScriptArrayHelper ArrayHelper(ArrayProp, InPropertyData);
+		 ArrayHelper.EmptyValues();
+		 for (const TSharedPtr<FJsonValue>& PropertyValueEntry : *PropertyValuesPtr)
+		 {
+			 const int32 NewEntryIndex = ArrayHelper.AddValue();
+			 uint8* ArrayEntryData = ArrayHelper.GetRawPtr(NewEntryIndex);
+			 ReadContainerEntry(PropertyValueEntry.ToSharedRef(), NewEntryIndex, ArrayProp->Inner, ArrayEntryData);
+		 }
+	 }
+	 else if (FSetProperty* SetProp = CastField<FSetProperty>(InProperty))
+	 {
+		 const TArray< TSharedPtr<FJsonValue> >* PropertyValuesPtr;
+		 if (!InParsedPropertyValue->TryGetArray(PropertyValuesPtr)) return false;
+
+
+		 FScriptSetHelper SetHelper(SetProp, InPropertyData);
+		 SetHelper.EmptyElements();
+		 for (const TSharedPtr<FJsonValue>& PropertyValueEntry : *PropertyValuesPtr)
+		 {
+			 const int32 NewEntryIndex = SetHelper.AddDefaultValue_Invalid_NeedsRehash();
+			 uint8* SetEntryData = SetHelper.GetElementPtr(NewEntryIndex);
+			 ReadContainerEntry(PropertyValueEntry.ToSharedRef(), NewEntryIndex, SetHelper.GetElementProperty(), SetEntryData);
+		 }
+		 SetHelper.Rehash();
+	 }
+	 else if (FMapProperty* MapProp = CastField<FMapProperty>(InProperty))
+	 {
+		 const TSharedPtr<FJsonObject>* PropertyValue;
+		 if (!InParsedPropertyValue->TryGetObject(PropertyValue)) return false;
+
+		 FScriptMapHelper MapHelper(MapProp, InPropertyData);
+		 MapHelper.EmptyValues();
+		 for (const auto& PropertyValuePair : (*PropertyValue)->Values)
+		 {
+			 const int32 NewEntryIndex = MapHelper.AddDefaultValue_Invalid_NeedsRehash();
+			 uint8* MapKeyData = MapHelper.GetKeyPtr(NewEntryIndex);
+			 uint8* MapValueData = MapHelper.GetValuePtr(NewEntryIndex);
+
+			 // JSON object keys are always strings
+			 const FString KeyError = DataTableUtils::AssignStringToPropertyDirect(PropertyValuePair.Key, MapHelper.GetKeyProperty(), MapKeyData);
+			 if (KeyError.Len() > 0)
+			 {
+				 MapHelper.RemoveAt(NewEntryIndex);
+				 return false;
+			 }
+
+			 if (!ReadContainerEntry(PropertyValuePair.Value.ToSharedRef(), NewEntryIndex, MapHelper.GetValueProperty(), MapValueData))
+			 {
+				 MapHelper.RemoveAt(NewEntryIndex);
+				 return false;
+			 }
+		 }
+		 MapHelper.Rehash();
+	 }
+	 else if (FStructProperty* StructProp = CastField<FStructProperty>(InProperty))
+	 {
+		 const TSharedPtr<FJsonObject>* PropertyValue = nullptr;
+		 if (InParsedPropertyValue->TryGetObject(PropertyValue))
+		 {
+			 return ReadStruct(PropertyValue->ToSharedRef(), StructProp->Struct, InPropertyData);
+		 }
+		 else
+		 {
+			 // If the JSON does not contain a JSON object for this struct, we try to use the backwards-compatible string deserialization, same as the "else" block below
+			 FString PropertyValueString;
+			 if (!InParsedPropertyValue->TryGetString(PropertyValueString)) return false;
+
+			 const FString Error = DataTableUtils::AssignStringToProperty(PropertyValueString, InProperty, (uint8*)InStructData);
+			 if (Error.Len() > 0) return false;
+
+			 return true;
+		 }
+	 }
+	 else
+	 {
+		 FString PropertyValue;
+		 if (!InParsedPropertyValue->TryGetString(PropertyValue)) return false;
+
+		 const FString Error = DataTableUtils::AssignStringToProperty(PropertyValue, InProperty, (uint8*)InStructData);
+		 if (Error.Len() > 0) return false;
+
+	 }
+
+	 return true;
+ }
+
+ bool ReadContainerEntry(const TSharedRef<FJsonValue>& InParsedPropertyValue, const int32 InArrayEntryIndex, FProperty* InProperty, void* InPropertyData)
+ {
+	 const TCHAR* const ParsedPropertyType = JSONTypeToString(InParsedPropertyValue->Type);
+
+	 if (FEnumProperty* EnumProp = CastField<FEnumProperty>(InProperty))
+	 {
+		 FString EnumValue;
+		 if (InParsedPropertyValue->TryGetString(EnumValue))
+		 {
+			 FString Error = DataTableUtils::AssignStringToPropertyDirect(EnumValue, InProperty, (uint8*)InPropertyData);
+			 if (!Error.IsEmpty()) return false;
+		 }
+		 else
+		 {
+			 int64 PropertyValue = 0;
+			 if (!InParsedPropertyValue->TryGetNumber(PropertyValue)) return false;
+
+			 EnumProp->GetUnderlyingProperty()->SetIntPropertyValue(InPropertyData, PropertyValue);
+		 }
+	 }
+	 else if (FNumericProperty* NumProp = CastField<FNumericProperty>(InProperty))
+	 {
+		 FString EnumValue;
+		 if (NumProp->IsEnum() && InParsedPropertyValue->TryGetString(EnumValue))
+		 {
+			 FString Error = DataTableUtils::AssignStringToPropertyDirect(EnumValue, InProperty, (uint8*)InPropertyData);
+			 if (!Error.IsEmpty()) false;
+		 }
+		 else if (NumProp->IsInteger())
+		 {
+			 int64 PropertyValue = 0;
+			 if (!InParsedPropertyValue->TryGetNumber(PropertyValue)) return false;
+
+			 NumProp->SetIntPropertyValue(InPropertyData, PropertyValue);
+		 }
+		 else
+		 {
+			 double PropertyValue = 0.0;
+			 if (!InParsedPropertyValue->TryGetNumber(PropertyValue)) return false;
+
+			 NumProp->SetFloatingPointPropertyValue(InPropertyData, PropertyValue);
+		 }
+	 }
+	 else if (FBoolProperty* BoolProp = CastField<FBoolProperty>(InProperty))
+	 {
+		 bool PropertyValue = false;
+		 if (!InParsedPropertyValue->TryGetBool(PropertyValue)) return false;
+
+		 BoolProp->SetPropertyValue(InPropertyData, PropertyValue);
+	 }
+	 else if (FArrayProperty* ArrayProp = CastField<FArrayProperty>(InProperty))
+	 {
+		 // Cannot nest arrays
+		 return false;
+	 }
+	 else if (FSetProperty* SetProp = CastField<FSetProperty>(InProperty))
+	 {
+		 // Cannot nest sets
+		 return false;
+	 }
+	 else if (FMapProperty* MapProp = CastField<FMapProperty>(InProperty))
+	 {
+		 // Cannot nest maps
+		 return false;
+	 }
+	 else if (FStructProperty* StructProp = CastField<FStructProperty>(InProperty))
+	 {
+		 const TSharedPtr<FJsonObject>* PropertyValue = nullptr;
+		 if (InParsedPropertyValue->TryGetObject(PropertyValue))
+		 {
+			 return ReadStruct(PropertyValue->ToSharedRef(), StructProp->Struct, InPropertyData);
+		 }
+		 else
+		 {
+			 // If the JSON does not contain a JSON object for this struct, we try to use the backwards-compatible string deserialization, same as the "else" block below
+			 FString PropertyValueString;
+			 if (!InParsedPropertyValue->TryGetString(PropertyValueString)) return false;
+
+			 const FString Error = DataTableUtils::AssignStringToPropertyDirect(PropertyValueString, InProperty, (uint8*)InPropertyData);
+			 if (Error.Len() > 0) return false;
+
+			 return true;
+		 }
+	 }
+	 else
+	 {
+		 FString PropertyValue;
+		 if (!InParsedPropertyValue->TryGetString(PropertyValue)) return false;
+
+
+		 const FString Error = DataTableUtils::AssignStringToPropertyDirect(PropertyValue, InProperty, (uint8*)InPropertyData);
+		 if (Error.Len() > 0) return false;
+
+	 }
+
+	 return true;
+ }
+

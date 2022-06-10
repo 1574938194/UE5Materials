@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "K2Node.h"
 #include "K2Node_CallFunctionOnMember.h"
-#include "K2Node_GetCellValue.generated.h"
+#include "K2Node_ToTemplateArray.generated.h"
 
 class FBlueprintActionDatabaseRegistrar;
 class UEdGraphPin;
@@ -16,7 +16,7 @@ struct FEdGraphPinType;
  *
  */
 UCLASS()
-class FREEEXCELEDITOR_API UK2Node_GetCellValue : public  UK2Node
+class FREEEXCELEDITOR_API UK2Node_ToTemplateArray : public  UK2Node
 {
 	GENERATED_UCLASS_BODY()
 
@@ -46,7 +46,7 @@ class FREEEXCELEDITOR_API UK2Node_GetCellValue : public  UK2Node
 	/**	Helper function to get sortable property name of inner property of Target Array */
 	TArray<FString> GetPropertyNames();
 
-private: 
+private:
 	void PropagatePinType(UEdGraphPin* Pin);
 
 	void SetPinToolTip(UEdGraphPin& MutatablePin, const FText& PinDescription) const;
@@ -55,4 +55,5 @@ private:
 	FText NodeTooltip; 
 
 	FText InputCheck;
+	 
 };

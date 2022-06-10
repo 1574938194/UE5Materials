@@ -35,6 +35,7 @@ public class FreeExcel : ModuleRules
 				"Projects",
 				 "CoreUObject", 
 				"Engine",
+				"Json"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
