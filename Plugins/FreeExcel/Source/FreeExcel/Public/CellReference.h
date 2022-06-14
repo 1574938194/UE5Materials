@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "OpenXLSX/include/headers/XLCellReference.hpp"
+#include "UObject/NoExportTypes.h" 
+#include <string>
 #include "CellReference.generated.h"
 
  
@@ -32,8 +32,12 @@ public:
 	UPROPERTY(EditAnywhere)
 		int32 Col {1};
 	 
-	FString to_string() const;
-	 
+	FString ToString() const
+	{
+		return FString(to_string().c_str());
+	}
+	std::string to_string() const;
+
 	inline static bool address_is_valid(uint32_t row, uint16_t column)  {
 		return !(row < 1 || row >  max_rows || column < 1 || column >  max_cols);
 	}

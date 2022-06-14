@@ -2,8 +2,7 @@
 
 #pragma optimize("",off)
 
-#include "FreeExcelLibrary.h"
-#include "OpenXLSX/include/headers/XLCellRange.hpp"
+#include "FreeExcelLibrary.h" 
 #include "Sheet.h"
 #include "CellValue.h"
 #include "ExcelDocument.h"
@@ -96,7 +95,7 @@ FCellReference UFreeExcelLibrary::MakeCellReference(int32 row, int32 col) {
  
  FString UFreeExcelLibrary::ToString_CellReference(FCellReference ref)
 {
-	 return ref.to_string();
+	 return ref.ToString();
 }
   
 FCellRange UFreeExcelLibrary::MakeCellRangeWithString(FString ref)
@@ -133,9 +132,10 @@ FCellRange UFreeExcelLibrary::MakeCellRange_Internal(USheet* sheet, const FCellR
 	FCellRange ret = FCellRange(range);
 	if (sheet)
 	{
-		ret.dataNode = std::make_unique<OpenXLSX::XMLNode>(sheet->_Inner.xmlDocument().first_child().child("sheetData"));
-		
-		ret.sharedStrings = sheet->_Inner.parentDoc().execQuery(OpenXLSX::XLQuery(OpenXLSX::XLQueryType::QuerySharedStrings)).result<OpenXLSX::XLSharedStrings>();
+		ret.dataNode  =UExcelDocument::getCellNode(
+			UExcelDocument::getRowNode(sheet->data_->xmlDocument().first_child().child("sheetData"), ret.Min.Row)
+			, ret.Min.Col);
+ 
 	} 
 
 	return ret;
@@ -198,7 +198,7 @@ void  UFreeExcelLibrary::Clear_CellValue( FCellValue& val)
 	val.clear();
 }
 
-EXLValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
+EValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
 {
 	return val.type();
 }
@@ -225,7 +225,7 @@ EXLValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
  
  void UFreeExcelLibrary::CellIterator_Cell(const FCellIterator& Target, UCell*& ReturnValue)
 {
-	ReturnValue = &*Target;
+	ReturnValue = Target.get();
 }
  
  void UFreeExcelLibrary::CellIterator_NotEqual(const FCellIterator& Target, const FCellIterator& Right ,bool& ReturnValue)
@@ -296,7 +296,9 @@ EXLValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
 	 }
 	 if (!fields.Num()) return ;
 	 auto row = 0, col = 0;
-	 sheet->SheetSize(row, col);
+	 auto max = sheet->LastCell();
+	 row = max.Row;
+	 col = max.Col;
 	 /*Array.Reserve(row - 1);*/
 
 	 for (int32 RowIdx = 2; RowIdx <= row; ++RowIdx)
@@ -308,7 +310,7 @@ EXLValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
 		 auto p = PropertyIndex.begin();
 		 for (int i = 0; i < PropertyIndex.size(); ++i, ++p, ++it)
 		 {
-			 if (!*p || (*it).type() ==EXLValueType::Empty)  continue;
+			 if (!*p || (*it).type() ==EValueType::Empty)  continue;
 
 
 			 FProperty* BaseProp = *p;
@@ -352,7 +354,7 @@ EXLValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
 			 else if (auto EnumProp = CastField<FEnumProperty>(BaseProp))
 			 {
 				 void* Data = EnumProp->ContainerPtrToValuePtr<void>(InStructData);
-				 if ((*it).type() == EXLValueType::String)
+				 if ((*it).type() == EValueType::String)
 				 {
 					 EnumProp->GetUnderlyingProperty()->SetIntPropertyValue(Data, 
 						 (int64)EnumProp->GetEnum()->GetValueByName(*(FString)*it));
@@ -773,100 +775,76 @@ EXLValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
  
  void UFreeExcelLibrary::SetCellValue_DocBool( UExcelDocument* Target, const FCellReference& Ref, const bool& Value)
  {
-	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+	 Target->GetCurrentSheet()->Cell(Ref)->SetBool( Value);
  }
  void UFreeExcelLibrary::SetCellValue_DocInt(UExcelDocument* Target, const FCellReference& Ref, const int32& Value)
  {
-	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+	 Target->GetCurrentSheet()->Cell(Ref)->SetInt(  Value);
  }
  void UFreeExcelLibrary::SetCellValue_DocFloat(UExcelDocument* Target, const FCellReference& Ref, const float& Value)
  {
-	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+	 Target->GetCurrentSheet()->Cell(Ref)->SetFloat( Value);
  }
  void UFreeExcelLibrary::SetCellValue_DocString(UExcelDocument* Target, const FCellReference& Ref, const FString& Value)
  {
-	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = std::string(TCHAR_TO_UTF8(*Value));
+	 Target->GetCurrentSheet()->Cell(Ref)->SetString(Value);
  }
  void UFreeExcelLibrary::SetCellValue_DocDateTime(UExcelDocument* Target, const FCellReference& Ref, const FDateTime& Value)
  {
-	 std::tm t;
-	 t.tm_year = Value.GetYear() - 1900;
-	 t.tm_mon = Value.GetMonth() - 1;
-	 t.tm_mday = Value.GetDay();
-	 t.tm_hour = Value.GetHour();
-	 t.tm_min = Value.GetMinute();
-	 t.tm_sec = Value.GetSecond();
-	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = OpenXLSX::XLDateTime(t);
+	 Target->GetCurrentSheet()->Cell(Ref)->SetDateTime(Value);
  } 
  void UFreeExcelLibrary::SetCellValue_DocCellValue(UExcelDocument* Target, const FCellReference& Ref, const FCellValue& Value)
  {
-	 Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() = 
-		 OpenXLSX::XLCellValue{ Value._Value,(OpenXLSX::XLValueType)Value._Type};
+	 Target->GetCurrentSheet()->Cell(Ref)->SetCellValue(Value);
  } 
  void UFreeExcelLibrary::SetCellValue_SheetBool(  USheet* Target, const FCellReference& Ref, const bool& Value)
  {
-	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+	 Target->Cell(Ref)->SetBool(  Value);
  }
  void UFreeExcelLibrary::SetCellValue_SheetInt(USheet* Target, const FCellReference& Ref, const int32& Value)
  {
-	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+	 Target->Cell(Ref)->SetInt( Value);
  } 
  void UFreeExcelLibrary::SetCellValue_SheetFloat(USheet* Target, const FCellReference& Ref, const float& Value)
  {
-	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = Value;
+	 Target->Cell(Ref)->SetFloat(  Value);
  } 
  void UFreeExcelLibrary::SetCellValue_SheetString(USheet* Target, const FCellReference& Ref, const FString& Value)
  {
-	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = std::string(TCHAR_TO_UTF8(*Value));
+	 Target->Cell(Ref)->SetString( Value);
  } 
  void UFreeExcelLibrary::SetCellValue_SheetDateTime(USheet* Target, const FCellReference& Ref, const FDateTime& Value)
- {
-	 std::tm t;
-	 t.tm_year = Value.GetYear() - 1900;
-	 t.tm_mon = Value.GetMonth() - 1;
-	 t.tm_mday = Value.GetDay();
-	 t.tm_hour = Value.GetHour();
-	 t.tm_min = Value.GetMinute();
-	 t.tm_sec = Value.GetSecond();
-	 Target->_Inner.cell(Ref.Row, Ref.Col).value() = OpenXLSX::XLDateTime(t);
+ { 
+	 Target->Cell(Ref)->SetDateTime(Value);
  } 
  void UFreeExcelLibrary::SetCellValue_SheetCellValue(USheet* Target, const FCellReference& Ref, const FCellValue& Value)
  {
-	 Target->_Inner.cell(Ref.Row, Ref.Col).value() =
-		 OpenXLSX::XLCellValue{ Value._Value,(OpenXLSX::XLValueType)Value._Type };
+	 Target->Cell(Ref)->SetCellValue(Value);
  }
  
  void UFreeExcelLibrary::SetCellValue_CellBool( UCell* Target,  const bool& Value)
  {
-	 Target->_Inner.value() = Value;
+	 Target->SetBool( Value);
  }
  void UFreeExcelLibrary::SetCellValue_CellInt(UCell* Target, const int32& Value)
  {
-	 Target->_Inner.value() = Value;
+	 Target->SetInt( Value);
  }
  void UFreeExcelLibrary::SetCellValue_CellFloat(UCell* Target, const float& Value)
  {
-	 Target->_Inner.value() = Value;
+	 Target->SetFloat( Value);
  } 
  void UFreeExcelLibrary::SetCellValue_CellString(UCell* Target, const FString& Value)
  {
-	 Target->_Inner.value() = std::string(TCHAR_TO_UTF8(*Value));
+	 Target->SetString( Value);
  }  
  void UFreeExcelLibrary::SetCellValue_CellDateTime(UCell* Target,  const FDateTime& Value)
  {
-	 std::tm t;
-	 t.tm_year = Value.GetYear() - 1900;
-	 t.tm_mon = Value.GetMonth() - 1;
-	 t.tm_mday = Value.GetDay();
-	 t.tm_hour = Value.GetHour();
-	 t.tm_min = Value.GetMinute();
-	 t.tm_sec = Value.GetSecond();
-	 Target->_Inner.value() = OpenXLSX::XLDateTime(t);
+	 Target->SetDateTime(Value);
  }
  void UFreeExcelLibrary::SetCellValue_CellCellValue(UCell* Target, const FCellValue& Value)
  {
-	 Target->_Inner.value() =
-		 OpenXLSX::XLCellValue{ Value._Value,(OpenXLSX::XLValueType)Value._Type };
+	 Target->SetCellValue( Value );
  }
  
  void UFreeExcelLibrary::SetCellValue_CellValueBool(const FCellValue& Target,  const bool& Value)
@@ -896,83 +874,77 @@ EXLValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
   
  void UFreeExcelLibrary::GetCellValue_DocBool(UExcelDocument* Target, const FCellReference& Ref,  bool& Value)
  {
-	 Value = Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() ;
+	 Value = Target->GetCurrentSheet()->Cell(Ref)->Value();
  }
  void UFreeExcelLibrary::GetCellValue_DocInt(UExcelDocument* Target, const FCellReference& Ref,  int32& Value)
  {
-	 Value =  Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() ;
+	 Value =  Target->GetCurrentSheet()->Cell(Ref)->Value() ;
  }
  void UFreeExcelLibrary::GetCellValue_DocFloat(UExcelDocument* Target, const FCellReference& Ref,  float& Value)
  {
-	 Value =  Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value() ;
+	 Value =  Target->GetCurrentSheet()->Cell(Ref)->Value();
  }
  void UFreeExcelLibrary::GetCellValue_DocString(UExcelDocument* Target, const FCellReference& Ref,  FString& Value)
  {
-	 Value = Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value().template operator std::string().c_str();
+	 Value = Target->GetCurrentSheet()->Cell(Ref)->Value().template operator FString();
  }
  void UFreeExcelLibrary::GetCellValue_DocDateTime(UExcelDocument* Target, const FCellReference& Ref,  FDateTime& Value)
  {
-	 std::tm t = (Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value().get<OpenXLSX::XLDateTime>()).tm();
-	 Value = FDateTime(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
+	 Value = Target->GetCurrentSheet()->Cell(Ref)->Value();
  }
  void UFreeExcelLibrary::GetCellValue_DocCellValue(UExcelDocument* Target, const FCellReference& Ref,  FCellValue& Value)
  {
-	 auto val = OpenXLSX::XLCellValue(Target->GetCurrentSheet()->_Inner.cell(Ref.Row, Ref.Col).value());
-	Value =  { val.m_value,(EXLValueType)val.m_type };
+	 Value = Target->GetCurrentSheet()->Cell(Ref)->Value();
  }
  
  void UFreeExcelLibrary::GetCellValue_SheetBool(USheet* Target, const FCellReference& Ref,  bool& Value)
  {
-	 Value = Target->_Inner.cell(Ref.Row, Ref.Col).value() ;
+	 Value = Target->Cell(Ref)->Value();
  }
  void UFreeExcelLibrary::GetCellValue_SheetInt(USheet* Target, const FCellReference& Ref,  int32& Value)
  {
-	 Value = Target->_Inner.cell(Ref.Row, Ref.Col).value();
+	 Value = Target->Cell(Ref)->Value();
  }
  void UFreeExcelLibrary::GetCellValue_SheetFloat(USheet* Target, const FCellReference& Ref,  float& Value)
  {
-	 Value = Target->_Inner.cell(Ref.Row, Ref.Col).value() ;
+	 Value = Target->Cell(Ref)->Value();
  }
  void UFreeExcelLibrary::GetCellValue_SheetString(USheet* Target, const FCellReference& Ref,  FString& Value)
  {
-	 Value = Target->_Inner.cell(Ref.Row, Ref.Col).value().template operator std::string().c_str();
+	 Value = Target->Cell(Ref)->Value().template operator FString();
  }
  void UFreeExcelLibrary::GetCellValue_SheetDateTime(USheet* Target, const FCellReference& Ref,  FDateTime& Value)
  {
-	 std::tm t = (Target->_Inner.cell(Ref.Row, Ref.Col).value().get<OpenXLSX::XLDateTime>()).tm();
-	 Value = FDateTime(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
+	 Value = Target->Cell(Ref)->Value();
  }
  void UFreeExcelLibrary::GetCellValue_SheetCellValue(USheet* Target, const FCellReference& Ref,  FCellValue& Value)
  {
-	 auto val = OpenXLSX::XLCellValue(Target->_Inner.cell(Ref.Row, Ref.Col).value());
-		 Value = { val.m_value,(EXLValueType)val.m_type };
+	 Value = Target->Cell(Ref)->Value();
  }
 
  void UFreeExcelLibrary::GetCellValue_CellBool(UCell* Target,  bool& Value)
  {
-	 Value = Target->_Inner.value() ;
+	 Value = Target->Value() ;
  }
  void UFreeExcelLibrary::GetCellValue_CellInt(UCell* Target,  int32& Value)
  {
-	 Value= Target->_Inner.value() ;
+	 Value = Target->Value();
  }
  void UFreeExcelLibrary::GetCellValue_CellFloat(UCell* Target,  float& Value)
  {
-	 Value= Target->_Inner.value() ;
+	 Value = Target->Value();
  }
  void UFreeExcelLibrary::GetCellValue_CellString(UCell* Target,  FString& Value)
  {
-	 Value = Target->_Inner.value().template operator std::string().c_str();
+	 Value = Target->Value().template operator FString();
  }
  void UFreeExcelLibrary::GetCellValue_CellDateTime(UCell* Target,  FDateTime& Value)
  {  
-	 std::tm t = (Target->_Inner.value().get<OpenXLSX::XLDateTime>()).tm();
-	 Value = FDateTime(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
+	 Value = Target->Value();
  }
  void UFreeExcelLibrary::GetCellValue_CellCellValue(UCell* Target,  FCellValue& Value)
  {
-	 auto val = OpenXLSX::XLCellValue(Target->_Inner.value());
-	 Value = { val.m_value,(EXLValueType)val.m_type };
+	 Value = Target->Value();
  }
  void UFreeExcelLibrary::GetCellValue_CellValueBool(const FCellValue& Target, bool& Value)
  {
@@ -998,5 +970,4 @@ EXLValueType  UFreeExcelLibrary::Type_CellValue(const FCellValue& val)
  { 
 	 Value = Target;
  }
- 
-#undef LOCAL_UFUNCTION_DEFINE
+  

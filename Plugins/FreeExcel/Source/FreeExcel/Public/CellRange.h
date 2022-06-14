@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "OpenXLSX/include/headers/XLCellRange.hpp"
+#include "UObject/NoExportTypes.h" 
 #include "CellReference.h"
 #include "Cell.h"
 #include "CellIterator.h"
@@ -20,31 +19,18 @@ struct FREEEXCEL_API FCellRange
     GENERATED_BODY()
 public: 
     FCellRange() = default;
+    FCellRange(FCellReference min, FCellReference max)
+        :Min(min),Max(max)
+    {
+
+    } 
     FCellRange(const FCellRange& right)
-        :Min(right.Min),Max(right.Max)
-    { 
-        if (right.dataNode)
-        { 
-            dataNode = std::make_unique<OpenXLSX::XMLNode>( *right.dataNode);
-            sharedStrings = right.sharedStrings;
-        }
-    }
+        :dataNode(right.dataNode),Min(right.Min),Max(right.Max){  }
     FCellRange& operator=(const FCellRange& right)
     {
         if (&right != this)
         {
-            if (right.dataNode)
-            {
-                if (dataNode)
-                {
-                    *dataNode = *right.dataNode;
-                }
-                else
-                {
-                    dataNode = std::make_unique<OpenXLSX::XMLNode>(*right.dataNode);
-                }
-                sharedStrings = right.sharedStrings;
-            }
+            dataNode = right.dataNode;
             Min = right.Min;
             Max = right.Max;
         }
@@ -65,19 +51,19 @@ public:
 
     FCellIterator end() const;
 
-    /**< The cell reference of the first cell in the range */
-    UPROPERTY(EditAnywhere)
-        FCellReference          Min;
-    /**< The cell reference of the last cell in the range */
-    UPROPERTY(EditAnywhere)
-        FCellReference          Max;
 
    
 protected:
-    std::unique_ptr<OpenXLSX::XMLNode> dataNode;    /**< */
-    OpenXLSX::XLSharedStrings          sharedStrings;
-    
+    XMLNode dataNode;   
+    /**< The cell reference of the first cell in the range */
+    UPROPERTY(EditAnywhere)
+        FCellReference Min;
+    /**< The cell reference of the last cell in the range */
+    UPROPERTY(EditAnywhere)
+        FCellReference Max;
+
     friend class USheet; 
     friend struct FCellIterator;
     friend class UFreeExcelLibrary;
 };
+ 

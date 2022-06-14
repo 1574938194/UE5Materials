@@ -3,14 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "OpenXLSX/include/headers/XLCell.hpp"
-#include "CellReference.h" 
-#include "XLValueType.h"
+#include "UObject/NoExportTypes.h" 
+#include "CellReference.h"  
 #include "CellValue.h"
+#include "XLXmlFile.hpp"
 #include "Cell.generated.h"
 
- 
+class USheet;
+
+UENUM(BlueprintType)
+enum class ECellType :uint8 {
+	Empty UMETA(DisplayName = "Empty"),
+	Boolean UMETA(DisplayName = "Boolean"),
+	Integer UMETA(DisplayName = "Integer"),
+	Float UMETA(DisplayName = "Float"),
+	Error,
+	String UMETA(DisplayName = "String"),
+	Formula UMETA(DisplayName = "Formula")
+};
+
 /**
  * 
  */
@@ -31,10 +42,40 @@ public:
     void SetFormula(FString formula);
 
     UFUNCTION(BlueprintPure, Category = "FreeExcel")
-    FCellValue Value()const;
+		FCellValue Value()const
+	{
+		return to_value(sheet, cellNode);
+	}
+
+	static FCellValue to_value(const USheet* sheet, const XMLNode& cellNode);
+
 
     UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set Cell Value (Cell)"), Category = "FreeExcel")
-    void SetCellValue(const FCellValue& val);
+    void SetCellValue(const FCellValue& val)
+	{
+		switch (val.type())
+		{
+		case EValueType::Empty:
+			Clear();
+			break;
+		case EValueType::Boolean:
+			SetBool((bool)val.ival);
+			break;
+		case EValueType::Integer:
+			SetInt(val.ival);
+			break;
+		case EValueType::Float:
+			SetFloat(val.fval);
+			break;
+		case EValueType::Error:
+			break;
+		case EValueType::String:
+			SetString(val.RawText);
+			break;
+		default:
+			break;
+		}
+	}
 
     UFUNCTION(BlueprintPure, Category = "FreeExcel")
     bool HasValue() const;
@@ -52,7 +93,10 @@ public:
 		void SetString(FString val);
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set DateTime (Cell)"), Category = "FreeExcel")
-		void SetDateTime(FDateTime val);
+    void SetDateTime(FDateTime val)
+    {
+        SetFloat(FCellValue::datetime_to_serial(val));
+    }
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set Float (Cell)"), Category = "FreeExcel")
 		void SetFloat(float val);
@@ -70,13 +114,47 @@ public:
 		FString ToString()const;
 	 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "To DateTime (Cell)"), Category = "FreeExcel")
-		FDateTime ToDateTime()const;
-	 
+		FDateTime ToDateTime()const
+	{
+		return FCellValue::serial_to_datetime(ToFloat());
+	}
+  
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Type (Cell)"), Category = "FreeExcel")
-		EXLCellType Type()const;
+		ECellType Type()const;
+  
+    operator bool() const
+    {
+        return (bool)cellNode;
+    }
+ 
+	void offset(int32 rowOffset, int32 colOffset);
+   
+    //void setError()
+    //{
+    //    // ===== Check that the m_cellNode is valid.
+    //    assert(m_cellNode);              // NOLINT
+    //    assert(!m_cellNode->empty());    // NOLINT
 
+    //    // ===== If the cell node doesn't have a type attribute, create it.
+    //    if (!m_cellNode->attribute("t")) m_cellNode->append_attribute("t");
+
+    //    // ===== Set the type to "e", i.e. error
+    //    m_cellNode->attribute("t").set_value("e");
+
+    //    // ===== Remove the value node, if it exists
+    //    m_cellNode->remove_child("v");
+
+    //    // ===== Disable space preservation (only relevant for strings).
+    //    m_cellNode->remove_attribute(" xml:space");
+
+    //    // ===== Remove the value node.
+    //    m_cellNode->remove_child("v");
+    //}
+  
+   
 protected:
-	OpenXLSX::XLCell _Inner;       
+    USheet* sheet;
+    XMLNode cellNode;
 
     friend class USheet;
     friend struct FCellIterator;  

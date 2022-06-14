@@ -3,26 +3,15 @@
 
 #include "CellRange.h"
 #include "CellIterator.h"
-
-namespace OpenXLSX
-{
-    XMLNode getRowNode(XMLNode sheetDataNode, uint32_t rowNumber);
-    XMLNode getCellNode(XMLNode rowNode, uint16_t columnNumber);
-} 
+#include "ExcelDocument.h"
+ 
+ 
 FCellIterator FCellRange::begin() const
 {
     FCellIterator ret;
-
-    if (dataNode)
-    {
-        ret.dataNode = std::make_unique<OpenXLSX::XMLNode>(*dataNode);
-        ret.shared_string = sharedStrings;
-        ret.cell = OpenXLSX::XLCell(
-            OpenXLSX::getCellNode(
-                OpenXLSX::getRowNode(*dataNode, Min.Row)
-                , Min.Col),
-            sharedStrings);
-    };
+     
+    ret.dataNode = dataNode; 
+    
     ret.min = Min;
     ret.max = Max; 
     ret.Current = ret.min;
@@ -34,12 +23,7 @@ FCellIterator FCellRange::end() const
 {
     FCellIterator ret;
 
-    if (dataNode)
-    {
-        ret.dataNode = std::make_unique<OpenXLSX::XMLNode>(*dataNode);
-        ret.shared_string = sharedStrings;
-        ret.cell = OpenXLSX::XLCell();
-    }
+    ret.dataNode = XMLNode();
     ret.min = Min;
     ret.max = Max; 
     ret.Current = ret.max;

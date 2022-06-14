@@ -1,15 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+#pragma optimize("",off)
 #include "ExcelDocument.h"  
 #include "Sheet.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include <fstream>
 
 using namespace std; 
+
 
 #pragma region XLSXDATA
 
 const int           templateSize = 7714;
-const unsigned char templateData[7714] = 
+const unsigned char templateData[7714] =
 {
         0x50, 0x4b, 0x03, 0x04, 0x14, 0x00, 0x06, 0x00, 0x08, 0x00, 0x00, 0x00, 0x21, 0x00, 0xb5, 0x55, 0x30, 0x23, 0xf4, 0x00, 0x00, 0x00,
         0x4c, 0x02, 0x00, 0x00, 0x0b, 0x00, 0x08, 0x02, 0x5f, 0x72, 0x65, 0x6c, 0x73, 0x2f, 0x2e, 0x72, 0x65, 0x6c, 0x73, 0x20, 0xa2, 0x04,
@@ -366,98 +368,77 @@ const unsigned char templateData[7714] =
 
 #pragma endregion
 
-enum class XLProperty {
-    Title,
-    Subject,
-    Creator,
-    Keywords,
-    Description,
-    LastModifiedBy,
-    LastPrinted,
-    CreationDate,
-    ModificationDate,
-    Category,
-    Application,
-    DocSecurity,
-    ScaleCrop,
-    Manager,
-    Company,
-    LinksUpToDate,
-    SharedDoc,
-    HyperlinkBase,
-    HyperlinksChanged,
-    AppVersion
-};
 
 UExcelDocument::UExcelDocument(const FObjectInitializer& ObjectInitializer )
 	:Super(ObjectInitializer)
 { 
 }
 
- 
- 
-void XLZipArchive::save(const std::string& path)
-{
-    m_archive->Save(path);
-} 
-void XLZipArchive::addEntry(const std::string& name, const std::string& data)
-{
-    m_archive->AddEntry(name, data);
-} 
-void XLZipArchive::deleteEntry(const std::string& entryName)
-{
-    m_archive->DeleteEntry(entryName);
-}
 
-/**
- * @details
- */
-std::string XLZipArchive::getEntry(const std::string& name)
-{
-    return m_archive->GetEntry(name).GetDataAsString();
-}
-
-/**
- * @details
- */
-bool XLZipArchive::hasEntry(const std::string& entryName)
-{
-    return m_archive->HasEntry(entryName);
-}
+ 
 void UExcelDocument::Open(FString path)
 {
     // Check if a document is already open. If yes, close it.
     // TODO: Consider throwing if a file is already open.
-    if (m_archive && m_archive->IsOpen()) close();
+    if ( m_archive.IsOpen())
+    {
+        this->Close();
+    }
     m_filePath = path;
       
-    m_archive->Open(m_filePath);
+    m_archive.Open(std::string(TCHAR_TO_UTF8(*path)));
 
     // ===== Add and open the Relationships and [Content_Types] files for the document level.
-    m_data.emplace_back(this, "[Content_Types].xml");
-    m_data.emplace_back(this, "_rels/.rels");
-    m_data.emplace_back(this, "xl/_rels/workbook.xml.rels");
+    m_data.emplace_back([=](std::string path)
+        {
+            return extractXmlFromArchive(path);
+        }, "[Content_Types].xml");
+    m_data.emplace_back([=](std::string path)
+        {
+            return extractXmlFromArchive(path);
+        }, "_rels/.rels");
+    m_data.emplace_back([=](std::string path)
+        {
+            return extractXmlFromArchive(path);
+        }, "xl/_rels/workbook.xml.rels");
 
-    m_contentTypes = XLContentTypes(getXmlData("[Content_Types].xml"));
-    m_docRelationships = XLRelationships(getXmlData("_rels/.rels"));
-    m_wbkRelationships = XLRelationships(getXmlData("xl/_rels/workbook.xml.rels"));
+    content_types =getXmlData("[Content_Types].xml");
+    doc_rels = getXmlData("_rels/.rels");
+    workbook_rels = getXmlData("xl/_rels/workbook.xml.rels");
 
-    if (!m_archive.hasEntry("xl/sharedStrings.xml"))
-        execCommand(XLCommand(XLCommandType::AddSharedStrings));
+    // .xlsx should be have sharedStrings.xml document
+    if (!m_archive.HasEntry("xl/sharedStrings.xml"))
+    {
+        AddSharedStrings();
+    } 
 
     // ===== Add remaining spreadsheet elements to the vector of XLXmlData objects.
-    for (auto& item : m_contentTypes.getContentItems()) {
-        if (item.path().substr(0, 4) == "/xl/" && !(item.path() == "/xl/workbook.xml"))
-            m_data.emplace_back(/* parentDoc */ this,
-                /* xmlPath   */ item.path().substr(1),
-                /* xmlID     */ m_wbkRelationships.relationshipByTarget(item.path().substr(4)).id(),
-                /* xmlType   */ item.type());
-
+    for (auto& item : getContentItems())
+    {
+        auto path_ = ContentTypePath(item);
+        auto type = ContentTypeType(item);
+        if (path_.substr(0, 4) == "/xl/" && !(path_ == "/xl/workbook.xml"))
+        {
+            m_data.emplace_back(
+                [=](std::string path)
+                {
+                    return extractXmlFromArchive(path);
+                },
+                /* xmlPath   */ path_.substr(1),
+                /* xmlID     */ wbkRelsIdByTarget(path_.substr(4)),
+                /* xmlType   */ type);
+        }
         else
-            m_data.emplace_back(/* parentDoc */ this,
-                /* xmlPath   */ item.path().substr(1),
-                /* xmlID     */ m_docRelationships.relationshipByTarget(item.path().substr(1)).id(),
-                /* xmlType   */ item.type());
+        {
+            m_data.emplace_back(
+                  [=](std::string path) 
+                {
+                    return extractXmlFromArchive(path);
+                },
+                /* xmlPath   */ path_.substr(1),
+                /* xmlID     */ docRelsIdByTarget(path_.substr(1)),
+                /* xmlType   */ type);
+        }
     }
 
     for (const auto& node : getXmlData("xl/sharedStrings.xml")->getXmlDocument()->document_element().children()) {
@@ -465,75 +446,76 @@ void UExcelDocument::Open(FString path)
             std::string result;
             for (const auto& elem : node.children())
                 result += elem.child("t").text().get();
-            m_sharedStringCache.emplace_back(result);
+            sharedStringCache.emplace_back(result);
         }
 
         else
-            m_sharedStringCache.emplace_back(node.first_child().text().get());
+            sharedStringCache.emplace_back(node.first_child().text().get());
 
     }
 
 
     // ===== Open the workbook and document property items
     // TODO: If property data doesn't exist, consider creating them, instead of ignoring it.
-    m_coreProperties = (hasXmlData("docProps/core.xml") ? XLProperties(getXmlData("docProps/core.xml")) : XLProperties());
-    m_appProperties = (hasXmlData("docProps/app.xml") ? XLAppProperties(getXmlData("docProps/app.xml")) : XLAppProperties());
-    m_sharedStrings = XLSharedStrings(getXmlData("xl/sharedStrings.xml"), &m_sharedStringCache);
-    m_workbook = XLWorkbook(getXmlData("xl/workbook.xml"));
+    core_properties = getXmlData("docProps/core.xml");
+    app_properties = getXmlData("docProps/app.xml");
+    shared_strings = getXmlData("xl/sharedStrings.xml");
+    workbook = getXmlData("xl/workbook.xml");
  
-    if (_Inner->workbook().worksheetCount() > 0)
+   /* if (WorksheetCount() > 0)
     {
         auto obj = NewObject<USheet>();
         obj->_Inner = _Inner->workbook().worksheet(_Inner->workbook().worksheetNames()[0]);
         _curSheet = obj;
-    }
+    }*/
 }
  
  
 void UExcelDocument::Create(FString path)
 {
     // ===== Create a temporary output file stream.
-    nowide::ofstream outfile(fileName, std::ios::binary);
+    std::ofstream outfile(*path, std::ios::binary);
 
     // ===== Stream the binary data for an empty workbook to the output file.
     // ===== Casting, in particular reinterpret_cast, is discouraged, but in this case it is unfortunately unavoidable.
-    outfile.write(reinterpret_cast<const char*>(templateData), templateSize);    // NOLINT
+    outfile.write(reinterpret_cast<const char*>(templateData), templateSize);
     outfile.close();
 
-    open(fileName);
+    this->Open(path);
 }
  
 void UExcelDocument::Close()
 {
-    if (m_archive)
+    if (m_archive.IsOpen())
     {
-        m_archive->Close();
-        m_archive = nullptr;
+        m_archive.Close(); 
     }
-    m_filePath.clear();
+    m_filePath.Empty();
     m_data.clear();
 
-    m_wbkRelationships = XLRelationships();
-    m_docRelationships = XLRelationships();
-    m_contentTypes = XLContentTypes();
-    m_appProperties = XLAppProperties();
-    m_coreProperties = XLProperties();
-    m_workbook = XLWorkbook(); 
+    workbook_rels = nullptr;
+    doc_rels = nullptr;
+    content_types = nullptr;
+    app_properties = nullptr;
+    core_properties = nullptr;
+    workbook = nullptr; 
+
+    shared_strings = nullptr;
+    sharedStringCache.clear();
 }
  
 void UExcelDocument::Save()
-{
-
-    saveAs(m_filePath);
+{ 
+    SaveAs(m_filePath);
 }
  
 void UExcelDocument::SaveAs(FString path)
 {
-    m_filePath = fileName;
+    m_filePath = path;
 
     // ===== Add all xml items to archive and save the archive.
-    for (auto& item : m_data) m_archive.addEntry(item.getXmlPath(), item.getRawData());
-    m_archive.save(m_filePath);
+    for (auto& item : m_data) m_archive.AddEntry(item.getXmlPath(), item.getRawData());
+    m_archive.Save(TCHAR_TO_UTF8(*m_filePath));
 }
  
 FString UExcelDocument::FileName() const
@@ -548,427 +530,209 @@ FString UExcelDocument::FullPath()const
   
 bool UExcelDocument::IsValid()const
 {
-	return m_archive;
+	return m_archive.IsOpen();
 }
-std::string XLDocument::property(XLProperty prop) const
+std::string UExcelDocument::GetProperty(XLProperty prop) const
 {
-    switch (prop) {
+    switch (prop)
+    {
     case XLProperty::Application:
-        return m_appProperties.property("Application");
+        return getCoreProperty("Application");
     case XLProperty::AppVersion:
-        return m_appProperties.property("AppVersion");
+        return getCoreProperty("AppVersion");
     case XLProperty::Category:
-        return m_coreProperties.property("cp:category");
+        return getCoreProperty("cp:category");
     case XLProperty::Company:
-        return m_appProperties.property("Company");
+        return getAppProperty("Company");
     case XLProperty::CreationDate:
-        return m_coreProperties.property("dcterms:created");
+        return getCoreProperty("dcterms:created");
     case XLProperty::Creator:
-        return m_coreProperties.property("dc:creator");
+        return getCoreProperty("dc:creator");
     case XLProperty::Description:
-        return m_coreProperties.property("dc:description");
+        return getCoreProperty("dc:description");
     case XLProperty::DocSecurity:
-        return m_appProperties.property("DocSecurity");
+        return getAppProperty("DocSecurity");
     case XLProperty::HyperlinkBase:
-        return m_appProperties.property("HyperlinkBase");
+        return getAppProperty("HyperlinkBase");
     case XLProperty::HyperlinksChanged:
-        return m_appProperties.property("HyperlinksChanged");
+        return getAppProperty("HyperlinksChanged");
     case XLProperty::Keywords:
-        return m_coreProperties.property("cp:keywords");
+        return getCoreProperty("cp:keywords");
     case XLProperty::LastModifiedBy:
-        return m_coreProperties.property("cp:lastModifiedBy");
+        return getCoreProperty("cp:lastModifiedBy");
     case XLProperty::LastPrinted:
-        return m_coreProperties.property("cp:lastPrinted");
+        return getCoreProperty("cp:lastPrinted");
     case XLProperty::LinksUpToDate:
-        return m_appProperties.property("LinksUpToDate");
+        return getAppProperty("LinksUpToDate");
     case XLProperty::Manager:
-        return m_appProperties.property("Manager");
+        return getAppProperty("Manager");
     case XLProperty::ModificationDate:
-        return m_coreProperties.property("dcterms:modified");
+        return getCoreProperty("dcterms:modified");
     case XLProperty::ScaleCrop:
-        return m_appProperties.property("ScaleCrop");
+        return getAppProperty("ScaleCrop");
     case XLProperty::SharedDoc:
-        return m_appProperties.property("SharedDoc");
+        return getAppProperty("SharedDoc");
     case XLProperty::Subject:
-        return m_coreProperties.property("dc:subject");
+        return getCoreProperty("dc:subject");
     case XLProperty::Title:
-        return m_coreProperties.property("dc:title");
-    default:
-        return "";    // To silence compiler warning.
+        return getCoreProperty("dc:title");
     }
+    return "";    // To silence compiler warning.
 }
-void XLDocument::setProperty(XLProperty prop, const std::string& value) // NOLINT
+
+void UExcelDocument::SetProperty(XLProperty prop, const std::string& value) // NOLINT
 {
     switch (prop) {
     case XLProperty::Application:
-        m_appProperties.setProperty("Application", value);
+        setAppProperty("Application", value);
         break;
     case XLProperty::AppVersion:    // ===== TODO: Clean up this section
-        try {
-            std::stof(value);
-        }
-        catch (...) {
-            throw XLPropertyError("Invalid property value");
-        }
-
-        if (value.find('.') != std::string::npos) {
+         
+        if (value.find('.') != std::string::npos) 
+        {
             if (!value.substr(value.find('.') + 1).empty() && value.substr(value.find('.') + 1).size() <= 5) { // NOLINT
                 if (!value.substr(0, value.find('.')).empty() && value.substr(0, value.find('.')).size() <= 2) {
-                    m_appProperties.setProperty("AppVersion", value);
-                }
-                else
-                    throw XLPropertyError("Invalid property value");
-            }
-            else
-                throw XLPropertyError("Invalid property value");
-        }
-        else
-            throw XLPropertyError("Invalid property value");
-
+                    setAppProperty("AppVersion", value);
+                } 
+            } 
+        } 
         break;
 
     case XLProperty::Category:
-        m_coreProperties.setProperty("cp:category", value);
+        setCoreProperty("cp:category", value);
         break;
     case XLProperty::Company:
-        m_appProperties.setProperty("Company", value);
+        setAppProperty("Company", value);
         break;
     case XLProperty::CreationDate:
-        m_coreProperties.setProperty("dcterms:created", value);
+        setCoreProperty("dcterms:created", value);
         break;
     case XLProperty::Creator:
-        m_coreProperties.setProperty("dc:creator", value);
+        setCoreProperty("dc:creator", value);
         break;
     case XLProperty::Description:
-        m_coreProperties.setProperty("dc:description", value);
+        setCoreProperty("dc:description", value);
         break;
     case XLProperty::DocSecurity:
         if (value == "0" || value == "1" || value == "2" || value == "4" || value == "8")
-            m_appProperties.setProperty("DocSecurity", value);
-        else
-            throw XLPropertyError("Invalid property value");
+            setAppProperty("DocSecurity", value);
+        
         break;
 
     case XLProperty::HyperlinkBase:
-        m_appProperties.setProperty("HyperlinkBase", value);
+        setAppProperty("HyperlinkBase", value);
         break;
     case XLProperty::HyperlinksChanged:
         if (value == "true" || value == "false")
-            m_appProperties.setProperty("HyperlinksChanged", value);
-        else
-            throw XLPropertyError("Invalid property value");
-
+            setAppProperty("HyperlinksChanged", value);
+        
         break;
 
     case XLProperty::Keywords:
-        m_coreProperties.setProperty("cp:keywords", value);
+        setCoreProperty("cp:keywords", value);
         break;
     case XLProperty::LastModifiedBy:
-        m_coreProperties.setProperty("cp:lastModifiedBy", value);
+        setCoreProperty("cp:lastModifiedBy", value);
         break;
     case XLProperty::LastPrinted:
-        m_coreProperties.setProperty("cp:lastPrinted", value);
+        setCoreProperty("cp:lastPrinted", value);
         break;
     case XLProperty::LinksUpToDate:
         if (value == "true" || value == "false")
-            m_appProperties.setProperty("LinksUpToDate", value);
-        else
-            throw XLPropertyError("Invalid property value");
+            setAppProperty("LinksUpToDate", value);
+        
         break;
 
     case XLProperty::Manager:
-        m_appProperties.setProperty("Manager", value);
+        setAppProperty("Manager", value);
         break;
     case XLProperty::ModificationDate:
-        m_coreProperties.setProperty("dcterms:modified", value);
+        setCoreProperty("dcterms:modified", value);
         break;
     case XLProperty::ScaleCrop:
         if (value == "true" || value == "false")
-            m_appProperties.setProperty("ScaleCrop", value);
-        else
-            throw XLPropertyError("Invalid property value");
+            setAppProperty("ScaleCrop", value);
         break;
 
     case XLProperty::SharedDoc:
         if (value == "true" || value == "false")
-            m_appProperties.setProperty("SharedDoc", value);
-        else
-            throw XLPropertyError("Invalid property value");
+            setAppProperty("SharedDoc", value); 
         break;
 
     case XLProperty::Subject:
-        m_coreProperties.setProperty("dc:subject", value);
+        setCoreProperty("dc:subject", value);
         break;
     case XLProperty::Title:
-        m_coreProperties.setProperty("dc:title", value);
+        setCoreProperty("dc:title", value);
         break;
     }
 }
-void XLDocument::deleteProperty(XLProperty theProperty)
+
+void UExcelDocument::RemoveProperty(XLProperty theProperty)
 {
-    setProperty(theProperty, "");
+    SetProperty(theProperty, "");
 }
-void XLDocument::execCommand(const XLCommand& command) {
 
-    switch (command.type()) {
-    case XLCommandType::SetSheetName:
-        m_appProperties.setSheetName(command.getParam<std::string>("sheetName"), command.getParam<std::string>("newName"));
-        m_workbook.setSheetName(command.getParam<std::string>("sheetID"), command.getParam<std::string>("newName"));
-        break;
 
-    case XLCommandType::SetSheetColor:
-        // TODO: To be implemented
-        break;
-
-    case XLCommandType::SetSheetVisibility:
-        m_workbook.setSheetVisibility(command.getParam<std::string>("sheetID"), command.getParam<std::string>("sheetVisibility"));
-        break;
-
-    case XLCommandType::SetSheetIndex:
-    {
-        XLQuery qry(XLQueryType::QuerySheetName);
-        auto sheetName = execQuery(qry.setParam("sheetID", command.getParam<std::string>("sheetID"))).result<std::string>();
-        m_workbook.setSheetIndex(sheetName, command.getParam<uint16_t>("sheetIndex"));
-    }
-    break;
-
-    case XLCommandType::SetSheetActive:
-        m_workbook.setSheetActive(command.getParam<std::string>("sheetID"));
-        break;
-
-    case XLCommandType::ResetCalcChain:
-    {
-        m_archive.deleteEntry("xl/calcChain.xml");
-        auto item = std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& item) {
-            return item.getXmlPath() == "xl/calcChain.xml";
-            });
-
-        if (item != m_data.end()) m_data.erase(item);
-    }
-    break;
-    case XLCommandType::AddSharedStrings:
-    {
-        std::string sharedStrings{
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            "<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">\n"
-            "  <si>\n"
-            "    <t/>\n"
-            "  </si>\n"
-            "</sst>"
-        };
-        m_contentTypes.addOverride("/xl/sharedStrings.xml", XLContentType::SharedStrings);
-        m_wbkRelationships.addRelationship(XLRelationshipType::SharedStrings, "sharedStrings.xml");
-        m_archive.addEntry("xl/sharedStrings.xml", sharedStrings);
-    }
-    break;
-    case XLCommandType::AddWorksheet:
-    {
-        std::string emptyWorksheet{
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-            "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\""
-            " xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\""
-            " xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac\""
-            " xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\">"
-            "<dimension ref=\"A1\"/>"
-            "<sheetViews>"
-            "<sheetView workbookViewId=\"0\"/>"
-            "</sheetViews>"
-            "<sheetFormatPr baseColWidth=\"10\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\"/>"
-            "<sheetData/>"
-            "<pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/>"
-            "</worksheet>"
-        };
-        m_contentTypes.addOverride(command.getParam<std::string>("sheetPath"), XLContentType::Worksheet);
-        m_wbkRelationships.addRelationship(XLRelationshipType::Worksheet, command.getParam<std::string>("sheetPath").substr(4));
-        m_appProperties.appendSheetName(command.getParam<std::string>("sheetName"));
-        m_archive.addEntry(command.getParam<std::string>("sheetPath").substr(1), emptyWorksheet);
-        m_data.emplace_back(
-            /* parentDoc */ this,
-            /* xmlPath   */ command.getParam<std::string>("sheetPath").substr(1),
-            /* xmlID     */ m_wbkRelationships.relationshipByTarget(command.getParam<std::string>("sheetPath").substr(4)).id(),
-            /* xmlType   */ XLContentType::Worksheet);
-    }
-    break;
-    case XLCommandType::AddChartsheet:
-        // TODO: To be implemented
-        break;
-    case XLCommandType::DeleteSheet:
-    {
-        m_appProperties.deleteSheetName(command.getParam<std::string>("sheetName"));
-        auto sheetPath = "/xl/" + m_wbkRelationships.relationshipById(command.getParam<std::string>("sheetID")).target();
-        m_archive.deleteEntry(sheetPath.substr(1));
-        m_contentTypes.deleteOverride(sheetPath);
-        m_wbkRelationships.deleteRelationship(command.getParam<std::string>("sheetID"));
-        m_data.erase(std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& item) {
-            return item.getXmlPath() == sheetPath.substr(1);
-            }));
-    }
-    break;
-    case XLCommandType::CloneSheet:
-    {
-        auto internalID = m_workbook.createInternalSheetID();
-        auto sheetPath = "/xl/worksheets/sheet" + std::to_string(internalID) + ".xml";
-        if (m_workbook.sheetExists(command.getParam<std::string>("cloneName")))
-            throw XLInternalError("Sheet named \"" + command.getParam<std::string>("cloneName") + "\" already exists.");
-
-        if (m_wbkRelationships.relationshipById(command.getParam<std::string>("sheetID")).type() == XLRelationshipType::Worksheet) {
-            m_contentTypes.addOverride(sheetPath, XLContentType::Worksheet);
-            m_wbkRelationships.addRelationship(XLRelationshipType::Worksheet, sheetPath.substr(4));
-            m_appProperties.appendSheetName(command.getParam<std::string>("cloneName"));
-            m_archive.addEntry(sheetPath.substr(1), std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& data) {
-                return data.getXmlPath().substr(3) ==
-                    m_wbkRelationships.relationshipById(command.getParam<std::string>
-                        ("sheetID")).target();
-                })->getRawData());
-            m_data.emplace_back(
-                /* parentDoc */ this,
-                /* xmlPath   */ sheetPath.substr(1),
-                /* xmlID     */ m_wbkRelationships.relationshipByTarget(sheetPath.substr(4)).id(),
-                /* xmlType   */ XLContentType::Worksheet);
-        }
-        else {
-            m_contentTypes.addOverride(sheetPath, XLContentType::Chartsheet);
-            m_wbkRelationships.addRelationship(XLRelationshipType::Chartsheet, sheetPath.substr(4));
-            m_appProperties.appendSheetName(command.getParam<std::string>("cloneName"));
-            m_archive.addEntry(sheetPath.substr(1), std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& data) {
-                return data.getXmlPath().substr(3) ==
-                    m_wbkRelationships.relationshipById(command.getParam<std::string>
-                        ("sheetID")).target();
-                })->getRawData());
-            m_data.emplace_back(
-                /* parentDoc */ this,
-                /* xmlPath   */ sheetPath.substr(1),
-                /* xmlID     */ m_wbkRelationships.relationshipByTarget(sheetPath.substr(4)).id(),
-                /* xmlType   */ XLContentType::Chartsheet);
-        }
-
-        m_workbook.prepareSheetMetadata(command.getParam<std::string>("cloneName"), internalID);
-    }
-    break;
-    }
-}
-XLQuery XLDocument::execQuery(const XLQuery& query) const
+XLXmlData* UExcelDocument::getXmlData(const std::string& path)
 {
-
-    switch (query.type()) {
-    case XLQueryType::QuerySheetName:
-        return XLQuery(query).setResult(m_workbook.sheetName(query.getParam<std::string>("sheetID")));
-
-    case XLQueryType::QuerySheetIndex:
-        return query;
-
-    case XLQueryType::QuerySheetVisibility:
-        return XLQuery(query).setResult(m_workbook.sheetVisibility(query.getParam<std::string>("sheetID")));
-
-    case XLQueryType::QuerySheetType:
-        if (m_wbkRelationships.relationshipById(query.getParam<std::string>("sheetID")).type() == XLRelationshipType::Worksheet)
-            return XLQuery(query).setResult(XLContentType::Worksheet);
-        else
-            return XLQuery(query).setResult(XLContentType::Chartsheet);
-
-    case XLQueryType::QuerySheetIsActive:
-        return XLQuery(query).setResult(m_workbook.sheetIsActive(query.getParam<std::string>("sheetID")));
-
-    case XLQueryType::QuerySheetID:
-        return XLQuery(query).setResult(m_workbook.sheetVisibility(query.getParam<std::string>("sheetID")));
-
-    case XLQueryType::QuerySheetRelsID:
-        return XLQuery(query).setResult(m_wbkRelationships.relationshipByTarget(query.getParam<std::string>("sheetPath").substr(4)).id());
-
-    case XLQueryType::QuerySheetRelsTarget:
-        return XLQuery(query).setResult(m_wbkRelationships.relationshipById(query.getParam<std::string>("sheetID")).target());
-
-    case XLQueryType::QuerySharedStrings:
-        return XLQuery(query).setResult(m_sharedStrings);
-
-    case XLQueryType::QueryXmlData:
-    {
-        auto result =
-            std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& item) { return item.getXmlPath() == query.getParam<std::string>("xmlPath"); });
-        if (result == m_data.end()) throw XLInternalError("Path does not exist in zip archive (" + query.getParam<std::string>("xmlPath") + ")");
-        return XLQuery(query).setResult(&*result);
-    }
-    }
-
-    return query; // Needed in order to suppress compiler warning
-}
-
-/**
- * @details
- */
-XLQuery XLDocument::execQuery(const XLQuery& query)
-{
-    return static_cast<const XLDocument&>(*this).execQuery(query);
-}
-
-XLXmlData* XLDocument::getXmlData(const std::string& path)
-{
-    if (!hasXmlData(path)) throw XLInternalError("Path does not exist in zip archive.");
+    if (!hasXmlData(path)) nullptr;
     return &*std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& item) { return item.getXmlPath() == path; });
-    //    auto result = std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& item) { return item.getXmlPath() == path; });
-    //    if (result == m_data.end()) throw XLInternalError("Path does not exist in zip archive.");
-    //    return &*result;
 }
 
-/**
- * @details
- */
-const XLXmlData* XLDocument::getXmlData(const std::string& path) const
+const XLXmlData* UExcelDocument::getXmlData(const std::string& path) const
 {
-    if (!hasXmlData(path)) throw XLInternalError("Path does not exist in zip archive.");
+    if (!hasXmlData(path)) nullptr;
     return &*std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& item) { return item.getXmlPath() == path; });
-    //    if (result == m_data.end()) throw XLInternalError("Path does not exist in zip archive.");
-    //    return &*result;
 }
-
-/**
- * @details
- */
-bool XLDocument::hasXmlData(const std::string& path) const
+ 
+bool UExcelDocument::hasXmlData(const std::string& path) const
 {
     return std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& item) { return item.getXmlPath() == path; }) != m_data.end();
 }
-
-/**
- * @details
- */
-std::string XLDocument::extractXmlFromArchive(const std::string& path)
-{
-    return (m_archive.hasEntry(path) ? m_archive.getEntry(path) : "");
-}
-
  
-USheet* UExcelDocument::GetSheetAt(int32 index)const
+std::string UExcelDocument::extractXmlFromArchive(const std::string& path)
 {
-	try
-	{
-		auto ret = NewObject<USheet>();
-		ret->_Inner = std::move(_Inner->workbook().sheet(index).get<XLWorksheet>());
-		return ret;
-	}
-	catch (...)
-	{
-		return nullptr;
-	}
+    return (m_archive.HasEntry(path) ? m_archive.GetEntry(path).GetDataAsString() : "");
 }
 
+USheet* UExcelDocument::GetSheet(FString name) const
+{
+    std::string sheetName = TCHAR_TO_UTF8(*name);
+    // ===== First determine if the sheet exists.
+    if (workbook->xmlDocument().document_element().child("sheets").find_child_by_attribute("name", sheetName.c_str()) == nullptr)
+    {
+        return nullptr;
+    }
+
+    //TODO xmlID ´óÐ¡Ð´
+    // ===== Find the sheet data corresponding to the sheet with the requested name
+    auto sheetNode = workbook->xmlDocument().document_element().child("sheets").
+        find_child_by_attribute("name", sheetName.c_str());
+    std::string xmlID = sheetNode.attribute("r:id").value();
+
+    auto xmlPath = wbkRelsTargetById(xmlID);
+
+    // Some spreadsheets use absolute rather than relative paths in relationship items.
+    if (xmlPath.substr(0, 4) == "/xl/") xmlPath = xmlPath.substr(4);
+
+    USheet* ret = NewObject<USheet>();
+    ret->doc_ = const_cast<UExcelDocument*>(this);
+    ret->reset(QueryXmlData("xl/" + xmlPath));
+    return ret;
+}
+ 
 USheet* UExcelDocument::GetOrCreateSheetWithName(FString name)
 {
 	try
 	{
 		std::string _Name(TCHAR_TO_UTF8(*name));
-		auto ret = NewObject<USheet>();
-		if (_Inner->workbook().worksheetExists(_Name))
+		if (!worksheetExists(_Name))
 		{
-			ret->_Inner = std::move(_Inner->workbook().worksheet(_Name)); 
-		}
-		else
-		{
-			_Inner->workbook().addWorksheet(_Name);
-			ret->_Inner = std::move(_Inner->workbook().worksheet(_Name));
+            AddWorksheet(name); 
 		} 
-		_curSheet = ret;
-		return ret; 
+		_curSheet = GetSheet(name);
+		return _curSheet;
 	}
 	catch (...)
 	{
@@ -976,41 +740,45 @@ USheet* UExcelDocument::GetOrCreateSheetWithName(FString name)
 	}
 }
  
-void UExcelDocument::DeleteSheet(FString name)
+ 
+void UExcelDocument::CloneSheet(FString SheetID, FString CloneName)
 {
-	std::string _Name(TCHAR_TO_UTF8(*name));
-	_Inner->workbook().deleteSheet(_Name);
+    std::string sheetID = TCHAR_TO_UTF8(*SheetID);
+    std::string cloneName = TCHAR_TO_UTF8(*CloneName);
+
+    auto internalID = createInternalSheetID();
+    auto sheetPath = "/xl/worksheets/sheet" + std::to_string(internalID) + ".xml";
+    if (worksheetExists(cloneName))
+    {
+        // Sheet already exists
+        return;
+    }
+
+    if (wbkRelsTypeById(sheetID) == XLRelationshipType::Worksheet) {
+        addOverride(sheetPath, ContentType::Worksheet);
+        addRelationship(XLRelationshipType::Worksheet, sheetPath.substr(4));
+        AppendSheetName(cloneName);
+        m_archive.AddEntry(sheetPath.substr(1), std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& data)
+            {
+                return data.getXmlPath().substr(3) == wbkRelsTargetById(sheetID);
+            })->getRawData());
+        m_data.emplace_back(
+             [=](std::string path)
+            {
+                return extractXmlFromArchive(path);
+            }, 
+            /* xmlPath   */ sheetPath.substr(1),
+            /* xmlID     */ wbkRelsTargetById(sheetPath.substr(4)),
+            /* xmlType   */ ContentType::Worksheet);
+    }
+
+    prepareSheetMetadata(cloneName, internalID);
 }
 
   
-void UExcelDocument::CloneSheet(FString existingName, FString newName)
-{
-	std::string _Name1(TCHAR_TO_UTF8(*existingName));
-	std::string _Name2(TCHAR_TO_UTF8(*newName));
-	_Inner->workbook().cloneSheet(_Name1, _Name2);
-}
-
-void UExcelDocument::SetSheetIndex(FString sheetName, int32 index)
-{
-	std::string _Name1(TCHAR_TO_UTF8(*sheetName));
-	_Inner->workbook().setSheetIndex(_Name1, index);
-}
-
-
-int32 UExcelDocument::GetSheetIndex(FString sheetName)
-{
-	std::string _Name1(TCHAR_TO_UTF8(*sheetName));
-	return _Inner->workbook().indexOfSheet(_Name1);
-}
- 
-int32 UExcelDocument::GetSheetCount()const
-{
-	return _Inner->workbook().sheetCount();
-}
- 
 TArray<FString> UExcelDocument::GetSheetNames()const
 {
-	auto ls = _Inner->workbook().sheetNames();
+	auto ls = worksheetNames();
 	TArray<FString> ret;
 	ret.Reserve(ls.size());
 	std::for_each(ls.begin(), ls.end(), [&ret](auto& it) {
@@ -1019,215 +787,109 @@ TArray<FString> UExcelDocument::GetSheetNames()const
 	return ret;
 }
  
-
-bool UExcelDocument::HasSheet(FString name)const
-{
-	std::string _Name1(TCHAR_TO_UTF8(*name));
-	return _Inner->workbook().sheetExists(_Name1);
-}
  
-//void UExcelDocument::SetFullCalculationOnLoad()
-//{
-//	_Inner->workbook().setFullCalculationOnLoad();
-//}
-
 #pragma region XLProperty
 
-namespace
+ 
+#pragma region Core Properties
+void UExcelDocument::setCoreProperty(const std::string & name, const std::string & value)
 {
-    inline XMLAttribute headingPairsSize(XMLNode docNode)
-    {
-        return docNode.child("HeadingPairs").first_child().attribute("size");
-    }
-
-    inline XMLNode headingPairsCategories(XMLNode docNode)
-    {
-        return docNode.child("HeadingPairs").first_child().first_child();
-    }
-
-    inline XMLNode headingPairsCounts(XMLNode docNode)
-    {
-        return headingPairsCategories(docNode).next_sibling();
-    }
-
-    inline XMLNode sheetNames(XMLNode docNode)
-    {
-        return docNode.child("TitlesOfParts").first_child();
-    }
-
-    inline XMLAttribute sheetCount(XMLNode docNode)
-    {
-        return sheetNames(docNode).attribute("size");
-    }
-}    // namespace
-
-/**
- * @details
- */
-XLProperties::XLProperties(XLXmlData* xmlData) : XLXmlFile(xmlData) {}
-
-/**
- * @details
- */
-XLProperties::~XLProperties() = default;
-
-/**
- * @details
- */
-void XLProperties::setProperty(const std::string & name, const std::string & value)
-{
-    if (!m_xmlData) return;
+    if (!core_properties) return;
     XMLNode node;
-    if (xmlDocument().first_child().child(name.c_str()) != nullptr)
-        node = xmlDocument().first_child().child(name.c_str());
+    if (core_properties->xmlDocument().first_child().child(name.c_str()) != nullptr)
+        node = core_properties->xmlDocument().first_child().child(name.c_str());
     else
-        node = xmlDocument().first_child().prepend_child(name.c_str());
+        node = core_properties->xmlDocument().first_child().prepend_child(name.c_str());
 
     node.text().set(value.c_str());
 }
-
-/**
- * @details
- */
-void XLProperties::setProperty(const std::string & name, int value)
+ 
+std::string UExcelDocument::getCoreProperty(const std::string& name) const
 {
-    setProperty(name, std::to_string(value));
-}
-
-/**
- * @details
- */
-void XLProperties::setProperty(const std::string & name, double value)
-{
-    setProperty(name, std::to_string(value));
-}
-
-/**
- * @details
- */
-std::string XLProperties::property(const std::string & name) const
-{
-    if (!m_xmlData) return "";
-    auto property = xmlDocument().first_child().child(name.c_str());
+    if (!core_properties) return "";
+    auto property = core_properties->xmlDocument().first_child().child(name.c_str());
     if (!property) {
-        property = xmlDocument().first_child().append_child(name.c_str());
+        property = core_properties->xmlDocument().first_child().append_child(name.c_str());
     }
 
     return property.text().get();
 }
-
-/**
- * @details
- */
-void XLProperties::deleteProperty(const std::string & name)
+ 
+void UExcelDocument::removeCoreProperty(const std::string & name)
 {
-    if (!m_xmlData) return;
-    auto property = xmlDocument().first_child().child(name.c_str());
-    if (property != nullptr) xmlDocument().first_child().remove_child(property);
+    if (!core_properties) return;
+    auto property = core_properties->xmlDocument().first_child().child(name.c_str());
+    if (property != nullptr) core_properties->xmlDocument().first_child().remove_child(property);
 }
+#pragma endregion
 
-/**
- * @details
- */
-XLAppProperties::XLAppProperties(XLXmlData * xmlData) : XLXmlFile(xmlData) {}
-
-/**
- * @details
- */
-XLAppProperties::~XLAppProperties() = default;
-
-/**
- * @details
- */
-void XLAppProperties::addSheetName(const std::string & title)
+#pragma region App Properties
+void UExcelDocument::AddSheetName(const std::string & title)
 {
-    if (!m_xmlData) return;
-    auto theNode = sheetNames(xmlDocument().document_element()).append_child("vt:lpstr");
+    if (!app_properties) return;
+    auto theNode = sheetNames(app_properties->xmlDocument().document_element()).append_child("vt:lpstr");
     theNode.text().set(title.c_str());
-    sheetCount(xmlDocument().document_element()).set_value(sheetCount(xmlDocument().document_element()).as_uint() + 1);
+    sheetCount(app_properties->xmlDocument().document_element()).
+        set_value(sheetCount(app_properties->xmlDocument().document_element()).as_uint() + 1);
 }
-
-/**
- * @details
- */
-void XLAppProperties::deleteSheetName(const std::string & title)
+ 
+void UExcelDocument::RemoveSheetName(const std::string & title)
 {
-    if (!m_xmlData) return;
-    for (auto& iter : sheetNames(xmlDocument().document_element()).children()) {
+    if (!app_properties) return;
+    for (auto& iter : sheetNames(app_properties->xmlDocument().document_element()).children()) {
         if (iter.child_value() == title) {
-            sheetNames(xmlDocument().document_element()).remove_child(iter);
-            sheetCount(xmlDocument().document_element()).set_value(sheetCount(xmlDocument().document_element()).as_uint() - 1);
+            sheetNames(app_properties->xmlDocument().document_element()).remove_child(iter);
+            sheetCount(app_properties->xmlDocument().document_element()).
+                set_value(sheetCount(app_properties->xmlDocument().document_element()).as_uint() - 1);
             return;
         }
     }
 }
+ 
 
-/**
- * @details
- */
-void XLAppProperties::setSheetName(const std::string & oldTitle, const std::string & newTitle)
+void UExcelDocument::AddHeadingPair(const std::string & name, int value)
 {
-    if (!m_xmlData) return;
-    for (auto& iter : sheetNames(xmlDocument().document_element())) {
-        if (iter.child_value() == oldTitle) {
-            iter.text().set(newTitle.c_str());
-            return;
-        }
-    }
-}
-
-/**
- * @details
- */
-void XLAppProperties::addHeadingPair(const std::string & name, int value)
-{
-    if (!m_xmlData) return;
-    for (auto& item : headingPairsCategories(xmlDocument().document_element()).children()) {
+    if (!app_properties) return;
+    for (auto& item : headingPairsCategories(app_properties->xmlDocument().document_element()).children()) {
         if (item.child_value() == name) return;
     }
 
-    auto pairCategory = headingPairsCategories(xmlDocument().document_element()).append_child("vt:lpstr");
+    auto pairCategory = headingPairsCategories(app_properties->xmlDocument().document_element()).append_child("vt:lpstr");
     pairCategory.set_value(name.c_str());
 
-    auto pairCount = headingPairsCounts(xmlDocument().document_element()).append_child("vt:i4");
+    auto pairCount = headingPairsCounts(app_properties->xmlDocument().document_element()).append_child("vt:i4");
     pairCount.set_value(std::to_string(value).c_str());
 
-    headingPairsSize(xmlDocument().document_element())
-        .set_value(std::distance(headingPairsCategories(xmlDocument().document_element()).begin(),
-            headingPairsCategories(xmlDocument().document_element()).end()));
+    headingPairsSize(app_properties->xmlDocument().document_element())
+        .set_value(std::distance(headingPairsCategories(app_properties->xmlDocument().document_element()).begin(),
+            headingPairsCategories(app_properties->xmlDocument().document_element()).end()));
 }
-
-/**
- * @details
- */
-void XLAppProperties::deleteHeadingPair(const std::string & name)
+ 
+void UExcelDocument::RemoveHeadingPair(const std::string & name)
 {
-    if (!m_xmlData) return;
-    auto category = headingPairsCategories(xmlDocument().document_element()).begin();
-    auto count = headingPairsCounts(xmlDocument().document_element()).begin();
-    while (category != headingPairsCategories(xmlDocument().document_element()).end() &&
-        count != headingPairsCounts(xmlDocument().document_element()).end())
+    if (!app_properties) return;
+    auto category = headingPairsCategories(app_properties->xmlDocument().document_element()).begin();
+    auto count = headingPairsCounts(app_properties->xmlDocument().document_element()).begin();
+    while (category != headingPairsCategories(app_properties->xmlDocument().document_element()).end() &&
+        count != headingPairsCounts(app_properties->xmlDocument().document_element()).end())
     {
         if (category->child_value() == name) {
-            headingPairsCategories(xmlDocument().document_element()).remove_child(*category);
-            headingPairsCounts(xmlDocument().document_element()).remove_child(*count);
+            headingPairsCategories(app_properties->xmlDocument().document_element()).remove_child(*category);
+            headingPairsCounts(app_properties->xmlDocument().document_element()).remove_child(*count);
             break;
         }
         ++category;
         ++count;
     }
 }
-
-/**
- * @details
- */
-void XLAppProperties::setHeadingPair(const std::string & name, int newValue)
+ 
+void UExcelDocument::SetHeadingPair(const std::string & name, int newValue)
 {
-    if (!m_xmlData) return;
-    auto category = headingPairsCategories(xmlDocument().document_element()).begin();
-    auto count = headingPairsCounts(xmlDocument().document_element()).begin();
-    while (category != headingPairsCategories(xmlDocument().document_element()).end() &&
-        count != headingPairsCounts(xmlDocument().document_element()).end())
+    if (!app_properties) return;
+    auto category = headingPairsCategories(app_properties->xmlDocument().document_element()).begin();
+    auto count = headingPairsCounts(app_properties->xmlDocument().document_element()).begin();
+    while (category != headingPairsCategories(app_properties->xmlDocument().document_element()).end() &&
+        count != headingPairsCounts(app_properties->xmlDocument().document_element()).end())
     {
         if (category->child_value() == name) {
             count->text().set(std::to_string(newValue).c_str());
@@ -1237,81 +899,65 @@ void XLAppProperties::setHeadingPair(const std::string & name, int newValue)
         ++count;
     }
 }
-
-/**
- * @details
- */
-void XLAppProperties::setProperty(const std::string & name, const std::string & value)
+ 
+void UExcelDocument::setAppProperty(const std::string & name, const std::string & value)
 {
-    if (!m_xmlData) return;
-    auto property = xmlDocument().first_child().child(name.c_str());
-    if (!property) xmlDocument().first_child().append_child(name.c_str());
+    if (!app_properties) return;
+    auto property = app_properties->xmlDocument().first_child().child(name.c_str());
+    if (!property) app_properties->xmlDocument().first_child().append_child(name.c_str());
     property.text().set(value.c_str());
 }
-
-/**
- * @details
- */
-std::string XLAppProperties::property(const std::string & name) const
+ 
+std::string UExcelDocument::getAppProperty(const std::string & name) const
 {
-    if (!m_xmlData) return "";
-    auto property = xmlDocument().first_child().child(name.c_str());
-    if (!property) xmlDocument().first_child().append_child(name.c_str());
+    if (!app_properties) return "";
+    auto property = app_properties->xmlDocument().first_child().child(name.c_str());
+    if (!property) app_properties->xmlDocument().first_child().append_child(name.c_str());
 
     return property.text().get();
 }
-
-/**
- * @details
- */
-void XLAppProperties::deleteProperty(const std::string & name)
+ 
+void UExcelDocument::RemoveAppProperty(const std::string & name)
 {
-    if (!m_xmlData) return;
-    auto property = xmlDocument().first_child().child(name.c_str());
+    if (!app_properties) return;
+    auto property = app_properties->xmlDocument().first_child().child(name.c_str());
     if (!property) return;
 
-    xmlDocument().first_child().remove_child(property);
+    app_properties->xmlDocument().first_child().remove_child(property);
 }
-
-/**
- * @details
- */
-void XLAppProperties::appendSheetName(const std::string & sheetName)
+ 
+void UExcelDocument::AppendSheetName(const std::string & sheetName)
 {
-    if (!m_xmlData) return;
-    auto theNode = sheetNames(xmlDocument().document_element()).append_child("vt:lpstr");
+    if (!app_properties) return;
+    auto theNode = sheetNames(app_properties->xmlDocument().document_element()).append_child("vt:lpstr");
     theNode.text().set(sheetName.c_str());
-    sheetCount(xmlDocument().document_element()).set_value(sheetCount(xmlDocument().document_element()).as_uint() + 1);
+    sheetCount(app_properties->xmlDocument().document_element()).
+        set_value(sheetCount(app_properties->xmlDocument().document_element()).as_uint() + 1);
 }
-
-/**
- * @details
- */
-void XLAppProperties::prependSheetName(const std::string & sheetName)
+ 
+void UExcelDocument::PrependSheetName(const std::string & sheetName)
 {
-    if (!m_xmlData) return;
-    auto theNode = sheetNames(xmlDocument().document_element()).prepend_child("vt:lpstr");
+    if (!app_properties) return;
+    auto theNode = sheetNames(app_properties->xmlDocument().document_element()).prepend_child("vt:lpstr");
     theNode.text().set(sheetName.c_str());
-    sheetCount(xmlDocument().document_element()).set_value(sheetCount(xmlDocument().document_element()).as_uint() + 1);
+    sheetCount(app_properties->xmlDocument().document_element()).
+        set_value(sheetCount(app_properties->xmlDocument().document_element()).as_uint() + 1);
 }
-
-/**
- * @details
- */
-void XLAppProperties::insertSheetName(const std::string & sheetName, unsigned int index)
+ 
+void UExcelDocument::InsertSheetName(const std::string & sheetName, unsigned int index)
 {
-    if (!m_xmlData) return;
+    if (!app_properties) return;
     if (index <= 1) {
-        prependSheetName(sheetName);
+        PrependSheetName(sheetName);
         return;
     }
 
-    if (index > sheetCount(xmlDocument().document_element()).as_uint()) {
-        appendSheetName(sheetName);
+    if (index > sheetCount(app_properties->xmlDocument().document_element()).as_uint()) {
+        AppendSheetName(sheetName);
         return;
     }
 
-    auto     curNode = sheetNames(xmlDocument().document_element()).first_child();
+    auto     curNode = sheetNames(app_properties->xmlDocument().document_element()).first_child();
     unsigned idx = 1;
     while (curNode != nullptr) {
         if (idx == index) break;
@@ -1320,14 +966,104 @@ void XLAppProperties::insertSheetName(const std::string & sheetName, unsigned in
     }
 
     if (!curNode) {
-        appendSheetName(sheetName);
+        AppendSheetName(sheetName);
         return;
     }
 
-    auto theNode = sheetNames(xmlDocument().document_element()).insert_child_before("vt:lpstr", curNode);
+    auto theNode = sheetNames(app_properties->xmlDocument().document_element()).insert_child_before("vt:lpstr", curNode);
     theNode.text().set(sheetName.c_str());
 
-    sheetCount(xmlDocument().document_element()).set_value(sheetCount(xmlDocument().document_element()).as_uint() + 1);
+    sheetCount(app_properties->xmlDocument().document_element()).set_value(sheetCount(app_properties->xmlDocument().document_element()).as_uint() + 1);
 }
 
-#pragma endregion
+void UExcelDocument::AddWorksheet(FString SheetName)
+{
+    std::string sheetName = TCHAR_TO_UTF8(*SheetName);
+
+    // If a sheet with the given name already exists, do nothing
+    if (workbook->xmlDocument().document_element().child("sheets").find_child_by_attribute("name", sheetName.c_str()))
+    {
+        return;
+    }
+
+    // ===== Create new internal (workbook) ID for the sheet
+    auto internalID = createInternalSheetID();
+
+    // ===== Create xml file for new worksheet and add metadata to the workbook file. 
+    std::string sheetPath = "/xl/worksheets/sheet" + std::to_string(internalID) + ".xml";
+
+    std::string emptyWorksheet{
+          "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+          "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\""
+          " xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\""
+          " xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac\""
+          " xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\">"
+          "<dimension ref=\"A1\"/>"
+          "<sheetViews>"
+          "<sheetView workbookViewId=\"0\"/>"
+          "</sheetViews>"
+          "<sheetFormatPr baseColWidth=\"10\" defaultRowHeight=\"16\" x14ac:dyDescent=\"0.2\"/>"
+          "<sheetData/>"
+          "<pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/>"
+          "</worksheet>"
+    };
+    addOverride(sheetPath, ContentType::Worksheet);
+    addRelationship(XLRelationshipType::Worksheet, sheetPath.substr(4));
+    AppendSheetName(sheetName);
+    m_archive.AddEntry(sheetPath.substr(1), emptyWorksheet);
+    m_data.emplace_back(
+        [=](std::string path)
+        {
+            return extractXmlFromArchive(path);
+        },
+        /* xmlPath   */ sheetPath.substr(1),
+            /* xmlID     */ wbkRelsIdByTarget(sheetPath.substr(4)),
+            /* xmlType   */ ContentType::Worksheet);
+
+    prepareSheetMetadata(sheetName, internalID);
+
+}
+ 
+void  UExcelDocument::RemoveSheet(FString name)
+{
+    std::string sheetName = TCHAR_TO_UTF8(*name);
+    // ===== Determine ID and type of sheet, as well as current worksheet count.
+    auto sheetID = sheetsNode(workbook->xmlDocument()).find_child_by_attribute("name", sheetName.c_str()).attribute("r:id").value();    // NOLINT
+
+    // TODO  shoud ID be relationshipID()?
+    //auto sheetType = wbkRelsTypeById(relationshipID()) ;
+    auto sheetType = wbkRelsTypeById(sheetID);
+
+    auto worksheetCount =
+        std::count_if(sheetsNode(workbook->xmlDocument()).children().begin(), sheetsNode(workbook->xmlDocument()).children().end(), [&](const XMLNode& item)
+            {
+                return wbkRelsTypeById(item.attribute("r:id").value()) == XLRelationshipType::Worksheet;
+
+            });
+
+    // ===== If this is the last worksheet in the workbook, do nothing
+    if (worksheetCount == 1 && sheetType == XLRelationshipType::Worksheet)
+    {
+        // There must be at least one worksheet in the workbook
+        return;
+    }
+
+    // ===== Delete the sheet data as well as the sheet node from Workbook.xml
+    // AppProperties 
+    RemoveSheetName(sheetName);
+
+    auto sheetPath = "/xl/" + wbkRelsTargetById(sheetID);
+    m_archive.DeleteEntry(sheetPath.substr(1));
+    deleteOverride(sheetPath);
+    RemoveRelationship(sheetID);
+    m_data.erase(std::find_if(m_data.begin(), m_data.end(), [&](const XLXmlData& item) {
+        return item.getXmlPath() == sheetPath.substr(1);
+        }));
+
+
+    sheetsNode(workbook->xmlDocument()).remove_child(sheetsNode(workbook->xmlDocument()).find_child_by_attribute("name", sheetName.c_str()));
+
+    if (SheetIsActive(sheetID))
+        workbook->xmlDocument().document_element().child("bookViews").first_child().remove_attribute("activeTab");
+}
+#pragma endregion 

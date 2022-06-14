@@ -11,6 +11,7 @@
 #pragma warning(disable : 4267)
 #pragma warning(disable : 4242)
 #pragma warning(disable : 4244)
+#pragma warning(disable : 4800)
 
 #include <algorithm>
 #include <cstddef>
@@ -27,8 +28,7 @@
 #    include <direct.h>
 #endif
 
-#include <nowide/cstdio.hpp>
-
+ 
 namespace
 {
     /* miniz.c 2.0.8 - public domain deflate/inflate, zlib-subset, ZIP reading/writing/appending, PNG writing
@@ -198,7 +198,7 @@ namespace
 #    define MINIZ_X86_OR_X64_CPU 0
 #endif
 
-#if (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__) || MINIZ_X86_OR_X64_CPU
+#if /*(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__) ||*/ MINIZ_X86_OR_X64_CPU
 /* Set MINIZ_LITTLE_ENDIAN to 1 if the processor is little endian. */
 #    define MINIZ_LITTLE_ENDIAN 1
 #else
@@ -4546,12 +4546,12 @@ common_exit:
 #        if defined(_MSC_VER) || defined(__MINGW64__)
     static FILE* mz_fopen(const char* pFilename, const char* pMode)
     {
-        FILE* pFile = nowide::fopen(pFilename, pMode);
+        FILE* pFile = std::fopen(pFilename, pMode);
         return pFile;
     }
     static FILE* mz_freopen(const char* pPath, const char* pMode, FILE* pStream)
     {
-        FILE* pFile = nowide::freopen(pPath, pMode, pStream);
+        FILE* pFile = std::freopen(pPath, pMode, pStream);
         if (!pFile) return NULL;
         return pFile;
     }
@@ -9724,7 +9724,7 @@ namespace Zippy
 
 }    // namespace Zippy
 
-namespace Zippy::Impl
+namespace Zippy 
 {
     /**
      * @brief Generates a random filename, which is used to generate a temporary archive when modifying and saving
@@ -10734,7 +10734,7 @@ namespace Zippy
             }
 
             // ===== Generate a random file name with the same path as the current file
-            std::string tempPath = filename.substr(0, filename.rfind('/') + 1) + Impl::GenerateRandomName(20);
+            std::string tempPath = filename.substr(0, filename.rfind('/') + 1) + GenerateRandomName(20);
 
             // ===== Prepare an temporary archive file with the random filename;
             mz_zip_archive tempArchive = mz_zip_archive();
@@ -10772,8 +10772,8 @@ namespace Zippy
 
             // ===== Close the current archive, delete the file with input filename (if it exists), rename the temporary and call Open.
             Close();
-            nowide::remove(filename.c_str());
-            nowide::rename(tempPath.c_str(), filename.c_str());
+            std::remove(filename.c_str());
+            std::rename(tempPath.c_str(), filename.c_str());
             Open(filename);
         }
 
@@ -10964,7 +10964,8 @@ namespace Zippy
             }
 
             // ===== Finally, add a new entry with the given name and data, and return the object.
-            return ZipEntry(&m_ZipEntries.emplace_back(Impl::ZipEntry(name, data)));
+            m_ZipEntries.emplace_back(Impl::ZipEntry(name, data));
+            return ZipEntry(&m_ZipEntries.back());
         }
 
     private:

@@ -30,32 +30,36 @@ FCellReference::FCellReference(FString ref)
          
         Col = result;
 	}
-	if (!address_is_valid(Row,Col)) {
+	if (Row<1 || Row> max_rows)
+    {
 		Row = 1;
-		Col = 1;
 	}
+    if (Col<1 || Col> max_cols)
+    {
+        Col = 1;
+    }
 }
 
-FString FCellReference::to_string() const
+std::string FCellReference::to_string() const
 {
-    FString _Col; 
+    std::string _Col;
     if (Col <= alphabetSize)
     {
         // ===== If there is one letter in the Column Name:
-        _Col.AppendChar(TCHAR(Col + asciiOffset));
+        _Col.append(1, char(Col + asciiOffset));
     } 
     else if (Col > alphabetSize && Col <= alphabetSize * (alphabetSize + 1)) {
         // ===== If there are two letters in the Column Name:
-        _Col.AppendChar (TCHAR((Col - (alphabetSize + 1)) / alphabetSize + asciiOffset + 1));
-        _Col.AppendChar (TCHAR((Col - (alphabetSize + 1)) % alphabetSize + asciiOffset + 1));
+        _Col.append(1, char((Col - (alphabetSize + 1)) / alphabetSize + asciiOffset + 1));
+        _Col.append(1, char((Col - (alphabetSize + 1)) % alphabetSize + asciiOffset + 1));
     } 
     else {
         // ===== If there is three letters in the Column Name:
-        _Col.AppendChar( TCHAR((Col - 703) / (alphabetSize * alphabetSize) + asciiOffset + 1));  // NOLINT
-        _Col.AppendChar (TCHAR(((Col - 703) / alphabetSize) % alphabetSize + asciiOffset + 1));  // NOLINT
-        _Col.AppendChar( TCHAR((Col - 703) % alphabetSize + asciiOffset + 1));  // NOLINT
+        _Col.append(1, char((Col - 703) / (alphabetSize * alphabetSize) + asciiOffset + 1));  
+        _Col.append(1, char(((Col - 703) / alphabetSize) % alphabetSize + asciiOffset + 1));
+        _Col.append(1, char((Col - 703) % alphabetSize + asciiOffset + 1)); 
     }
  
-    return _Col +  FString::FromInt(Row);
+    return _Col +  std::to_string(Row);
 }
 

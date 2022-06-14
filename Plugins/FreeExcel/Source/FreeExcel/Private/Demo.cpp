@@ -1,8 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
  
 #include "Demo.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "OpenXLSX/include/headers/XLSheet.hpp"
+#include "Kismet/KismetSystemLibrary.h" 
 #include "Sheet.h"
 #include <string>
 #include <iostream>
@@ -15,8 +14,7 @@
 #include "DataTableJSON.h" 
 
 
-using namespace std;
-using namespace OpenXLSX;
+using namespace std; 
 
 // Sets default values
 ADemo::ADemo()
@@ -80,9 +78,7 @@ void ADemo::RunDemo()
     doc->GetOrCreateSheetWithName("Sheet2");
     doc->CloneSheet("Sheet1", "Sheet3");
      
-    doc->DeleteSheet("Sheet2");
-    doc->SetSheetIndex("Sheet1", 2);
-    doc->SetSheetIndex("Sheet3",1); 
+    doc->RemoveSheet("Sheet2"); 
     //Unicode
     wks->Cell(TEXT("D2"))->SetString( TEXT("こんにちは世界"));
 
@@ -92,10 +88,10 @@ void ADemo::RunDemo()
     {
         switch (it.type())  
         {
-        case EXLValueType::Boolean: UKismetSystemLibrary::PrintString(this, FString((bool)it?TEXT("true"):TEXT("false"))); break;
-        case EXLValueType::Integer: UKismetSystemLibrary::PrintString(this, FString::FromInt((int32)it)); break;
-        case EXLValueType::Float: UKismetSystemLibrary::PrintString(this, FString::SanitizeFloat((float)it)); break;
-        case EXLValueType::String: UKismetSystemLibrary::PrintString(this, (FString)it); break;
+        case EValueType::Boolean: UKismetSystemLibrary::PrintString(this, FString((bool)it?TEXT("true"):TEXT("false"))); break;
+        case EValueType::Integer: UKismetSystemLibrary::PrintString(this, FString::FromInt((int32)it)); break;
+        case EValueType::Float: UKismetSystemLibrary::PrintString(this, FString::SanitizeFloat((float)it)); break;
+        case EValueType::String: UKismetSystemLibrary::PrintString(this, (FString)it); break;
         default:
             break;
         }

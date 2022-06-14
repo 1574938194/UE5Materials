@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "OpenXLSX/include/headers/XLCellRange.hpp"
+#include "UObject/NoExportTypes.h" 
 #include "CellReference.h"
 #include "Cell.h"
 #include "CellIterator.generated.h"
  
 struct FCellRange;
+class UFreeExcelLibrary;
 
 USTRUCT(BlueprintType, Meta = (HasNativeMake, HasNativeBreak))
 struct FREEEXCEL_API FCellIterator
@@ -24,31 +24,16 @@ public:
   
     FCellIterator() = default;
     FCellIterator(const FCellIterator& right)
-        : Current(right.Current) ,min(right.min), max(right.max), reached(right.reached)
-    {
-        if (right.dataNode)
-        {
-            dataNode = std::make_unique<OpenXLSX::XMLNode>(*right.dataNode);
-            shared_string = right.shared_string;
-            cell = right.cell;
-        } 
-    }
+        : dataNode(right.dataNode),
+        Current(right.Current) ,
+        min(right.min),
+        max(right.max),
+        reached(right.reached)
+    {  }
     FCellIterator& operator =(const FCellIterator& right)
     {
         if (&right != this) {
-            if (right.dataNode)
-            {
-                if (dataNode)
-                {
-                    *dataNode = *right.dataNode;
-                }
-                else
-                {
-                    dataNode = std::make_unique<OpenXLSX::XMLNode>(*right.dataNode);
-                }
-                shared_string = right.shared_string;
-                cell = right.cell;
-            }
+            dataNode = right.dataNode; 
             min = right.min;
             max = right.max;
             Current = right.Current;
@@ -60,10 +45,20 @@ public:
     FCellIterator& operator++();
      
     FCellIterator operator++(int);    // NOLINT
-     
-    reference operator*() const;
-     
-    pointer operator->()const;
+
+    pointer get()const;
+
+    pointer operator->()const
+    {
+        return get();
+    }
+
+    void next_row();
+
+    int32 rowCellCount() const
+    {
+        return FCellReference(dataNode.parent().last_child().attribute("r").value()).Col;
+    }
 
     bool operator==(const FCellIterator& right)const;
 
@@ -72,16 +67,16 @@ public:
         return !(*this == right);
     }
      
-    FCellReference          Current;
+    
 protected:
-    std::unique_ptr<OpenXLSX::XMLNode> dataNode;             /**< */
-    FCellReference          min;              /**< The cell reference of the first cell in the range */
-    FCellReference          max;          /**< The cell reference of the last cell in the range */
-    OpenXLSX::XLCell         cell;          /**< */
-    OpenXLSX::XLSharedStrings  shared_string;        /**< */
-    bool       reached{ false }; /**< */
+    XMLNode dataNode;
+    FCellReference Current;
+    FCellReference min;   
+    FCellReference max;    
+    bool reached{ false };
 
     friend struct FCellRange;
+    friend class UFreeExcelLibrary;
 };
 
   

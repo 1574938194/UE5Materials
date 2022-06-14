@@ -98,7 +98,7 @@ public:
 		static	void  Clear_CellValue( FCellValue& val);
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Type (CellValue)"), Category = "FreeExcel")
-		static	EXLValueType  Type_CellValue(const FCellValue& val);
+		static	EValueType  Type_CellValue(const FCellValue& val);
 
 	UFUNCTION(BlueprintCallable, meta = ( BlueprintInternalUseOnly = "true"), Category = "FreeExcel")
 	static void CellIterator_Forward(const FCellIterator& Target);

@@ -1,24 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
  
 #include "CellIterator.h"
-
-namespace OpenXLSX
-{
-    XMLNode getRowNode(XMLNode sheetDataNode, uint32_t rowNumber);
-    XMLNode getCellNode(XMLNode rowNode, uint16_t columnNumber);
-} 
-
+#include "ExcelDocument.h"
+ 
 bool FCellIterator::operator==(const FCellIterator& right)const
 {
     if (dataNode)
-    {
-        bool b = (bool)cell;
-        bool b2 = (bool)right.cell;
-        if (b && b2)
+    {  
+        if (dataNode && right.dataNode)
         {
-            return cell == right.cell;
+            return *dataNode == *right.dataNode;
         }
-        else if( b || b2)
+        else if(dataNode || right.dataNode)
         {
             return false;
         }
@@ -32,7 +25,7 @@ bool FCellIterator::operator==(const FCellIterator& right)const
 
 FCellIterator& FCellIterator::operator++()
 { 
-    FCellReference& ref = Current;
+    FCellReference ref = Current;
 
     // ===== Determine the cell reference for the next cell.
     if (ref.Col < max.Col)
@@ -52,30 +45,31 @@ FCellIterator& FCellIterator::operator++()
     {
         if (reached)
         {
-            cell = OpenXLSX::XLCell();
+            dataNode = XMLNode();
         }
         else if ((max.Row < ref.Row || (max.Row <= ref.Row && max.Col < ref.Col))
-            || ref.Row == cell.cellReference().row())
+            || ref.Row == Current.Row)
         {
-            auto node = cell.m_cellNode->next_sibling();
-            OpenXLSX::XLCellReference xRef(node.attribute("r").value());
-            if (!node || (xRef.row() != ref.Row || xRef.column() != ref.Col))
+            auto node = dataNode.next_sibling();
+            FCellReference xRef(node.attribute("r").value());
+            // if cell dosen't exist then create it
+            if (!node || (xRef.Row != ref.Row || xRef.Col != ref.Col))
             {
-                node = cell.m_cellNode->parent().insert_child_after("c", *cell.m_cellNode);
-                node.append_attribute("r").set_value(std::string(TCHAR_TO_UTF8(*ref.to_string())).c_str());
+                node = dataNode.parent().insert_child_after("c", dataNode);
+                node.append_attribute("r").set_value(ref.to_string().c_str());
             }
-            cell = OpenXLSX::XLCell(node, shared_string);
+            dataNode =  node;
         }
-        else if (ref.Row > (decltype(FCellReference::Row))cell.cellReference().row())
+        else if (ref.Row > Current.Row)
         {
-            auto rowNode = cell.m_cellNode->parent().next_sibling();
+            auto rowNode = dataNode.parent().next_sibling();
             if (!rowNode || rowNode.attribute("r").as_ullong() != ref.Row) {
-                rowNode = cell.m_cellNode->parent().parent().insert_child_after("row", cell.m_cellNode->parent());
+                rowNode = dataNode.parent().parent().insert_child_after("row", dataNode.parent());
                 rowNode.append_attribute("r").set_value(ref.Row);
                 // getRowNode(*m_dataNode, ref.row());
             }
 
-            cell = OpenXLSX::XLCell(OpenXLSX::getCellNode(rowNode, ref.Col), shared_string);
+            dataNode = UExcelDocument::getCellNode(rowNode, ref.Col);
         }
         else
         {
@@ -92,20 +86,26 @@ FCellIterator FCellIterator::operator++(int)    // NOLINT
     ++(*this);
     return oldIter;
 }
-
-
-UCell& FCellIterator::operator*()const
+  
+FCellIterator::pointer FCellIterator::get() const
 {
     auto ret = NewObject<UCell>();
-    ret->_Inner = cell;
-    return *ret;
-}
-
-
-FCellIterator::pointer FCellIterator::operator->()const
-{
-    auto ret = NewObject<UCell>();
-    ret->_Inner = cell;
+    ret->cellNode = dataNode;
     return ret;
 }
  
+void FCellIterator::next_row()
+{
+    if (Current.Row < max.Row)
+    {
+        ++Current.Row;
+        auto rowNode = dataNode.parent().next_sibling();
+        if (!rowNode || rowNode.attribute("r").as_ullong() != Current.Row) {
+            rowNode = dataNode.parent().parent().insert_child_after("row", dataNode.parent());
+            rowNode.append_attribute("r").set_value(Current.Row);
+            // getRowNode(*m_dataNode, ref.row());
+        }
+
+        dataNode = UExcelDocument::getCellNode(rowNode, Current.Col);
+    }
+}
